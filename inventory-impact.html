@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventory – Impact Visual + Business Case</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --bg-alt: #eef2f7;
+      --card: #ffffff;
+      --panel: rgba(255, 255, 255, 0.9);
+      --panel-solid: #ffffff;
+      --border: rgba(12, 24, 44, 0.12);
+      --border-hover: rgba(255, 215, 0, 0.35);
+      --accent: #d4af37;
+      --accent-grad: linear-gradient(135deg, #d4af37, #FFD700);
+      --accent-3: #10b981;
+      --accent-bg: rgba(255, 215, 0, 0.12);
+      --highlight: rgba(255, 215, 0, 0.18);
+      --text: #0f172a;
+      --muted: #475569;
+      --glow: 0 25px 80px rgba(255, 215, 0,0.15), 0 0 0 1px rgba(12, 24, 44, 0.05);
+      --radius: 16px;
+      --sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Navigation */
+    .nav-shell { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(246,248,251,0.85)); border-bottom: 1px solid var(--border); }
+    nav { max-width: 1200px; margin: 0 auto; padding: 0.9rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .orb { width: 34px; height: 34px; border-radius: 999px; background: radial-gradient(circle at 35% 30%, rgba(255, 215, 0,0.85), transparent 55%), radial-gradient(circle at 70% 60%, rgba(218, 165, 32,0.85), transparent 45%), #e2e8f0; border: 1px solid var(--border); box-shadow: var(--glow); }
+    .brand h1 { font-size: 0.95rem; font-weight: 700; letter-spacing: 0.05em; color: var(--text); }
+    .nav-links { display: flex; gap: 0.75rem; color: var(--muted); font-size: 0.92rem; }
+
+    main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.25rem 3.5rem; position: relative; }
+
+    /* Hero Section */
+    .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; align-items: center; padding: clamp(1.5rem, 2vw, 2.5rem); border: 1px solid var(--border); border-radius: 20px; background: linear-gradient(135deg, #ffffff, #eef3fb); box-shadow: var(--glow); position: relative; overflow: hidden; margin-bottom: 4rem; }
+    .hero::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, rgba(255, 215, 0,0.12), transparent 45%), linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0)); pointer-events: none; }
+    .hero-left { position: relative; z-index: 1; }
+    .pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.7rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.8rem; background: rgba(255, 215, 0,0.08); }
+    .hero h1 { font-size: clamp(2rem, 3vw, 2.8rem); margin-bottom: 0.6rem; line-height: 1.1; }
+    .hero h1 span { color: var(--accent); }
+    .hero p { color: var(--muted); max-width: 36rem; font-size: 1.02rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.1rem 0 1.6rem; }
+    .tag { padding: 0.35rem 0.8rem; border-radius: 10px; background: rgba(255, 215, 0,0.08); border: 1px solid var(--border); font-size: 0.88rem; color: var(--text); }
+    
+    .cta-row { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+    .btn { padding: 0.7rem 1.15rem; border-radius: 12px; border: 1px solid transparent; font-weight: 700; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .btn.primary { background: linear-gradient(120deg, #60a5fa, #FFD700); color: #0b1224; box-shadow: 0 10px 50px rgba(255, 215, 0,0.35); }
+    .btn.ghost { border-color: var(--border); color: var(--text); background: rgba(255,255,255,0.9); }
+
+    .hero-visual { position: relative; height: 360px; }
+    canvas { display: block; }
+    .scene { width: 100%; height: 100%; border-radius: 18px; overflow: hidden; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.85), rgba(224,231,255,0.5)); border: 1px solid var(--border); box-shadow: var(--glow); }
+    .parallax { position: absolute; inset: 0; pointer-events: none; }
+    .bubble { position: absolute; border-radius: 999px; filter: blur(0px); opacity: 0.35; transition: transform 0.5s ease, opacity 0.5s ease; }
+    .bubble:nth-child(1) { width: 150px; height: 150px; background: rgba(255, 215, 0,0.16); top: 8%; left: 4%; }
+    .bubble:nth-child(2) { width: 120px; height: 120px; background: rgba(218, 165, 32,0.16); bottom: 12%; right: 8%; }
+    .bubble:nth-child(3) { width: 90px; height: 90px; background: rgba(16,185,129,0.2); top: 48%; left: 58%; }
+    
+    .hero-legend { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0.7rem; padding: 1rem; pointer-events: none; }
+    .legend-item { align-self: flex-start; background: rgba(255,255,255,0.9); border: 1px solid var(--border); padding: 0.55rem 0.75rem; border-radius: 10px; box-shadow: 0 10px 30px rgba(12,24,44,0.04); backdrop-filter: blur(6px); transition: transform 0.4s ease, opacity 0.4s ease; font-weight: 700; color: var(--text); }
+    .legend-item span { display: block; font-weight: 500; color: var(--muted); font-size: 0.9rem; }
+
+    /* --- NEW: TL;DR Context Section --- */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 4rem; }
+    .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: transform 0.3s ease; }
+    .summary-card:hover { transform: translateY(-3px); }
+    .sc-bad { border-top: 4px solid var(--danger); }
+    .sc-good { border-top: 4px solid var(--success); }
+    
+    .sc-title { text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .sc-bad .sc-title { color: var(--danger); }
+    .sc-good .sc-title { color: var(--success); }
+    .sc-content { font-size: 1.05rem; color: #334155; }
+    .sc-content strong { color: var(--text); font-weight: 600; }
+
+    /* --- NEW: Executive Metrics (ROI + Gap Analysis) --- */
+    .metrics-deck { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; margin-bottom: 5rem; }
+    
+    /* ROI Card */
+    .m-roi { grid-column: span 12; background: #0f172a; color: white; border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 20px 60px -10px rgba(15, 23, 42, 0.5); }
+    @media (min-width: 900px) { .m-roi { grid-column: span 4; } }
+    
+    .roi-head { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; }
+    .roi-big { font-size: 3.5rem; font-weight: 800; color: var(--success); line-height: 1; margin: 0.5rem 0 1rem; }
+    .roi-math { border-top: 1px solid rgba(255,255,255,0.15); padding-top: 1rem; font-size: 0.9rem; color: #cbd5e1; }
+    .math-row { display: flex; justify-content: space-between; margin-bottom: 0.3rem; }
+    .math-row.highlight { color: white; font-weight: 700; margin-top: 0.5rem; }
+
+    /* Gap Analysis & Cost Card */
+    .m-data { grid-column: span 12; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 2rem; }
+    @media (min-width: 900px) { .m-data { grid-column: span 8; } }
+
+    .chart-block h3 { font-size: 0.95rem; margin-bottom: 0.8rem; display: flex; justify-content: space-between; font-weight: 600; color: var(--text); }
+    .chart-block h3 span { color: var(--success); font-size: 0.85rem; background: #ecfdf5; padding: 2px 8px; border-radius: 4px; border: 1px solid #a7f3d0; }
+    
+    /* --- FIXED CHART LAYOUT: Labels separate from bar --- */
+    .labels-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--muted); font-weight: 500; }
+    .labels-row strong { color: var(--text); font-weight: 700; }
+
+    .timeline { position: relative; height: 32px; background: #f1f5f9; border-radius: 8px; margin-bottom: 0.5rem; overflow: hidden; border: 1px solid var(--border); }
+    .timeline-bar { 
+      position: absolute; top: 0; left: 0; height: 100%; 
+      background: var(--accent-grad); 
+      width: 0; transition: width 1.2s cubic-bezier(0.2, 1, 0.3, 1);
+      z-index: 2; box-shadow: 4px 0 15px rgba(255, 215, 0,0.3);
+    }
+    .timeline-gap {
+      position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+      font-size: 0.8rem; font-weight: 600; color: var(--muted); z-index: 1;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .timeline-gap::before { content: ""; width: 6px; height: 6px; background: var(--success); border-radius: 50%; display: block; }
+
+    .cost-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: auto; }
+    .cost-item { font-size: 0.9rem; color: var(--muted); }
+    .cost-val { font-size: 1.5rem; font-weight: 700; color: var(--text); }
+    .cost-val span { font-size: 1rem; color: var(--danger); text-decoration: line-through; margin-left: 0.5rem; opacity: 0.6; }
+
+    /* Existing Content Styling */
+    .section-title { display: flex; align-items: center; gap: 0.5rem; margin: 3rem 0 1rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.85rem; }
+    .section-title::after { content: ""; height: 1px; background: var(--border); flex: 1; opacity: 0.6; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem; box-shadow: 0 18px 50px rgba(12,24,44,0.06); position: relative; overflow: hidden; transition: transform 0.35s ease, box-shadow 0.35s ease; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 20px 55px rgba(12,24,44,0.08); }
+    .stat { font-size: 1.45rem; font-weight: 800; color: var(--accent); }
+    .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text); }
+
+    .flow { margin-top: 0.6rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.8rem; }
+    .flow .node { background: linear-gradient(145deg, rgba(255, 215, 0,0.14), rgba(255,255,255,0.9)); border: 1px solid var(--border); padding: 1rem; border-radius: 12px; position: relative; box-shadow: 0 12px 40px rgba(12,24,44,0.06); }
+    .flow .node .badge { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.55rem; border-radius: 999px; background: rgba(255,255,255,0.85); border: 1px solid var(--border); font-size: 0.78rem; color: var(--muted); margin-bottom: 0.6rem; }
+
+    .infographics { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 0.75rem; }
+    .canvas-wrap { background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 0.9rem; box-shadow: 0 10px 30px rgba(12,24,44,0.04); position: relative; overflow: hidden; }
+    .chart-title { font-weight: 700; color: var(--text); margin-bottom: 0.45rem; }
+    .inline-stat { display: flex; align-items: center; gap: 0.5rem; }
+    .inline-stat strong { color: var(--success); margin-right: 0.3rem; }
+
+    .metric-bar { height: 10px; background: var(--bg-alt); border-radius: 8px; overflow: hidden; position: relative; margin: 0.35rem 0 0.8rem; border: 1px solid var(--border); }
+    .metric-bar span { position: absolute; inset: 0; width: 0; background: linear-gradient(120deg, #60a5fa, #FFD700); border-radius: 8px; box-shadow: 0 10px 30px rgba(255, 215, 0,0.25); transform-origin: left; }
+
+    .loop { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.6rem; }
+    .loop .step { padding: 0.75rem; border-radius: 10px; background: rgba(255,255,255,0.9); border: 1px dashed var(--border); color: var(--muted); font-size: 0.93rem; transition: transform 0.3s ease; position: relative; overflow: hidden; }
+    .step strong { position: relative; z-index: 1; color: var(--text); display: block; margin-bottom: 0.25rem; }
+
+    /* Reveal Animation */
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal.visible .metric-bar span { animation: grow 1s ease forwards; animation-delay: var(--delay, 0s); width: var(--value, 0%); }
+    .reveal.visible .timeline-bar { width: var(--w); }
+
+    footer { margin: 3rem 0 0; color: var(--muted); font-size: 0.9rem; text-align: center; padding-bottom: 2rem; }
+    @media (max-width: 960px) { .hero { grid-template-columns: 1fr; } .flow { grid-template-columns: 1fr; } .hero-visual { height: 320px; } .summary-grid { grid-template-columns: 1fr; } }
+    @keyframes grow { from { width: 0; } to { width: var(--value, 100%); } }
+  </style>
+</head>
+<body>
+  <div class="nav-shell">
+    <nav class="top-nav">
+      <div class="brand">
+        <div class="orb"></div>
+        <h1>Systems & Lifecycle Frameworks</h1>
+      </div>
+      <div class="nav-links">
+        <a class="btn ghost" href="index.html">Home</a>
+        <a class="btn primary" href="#">Whitepaper</a>
+      </div>
+    </nav>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="hero-left">
+        <div class="pill">Impact reel</div>
+        <h1>Inventory systems – <span>Promise keeping at scale</span></h1>
+        <p>Dynamic sensing, substitutions, and network-aware reservations keep every commitment credible across retail and field scenarios.</p>
+        <div class="tags">
+          <div class="tag">Availability truth</div>
+          <div class="tag">Promise engine</div>
+          <div class="tag">Network rebalancing</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn primary" href="#metrics">View Business Impact</a>
+          <a class="btn ghost" href="#">Read the whitepaper</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <canvas id="inventoryScene" class="scene" aria-label="3D particle background"></canvas>
+        <div class="parallax">
+          <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+        </div>
+        <div class="hero-legend" aria-hidden="true">
+          <div class="legend-item">Promise control <span>ETA confidence</span></div>
+          <div class="legend-item">Signal fusion <span>POS + supplier feeds</span></div>
+          <div class="legend-item">Guardrails <span>cost-to-serve</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="summary-grid reveal">
+      <div class="summary-card sc-bad">
+        <div class="sc-title"><span>⚠</span> The Friction</div>
+        <div class="sc-content">
+          Fragmented stock data leads to <strong>broken promises</strong> (canceling orders after acceptance) and <strong>capital trap</strong> (holding buffer stock just to be safe). This erodes trust and margin.
+        </div>
+      </div>
+      <div class="summary-card sc-good">
+        <div class="sc-title"><span>⚡</span> The Solution</div>
+        <div class="sc-content">
+          A real-time Promise Engine unifies "Available to Sell" data. It enables <strong>network-wide sourcing</strong> and <strong>dynamic substitutions</strong>, unlocking inventory trapped in silos.
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" id="metrics">Executive Business Case</div>
+    <div class="metrics-deck">
+      
+      <div class="m-roi reveal">
+        <div class="roi-head">Projected 3-Year ROI</div>
+        <div class="roi-big">285%</div>
+        <div class="roi-math">
+          <div class="math-row"><span>Implementation</span> <span>$220,000</span></div>
+          <div class="math-row"><span>Capital Released</span> <span>$850,000</span></div>
+          <div class="math-row highlight"><span>Net Value</span> <span>+$630,000</span></div>
+        </div>
+      </div>
+
+      <div class="m-data reveal">
+        <div>
+          <div class="chart-block">
+            <h3>Fulfillment Cycle <span>12x Faster</span></h3>
+            <div class="labels-row">
+              <strong>New: 4 Hrs</strong>
+              <span>Legacy Baseline: 48 Hours</span>
+            </div>
+            <div class="timeline">
+              <div class="timeline-bar" style="--w: 15%"></div>
+              <div class="timeline-gap">Gap: 44 Hours Saved</div>
+            </div>
+          </div>
+          
+          <div class="chart-block" style="margin-top: 1.5rem;">
+            <h3>Safety Stock Levels <span>50% Leaner</span></h3>
+            <div class="labels-row">
+              <strong>New: 2 Weeks</strong>
+              <span>Legacy Baseline: 4 Weeks</span>
+            </div>
+            <div class="timeline">
+              <div class="timeline-bar" style="--w: 50%"></div>
+              <div class="timeline-gap">Gap: Capital Unlocked</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cost-row">
+          <div class="cost-item">
+            Stockout Reduction
+            <div class="cost-val" style="color:var(--success)">-34%</div>
+          </div>
+          <div class="cost-item" style="text-align: right;">
+            Margin Uplift
+            <div class="cost-val">+8.5%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Outcome board</div>
+    <div class="grid" id="infographics">
+      <div class="card reveal">
+        <div class="stat">98% OTIF</div>
+        <p>Promises hold because availability respects constraints and lead times.</p>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:98%; --delay:0.1s"></span></div>
+      </div>
+      <div class="card reveal">
+        <div class="stat">Stockouts ↓</div>
+        <p>Risk-weighted rebalancing keeps fast movers near demand.</p>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:86%; --delay:0.2s"></span></div>
+      </div>
+      <div class="card reveal">
+        <div class="stat">Margin control</div>
+        <p>Optimized sourcing uses cost-to-serve logic to avoid expensive expedites.</p>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:74%; --delay:0.3s"></span></div>
+      </div>
+      <div class="card reveal">
+        <div class="stat">Delightful UX</div>
+        <p>Portals show truthful options and transparent substitutions.</p>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:88%; --delay:0.4s"></span></div>
+      </div>
+    </div>
+
+    <div class="section-title">Dynamic dataflow</div>
+    <div class="card reveal">
+      <div class="flow">
+        <div class="node"><div class="badge">Sensing</div><strong>Telemetry + POS</strong><p class="muted">Quality gates dedupe and align units before forecasts form.</p></div>
+        <div class="node"><div class="badge">Predict</div><strong>Risk-weighted</strong><p class="muted">Forecasts tuned by seasonality generate resilient demand.</p></div>
+        <div class="node"><div class="badge">Reserve</div><strong>Promise engine</strong><p class="muted">Matches orders to the best node with cost-to-serve.</p></div>
+        <div class="node"><div class="badge">Rebalance</div><strong>Autonomous moves</strong><p class="muted">Transfers and buys trigger with guardrails.</p></div>
+      </div>
+    </div>
+
+    <div class="section-title">Animated scenario decks</div>
+    <div class="infographics">
+      <div class="canvas-wrap reveal">
+        <div class="chart-title">Retail network resilience</div>
+        <div class="inline-stat"><strong class="stat">+14%</strong><span>reliability</span></div>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:78%; --delay:0.15s"></span></div>
+        <div class="loop">
+          <div class="step"><strong>Dark store surge</strong><p>Micro-region velocity drives forward picks.</p></div>
+          <div class="step"><strong>Pickup truth</strong><p>Click-and-collect confirms dock rules before promise.</p></div>
+          <div class="step"><strong>Trust badges</strong><p>Customers see ETA confidence in real time.</p></div>
+        </div>
+      </div>
+      <div class="canvas-wrap reveal">
+        <div class="chart-title">Field operations</div>
+        <div class="inline-stat"><strong class="stat">-22%</strong><span>truck rolls</span></div>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:72%; --delay:0.2s"></span></div>
+        <div class="loop">
+          <div class="step"><strong>Kitted loads</strong><p>Parts staged by appointment priority and route.</p></div>
+          <div class="step"><strong>Live updates</strong><p>Returns update availability instantly.</p></div>
+          <div class="step"><strong>Protection</strong><p>Critical spares guarded against non-urgent use.</p></div>
+        </div>
+      </div>
+      <div class="canvas-wrap reveal">
+        <div class="chart-title">Supply chain control</div>
+        <div class="inline-stat"><strong class="stat">-18%</strong><span>expedite spend</span></div>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:68%; --delay:0.25s"></span></div>
+        <div class="loop">
+          <div class="step"><strong>Network heatmaps</strong><p>Reslotting follows service-level contours.</p></div>
+          <div class="step"><strong>Partner contracts</strong><p>APIs enforce lead-time windows before booking.</p></div>
+          <div class="step"><strong>What-if sandboxes</strong><p>Simulate service impact before transfers execute.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Controls and trust</div>
+    <div class="grid reveal">
+      <div class="card">
+        <h3>Data quality</h3>
+        <p>Lineage and freshness indicators accompany every availability decision; anomalies quarantine noisy telemetry.</p>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:90%; --delay:0.1s"></span></div>
+      </div>
+      <div class="card">
+        <h3>Resilience</h3>
+        <p>Fallback logic reroutes promises during node outages while protecting margins with cost guardrails.</p>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:84%; --delay:0.2s"></span></div>
+      </div>
+      <div class="card">
+        <h3>Experience</h3>
+        <p>Confidence badges surface ETA accuracy and substitution rules; alerts only appear when action is needed.</p>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:88%; --delay:0.3s"></span></div>
+      </div>
+    </div>
+
+    <footer>
+      Impact Framework &copy; 2024
+    </footer>
+  </main>
+
+  <script>
+    // --- 3D Scene (Inventory Logic) ---
+    const createImpactScene = (canvasId, palette) => {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas || !window.THREE) return;
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.6));
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(55, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+      camera.position.set(0, 0.2, 6);
+
+      const resize = () => {
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h; camera.updateProjectionMatrix();
+      };
+      resize();
+      window.addEventListener('resize', resize);
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      const createCluster = (color, count, spread, offsetY = 0) => {
+        const positions = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+          positions[i * 3] = (Math.random() - 0.5) * spread;
+          positions[i * 3 + 1] = (Math.random() - 0.5) * spread + offsetY;
+          positions[i * 3 + 2] = (Math.random() - 0.5) * spread;
+        }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const mat = new THREE.PointsMaterial({ color, size: 0.06, transparent: true, opacity: 0.9 });
+        return new THREE.Points(geo, mat);
+      };
+
+      group.add(createCluster(palette[0], 260, 6, 0.5));
+      group.add(createCluster(palette[1], 180, 5, -0.4));
+      group.add(createCluster(palette[2], 140, 4, 0));
+
+      const light1 = new THREE.PointLight(palette[0], 1.1, 40); light1.position.set(4, 4, 8); scene.add(light1);
+      scene.add(new THREE.AmbientLight('#ffffff', 0.45));
+
+      let mouseX = 0, mouseY = 0;
+      canvas.addEventListener('pointermove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = (e.clientX - rect.left) / rect.width - 0.5;
+        mouseY = (e.clientY - rect.top) / rect.height - 0.5;
+      });
+
+      const animate = () => {
+        requestAnimationFrame(animate);
+        group.rotation.y += 0.0008;
+        group.rotation.z = THREE.MathUtils.lerp(group.rotation.z, mouseX * 0.3, 0.08);
+        renderer.render(scene, camera);
+      };
+      animate();
+    };
+
+    createImpactScene('inventoryScene', ['#60a5fa', '#FFD700', '#10b981']);
+
+    // --- Interaction / Reveal Logic ---
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.reveal, .card').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
+

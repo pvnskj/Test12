@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Automated RFDS Framework – Whitepaper</title>
+<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
+<link rel="stylesheet" href="theme.css"/>
+<style>
+    :root {
+      --bg: #f6f8fb;
+      --card: rgba(255, 255, 255, 0.92);
+      --card-solid: #ffffff;
+      --panel: rgba(255, 255, 255, 0.9);
+      --panel-solid: #ffffff;
+      --border: rgba(12, 24, 44, 0.12);
+      --border-hover: rgba(255, 215, 0, 0.35);
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #d4af37;
+      --accent2: #FFD700;
+      --accent3: #10b981;
+      --shadow: 0 22px 60px rgba(15, 23, 42, 0.10);
+      --radius: 20px;
+      --radius-sm: 14px;
+      --max: 1180px;
+      --sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      line-height: 1.65;
+      background: var(--bg);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .app {
+      max-width: calc(var(--max) + 440px);
+      margin: 0 auto;
+      padding: 1.25rem 1rem 2.25rem;
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 1rem;
+    }
+
+    .nav {
+      position: sticky;
+      top: 1rem;
+      align-self: start;
+      border: 1px solid var(--border);
+      background: linear-gradient(120deg, rgba(255,255,255,0.84), rgba(255,255,255,0.96));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .nav-head {
+      padding: 1rem 1rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: fit-content;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(37,99,235,0.08);
+      color: var(--accent);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .nav-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .search {
+      display: grid;
+      gap: 0.45rem;
+    }
+    .search label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .search input {
+      width: 100%;
+      padding: 0.7rem 0.8rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      outline: none;
+      background: rgba(255,255,255,0.96);
+      font-size: 0.95rem;
+    }
+    .search input:focus {
+      border-color: rgba(37,99,235,0.55);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
+    }
+
+    .nav-body {
+      padding: 0.75rem 0.75rem 1rem;
+      max-height: calc(100vh - 210px);
+      overflow: auto;
+    }
+
+    .nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.35rem;
+    }
+    .nav-h2 > a {
+      display: block;
+      padding: 0.55rem 0.65rem;
+      border-radius: 12px;
+      font-weight: 800;
+      color: var(--text);
+      border: 1px solid transparent;
+    }
+    .nav-h2 > a:hover {
+      border-color: rgba(37,99,235,0.25);
+      background: rgba(37,99,235,0.06);
+      text-decoration: none;
+    }
+
+    .nav-h3 {
+      list-style: none;
+      padding: 0.15rem 0 0.4rem 0.85rem;
+      margin: 0;
+      display: grid;
+      gap: 0.2rem;
+    }
+    .nav-h3 a {
+      display: block;
+      padding: 0.4rem 0.6rem;
+      border-radius: 10px;
+      color: var(--muted);
+      font-weight: 650;
+      border: 1px solid transparent;
+    }
+    .nav-h3 a:hover {
+      border-color: rgba(14,165,233,0.28);
+      background: rgba(14,165,233,0.06);
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .content {
+      border: 1px solid var(--border);
+      background: linear-gradient(120deg, rgba(255,255,255,0.86), rgba(255,255,255,0.96));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .content-inner {
+      padding: 1.35rem 1.35rem 0.6rem;
+    }
+
+    .paper-head {
+      padding: 1.4rem 1.4rem 1rem;
+      background: radial-gradient(circle at 78% 12%, rgba(14,165,233,0.16), transparent 42%),
+                  radial-gradient(circle at 28% 18%, rgba(37,99,235,0.12), transparent 46%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      margin: 0 0 0.4rem;
+      font-size: clamp(1.8rem, 2.7vw, 2.6rem);
+      line-height: 1.12;
+      letter-spacing: -0.015em;
+    }
+    .meta {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .paper-section {
+      padding: 0 1.35rem 1rem;
+    }
+
+    .section-details {
+      border: 1px solid var(--border);
+      background: var(--card-solid);
+      border-radius: var(--radius);
+      box-shadow: 0 14px 44px rgba(15,23,42,0.06);
+      overflow: hidden;
+    }
+
+    .section-summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 0.95rem 1rem;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(14,165,233,0.05), rgba(22,163,74,0.04));
+    }
+    details[open] .section-summary { border-bottom-color: rgba(37,99,235,0.18); }
+
+    .sum-title {
+      font-weight: 900;
+      font-size: 1.02rem;
+      letter-spacing: 0.01em;
+    }
+    .sum-hint {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .section-body {
+      padding: 1rem 1rem 0.25rem;
+    }
+    /* avoid duplicate visible H2 (the anchor still exists) */
+    .section-body h2 {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    h3 {
+      margin: 1.05rem 0 0.35rem;
+      font-size: 1.12rem;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      margin: 0 0 0.9rem;
+      color: var(--text);
+    }
+    
+    ul { margin: 0 0 1rem; padding-left: 1.2rem; }
+    li { margin-bottom: 0.4rem; color: var(--text); }
+
+    .def-list {
+      margin: 0.75rem 0 1rem;
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: linear-gradient(140deg, rgba(37,99,235,0.04), rgba(22,163,74,0.04));
+    }
+    .def-list dt {
+      font-weight: 900;
+      margin-top: 0.6rem;
+      color: var(--accent);
+    }
+    .def-list dt:first-child { margin-top: 0; }
+    .def-list dd {
+      margin: 0.15rem 0 0;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    mark {
+      background: rgba(14,165,233,0.22);
+      padding: 0.06rem 0.14rem;
+      border-radius: 6px;
+    }
+    
+    .nav-controls{
+      display:flex;
+      gap:0.5rem;
+      margin-top:0.6rem;
+      flex-wrap:wrap;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      padding:0.4rem 0.65rem;
+      border-radius:0.6rem;
+      font-size:0.9rem;
+      cursor:pointer;
+    }
+    .btn:hover{ background: var(--card-solid); }
+
+    @media (max-width: 1040px) {
+      .app { grid-template-columns: 1fr; }
+      .nav { position: relative; top: auto; }
+      .nav-body { max-height: none; }
+    }
+</style>
+</head>
+<body>
+  <div class="nav-shell">
+    <nav class="top-nav">
+      <div class="brand">
+        <div class="orb"></div>
+        <h1>Systems & Lifecycle Frameworks</h1>
+      </div>
+      <div class="nav-links">
+        <a class="btn ghost" href="index.html">Home</a>
+        <a class="btn primary" href="RFDS-impact.html">Impact</a>
+      </div>
+    </nav>
+  </div>
+  <main class="page-shell">
+  <div class="app">
+<aside aria-label="Whitepaper navigation" class="nav">
+<div class="nav-head">
+<div class="badge">RFDS Automation</div>
+<div class="nav-title">Whitepaper contents</div>
+<div class="search">
+<label for="q">Search within the whitepaper</label>
+<input autocomplete="off" id="q" placeholder="Type to highlight matches…" type="search"/>
+</div>
+<div class="nav-controls"><button class="btn" id="expandAll" type="button">Expand all</button><button class="btn" id="collapseAll" type="button">Collapse all</button></div>
+</div>
+<div class="nav-body">
+<ul class="nav-list">
+    <li><a href="#1-0-introduction">1.0 Introduction: The Strategic Imperative</a></li>
+    <li><a href="#2-0-legacy-challenge">2.0 The Legacy Challenge</a></li>
+    <li><a href="#3-0-integrated-solution">3.0 An Integrated Solution</a></li>
+    <li class="nav-h2"><a href="#4-0-system-architecture">4.0 System Architecture & Workflows</a>
+        <ul class="nav-h3">
+        <li><a href="#4-1-data-integration">4.1 Data Integration</a></li>
+        <li><a href="#4-2-site-level-management">4.2 Site-Level Management</a></li>
+        <li><a href="#4-3-rule-based-automation">4.3 Rule-Based Automation</a></li>
+        <li><a href="#4-4-dynamic-document">4.4 Dynamic Diagrams</a></li>
+        </ul>
+    </li>
+    <li class="nav-h2"><a href="#5-0-strategic-benefits">5.0 Strategic Business Benefits</a>
+        <ul class="nav-h3">
+            <li><a href="#5-1-efficiency">5.1 Efficiency and Speed</a></li>
+            <li><a href="#5-2-integrity">5.2 Data Integrity</a></li>
+            <li><a href="#5-3-scalability">5.3 Auditability & Scalability</a></li>
+        </ul>
+    </li>
+    <li><a href="#6-0-broader-applications">6.0 Broader Applications</a></li>
+    <li><a href="#7-0-conclusion">7.0 Conclusion</a></li>
+</ul>
+</div>
+</aside>
+<main aria-label="Whitepaper content" class="content">
+<div class="content-inner">
+<div class="paper-head">
+<h1 id="framework-automated-rfds-generation">A Framework for Automated Radio Frequency Design Sheet (RFDS) Generation</h1>
+<p class="meta">Whitepaper • Telecommunications & Network Engineering</p>
+</div>
+<p>Moving from manual, spreadsheet-driven processes to a validated, real-time automated ecosystem.</p>
+
+<section aria-labelledby="1-0-introduction" class="paper-section">
+<details class="section" open=""><summary class="section-summary" id="1-0-introduction"><span class="sum-title">1.0 Introduction: The Strategic Imperative for Automation</span><span class="sum-hint">Toggle</span></summary><div class="section-body">
+<p>In the competitive landscape of modern telecommunications, the speed, accuracy, and scalability of network deployment are paramount for success. Operational efficiency is no longer a goal but a baseline requirement for market leadership. Central to the deployment process is the Radio Frequency Design Sheet (RFDS), a critical document that serves as both a detailed technical blueprint and an essential communication tool for vendors and field crews, providing a definitive roadmap for constructing each cell site.</p>
+<p>Historically, the creation of these documents has been a manual, spreadsheet-driven process, prone to human error and operational friction. However, as carriers undertake complex initiatives like network densification, new spectrum overlays, and large-scale buildouts, this legacy approach has become a significant bottleneck. The transition from manual processes to a modern, automated system is therefore not merely an upgrade but a strategic necessity.</p>
+<p>This whitepaper details an advanced framework for the automated generation of RFDS documents. It outlines the system's integrated architecture, its rule-driven workflows, and the transformative business benefits it delivers by converting a fragmented, labor-intensive task into a seamless, data-driven, and instantaneous process.</p>
+</div></details></section>
+
+<section aria-labelledby="2-0-legacy-challenge" class="paper-section">
+<details class="section" open=""><summary class="section-summary" id="2-0-legacy-challenge"><span class="sum-title">2.0 The Legacy Challenge: Limitations of Manual RFDS Creation</span><span class="sum-hint">Toggle</span></summary><div class="section-body">
+<p>To architect a truly effective solution, it is essential to first understand the precise limitations of the legacy systems it is designed to replace. The traditional spreadsheet-based RFDS tool presents significant challenges as network complexity and deployment velocity increase. These limitations manifest as direct operational and financial risks:</p>
+<dl class="def-list">
+    <dt>Version Control Issues</dt>
+    <dd>The proliferation of multiple spreadsheet versions for a single site frequently leads to confusion, rework, and the risk of field crews building to outdated specifications.</dd>
+
+    <dt>Lack of Equipment Control</dt>
+    <dd>Manual processes offer no programmatic enforcement for using approved or current equipment, exposing the organization to incorrect installations using parts that may be non-compliant or retired.</dd>
+
+    <dt>Inefficient Data Aggregation</dt>
+    <dd>Legacy tools lack the ability to extract and aggregate information in bulk. This forces engineers into a time-consuming, site-by-site data entry and retrieval process, making large-scale analysis nearly impossible.</dd>
+
+    <dt>Error-Prone Manual Processes</dt>
+    <dd>Manual data entry results in equipment mismatches, inconsistent documentation, and ultimately, failed field installations that require costly remediation.</dd>
+
+    <dt>Unsustainable Scalability</dt>
+    <dd>As network buildouts expand to thousands of sites, the manual workflow becomes a critical bottleneck. The need for constant rework delays field readiness and hinders deployment targets.</dd>
+    
+    <dt>Burdensome Auditing</dt>
+    <dd>Auditing site characteristics at scale is highly inefficient, requiring teams to scrape data from static PDF files.</dd>
+</dl>
+</div></details></section>
+
+<section aria-labelledby="3-0-integrated-solution" class="paper-section">
+<details class="section" open=""><summary class="section-summary" id="3-0-integrated-solution"><span class="sum-title">3.0 An Integrated Solution: The Automated RFDS Generation System</span><span class="sum-hint">Toggle</span></summary><div class="section-body">
+<p>The automated RFDS generation system transforms RFDS creation from a manual, error-prone task into a real-time, validated, and data-driven process. By replacing legacy spreadsheet macros with an integrated, web-based platform, the system establishes a new standard for speed, accuracy, and control.</p>
+<ul>
+    <li><strong>Centralized Data Integration:</strong> A central hub ingests and harmonizes live project data from external RF management modules and internal procurement systems, creating a single source of truth.</li>
+    <li><strong>Rule-Driven Automation:</strong> A powerful rules engine automatically validates configurations, maps equipment to the correct sectors, and auto-populates detailed technical specifications.</li>
+    <li><strong>Real-Time Document Generation:</strong> The platform generates a complete, installation-ready RFDS document in seconds, including technical layouts and dynamically embedded diagrams.</li>
+    <li><strong>Centralized Repository and Auditing:</strong> Every generated RFDS is stored in a central, auditable repository, enabling version history tracking and large-scale data aggregation.</li>
+</ul>
+</div></details></section>
+
+<section aria-labelledby="4-0-system-architecture" class="paper-section">
+<details class="section" open=""><summary class="section-summary" id="4-0-system-architecture"><span class="sum-title">4.0 System Architecture and Core Workflows</span><span class="sum-hint">Toggle</span></summary><div class="section-body">
+<p>A well-defined architecture is the bedrock of any successful automation system. It dictates how information flows, how logic is applied, and how users interact with the platform.</p>
+
+<h3 id="4-1-data-integration">4.1 Data Integration and Synchronization</h3>
+<p>The system ingests critical site data from external RF planning systems and equipment attributes from a central procurement product catalog. A scheduled 'cron job' fetches updates daily at 3:00 AM, ensuring users work with the most current data.</p>
+<ul>
+    <li><strong>Automated Workflow:</strong> A user selects a site configuration, flagging it for the next scheduled data refresh. Within 24 hours, the system auto-populates all relevant data.</li>
+    <li><strong>Manual Workflow:</strong> For immediate needs, users can create or modify an RFDS manually using validated dropdown lists filtered to show only approved parts.</li>
+</ul>
+
+<h3 id="4-2-site-level-management">4.2 The Site-Level Management Module</h3>
+<p>The user interface organizes the RFDS creation process into five distinct sub-tabs:</p>
+<ol>
+    <li><strong>Layout:</strong> Users define the primary Site Configuration (e.g., Monopole, Rooftop) and RFDS Vendor.</li>
+    <li><strong>RFDS Info:</strong> Aggregates site details, project team assignments, and houses the "Generate RFDS" button.</li>
+    <li><strong>Alpha, Beta, Gamma:</strong> Sector-specific views of all assigned equipment (Antennas, Radios, OVP) with embedded preview functions.</li>
+</ol>
+
+<h3 id="4-3-rule-based-automation">4.3 Rule-Based Automation Engine</h3>
+<p>The automation engine replaces manual decision-making with programmatic logic:</p>
+<ul>
+    <li><strong>Conditional Equipment Mapping:</strong> Intelligently maps radio models to the correct sector based on identifiers (e.g., suffixes _1, _2) and frequency bands.</li>
+    <li><strong>Site-Driven Logic:</strong> Structure types dictate equipment placement (e.g., Monopole assets default to "Position 1").</li>
+    <li><strong>Dynamic Line Detail Calculation:</strong> Automates line equipment population based on rules; e.g., cable lengths determine specific cable models from a lookup table.</li>
+    <li><strong>Automated SOW Generation:</strong> Dynamically constructs a summary for the SOW/RF Comments by counting total antennas, radios, and cables.</li>
+    <li><strong>Data Validation:</strong> Prevents generation if critical data points (like Confirmed Rad Center height) do not match the RF management feed.</li>
+</ul>
+
+<h3 id="4-4-dynamic-document">4.4 Dynamic Document and Diagram Generation</h3>
+<p>Clicking "Generate RFDS" triggers the creation of a comprehensive PDF. The system employs an intelligent diagram selection process:</p>
+<ul>
+    <li><strong>Plumbing Diagrams:</strong> Selected based on the specific antenna model.</li>
+    <li><strong>Network Diagrams:</strong> Selected based on Fiber Type (Lit vs. Dark).</li>
+    <li><strong>OVP Diagrams:</strong> Selected based on the OVP model and line details.</li>
+</ul>
+<p>The system enforces strict version control, automatically approving the latest version while rejecting previous ones.</p>
+</div></details></section>
+
+<section aria-labelledby="5-0-strategic-benefits" class="paper-section">
+<details class="section" open=""><summary class="section-summary" id="5-0-strategic-benefits"><span class="sum-title">5.0 Analysis of Strategic Business Benefits</span><span class="sum-hint">Toggle</span></summary><div class="section-body">
+<h3 id="5-1-efficiency">5.1 Enhanced Operational Efficiency and Speed</h3>
+<p>The system dramatically accelerates the RFDS creation lifecycle. A process that previously required hours of manual data entry is reduced to seconds. This massive reduction in turnaround time ensures deployment crews receive accurate, actionable instructions without delay.</p>
+
+<h3 id="5-2-integrity">5.2 Uncompromising Data Integrity and Accuracy</h3>
+<p>By programmatically applying validation rules and integrating with authoritative data sources, the system enforces design integrity. The integration with a centralized product catalog guarantees that every design is compliant with current engineering and supply chain standards, creating a single source of truth.</p>
+
+<h3 id="5-3-scalability">5.3 Centralized Control, Auditability, and Scalability</h3>
+<p>A central, version-controlled repository provides a clear audit trail. The ability to aggregate site characteristics in a structured, tabular format eliminates manual data scraping and enables large-scale auditing. The system is inherently scalable, supporting various site configurations and future network expansion.</p>
+</div></details></section>
+
+<section aria-labelledby="6-0-broader-applications" class="paper-section">
+<details class="section" open=""><summary class="section-summary" id="6-0-broader-applications"><span class="sum-title">6.0 Broader Applications: A Model for US Industrial Sectors</span><span class="sum-hint">Toggle</span></summary><div class="section-body">
+<p>The automated RFDS system embodies a key architectural principle: the decoupling of complex business logic from core software by placing it into a configurable rules engine. This framework is adaptable to other critical sectors:</p>
+<dl class="def-list">
+    <dt>Healthcare</dt>
+    <dd>Generating validated installation plans for complex medical equipment like MRI machines. Ingesting data from procurement and clinical planning tools to auto-populate power requirements and mounting instructions.</dd>
+    
+    <dt>Manufacturing</dt>
+    <dd>Creating dynamic, just-in-time assembly instructions for customized products. Using ERP and WMS data to generate validated work orders with embedded schematics.</dd>
+
+    <dt>Energy & Utilities</dt>
+    <dd>Automating field deployment work packages for grid modernization. Integrating geospatial data and regulatory rules to generate safety protocols and installation guides.</dd>
+</dl>
+</div></details></section>
+
+<section aria-labelledby="7-0-conclusion" class="paper-section">
+<details class="section" open=""><summary class="section-summary" id="7-0-conclusion"><span class="sum-title">7.0 Conclusion: The Future of Field-Ready Documentation</span><span class="sum-hint">Toggle</span></summary><div class="section-body">
+<p>This architectural framework fundamentally re-engineers the process from a fragmented, manual task into an integrated, intelligent, and instantaneous workflow. By ingesting live data, applying a powerful rules engine, and producing validated outputs in seconds, the system provides a strategic advantage in a highly competitive industry.</p>
+<p>More broadly, this system represents a fundamental shift from reactive, static documentation to a proactive, data-driven workflow. It establishes the definitive benchmark for generating field-ready documentation with the integrity, velocity, and scale required to win in the next generation of complex industries.</p>
+</div></details></section>
+
+</div>
+</main>
+</div>
+<script>
+    // Expand/collapse helpers
+    const sections = () => Array.from(document.querySelectorAll('details.section'));
+    const openAll = () => sections().forEach(d => d.open = true);
+    const closeAll = () => sections().forEach(d => d.open = false);
+
+    const btnExpand = document.getElementById('expandAll');
+    const btnCollapse = document.getElementById('collapseAll');
+    if (btnExpand) btnExpand.addEventListener('click', openAll);
+    if (btnCollapse) btnCollapse.addEventListener('click', closeAll);
+
+    // Search and Highlight Logic
+    const openMatchingSections = () => {
+      document.querySelectorAll('details.section').forEach(d => {
+        if (d.querySelector('mark')) d.open = true;
+      });
+    };
+
+    const input = document.getElementById('q');
+    const root = document.querySelector('.content-inner');
+    const SKIP = new Set(['SCRIPT', 'STYLE', 'MARK', 'NOSCRIPT']);
+
+    function unwrapMarks() {
+      root.querySelectorAll('mark').forEach(m => {
+        const parent = m.parentNode;
+        parent.replaceChild(document.createTextNode(m.textContent), m);
+        parent.normalize();
+      });
+    }
+
+    function walkTextNodes(node, callback) {
+      const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, {
+        acceptNode: (n) => {
+          if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          if (!n.parentElement) return NodeFilter.FILTER_REJECT;
+          if (SKIP.has(n.parentElement.tagName)) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      let n;
+      while ((n = walker.nextNode())) callback(n);
+    }
+
+    function highlight(query) {
+      unwrapMarks();
+      if (!query) return;
+
+      const safe = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const re = new RegExp(safe, 'gi');
+
+      walkTextNodes(root, (textNode) => {
+        const text = textNode.nodeValue;
+        const match = text.match(re);
+        if (!match) return;
+
+        const frag = document.createDocumentFragment();
+        let last = 0;
+        text.replace(re, (m, offset) => {
+          if (offset > last) frag.appendChild(document.createTextNode(text.slice(last, offset)));
+          const mark = document.createElement('mark');
+          mark.textContent = text.slice(offset, offset + m.length);
+          frag.appendChild(mark);
+          last = offset + m.length;
+        });
+        if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+        textNode.parentNode.replaceChild(frag, textNode);
+      });
+    }
+
+    let t;
+    input.addEventListener('input', () => {
+      clearTimeout(t);
+      const q = input.value.trim();
+      t = setTimeout(() => { highlight(q); openMatchingSections(); }, 120);
+    });
+  </script>
+  </div>
+  </main>
+</body>
+</html>
+

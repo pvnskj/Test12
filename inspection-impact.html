@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Inspection – Impact Visual + Business Case</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --bg-alt: #eef2f7;
+      --card: #ffffff;
+      --border: rgba(12, 24, 44, 0.12);
+      --accent: #d4af37;
+      --accent-grad: linear-gradient(135deg, #d4af37, #FFD700);
+      --accent-3: #10b981;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text: #0f172a;
+      --muted: #475569;
+      --glow: 0 25px 80px rgba(255, 215, 0,0.15), 0 0 0 1px rgba(12, 24, 44, 0.05);
+      --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: radial-gradient(circle at 18% 22%, rgba(255, 215, 0,0.12), transparent 28%), radial-gradient(circle at 82% 12%, rgba(218, 165, 32,0.12), transparent 32%), radial-gradient(circle at 40% 76%, rgba(16,185,129,0.12), transparent 30%), var(--bg); color: var(--text); line-height: 1.65; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Navigation */
+    .nav-shell { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(246,248,251,0.85)); border-bottom: 1px solid var(--border); }
+    nav { max-width: 1200px; margin: 0 auto; padding: 0.9rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .orb { width: 34px; height: 34px; border-radius: 999px; background: radial-gradient(circle at 35% 30%, rgba(255, 215, 0,0.85), transparent 55%), radial-gradient(circle at 70% 60%, rgba(218, 165, 32,0.85), transparent 45%), #e2e8f0; border: 1px solid var(--border); box-shadow: var(--glow); }
+    .brand h1 { font-size: 0.95rem; font-weight: 700; letter-spacing: 0.05em; color: var(--text); }
+    .nav-links { display: flex; gap: 0.75rem; color: var(--muted); font-size: 0.92rem; }
+
+    main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.25rem 3.5rem; position: relative; }
+
+    /* Hero Section */
+    .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; align-items: center; padding: clamp(1.5rem, 2vw, 2.5rem); border: 1px solid var(--border); border-radius: 20px; background: linear-gradient(135deg, #ffffff, #eef3fb); box-shadow: var(--glow); position: relative; overflow: hidden; margin-bottom: 4rem; }
+    .hero::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, rgba(255, 215, 0,0.12), transparent 45%), linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0)); pointer-events: none; }
+    .hero-left { position: relative; z-index: 1; }
+    .pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.7rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.8rem; background: rgba(255, 215, 0,0.08); }
+    .hero h1 { font-size: clamp(2rem, 3vw, 2.8rem); margin-bottom: 0.6rem; line-height: 1.1; }
+    .hero h1 span { color: var(--accent); }
+    .hero p { color: var(--muted); max-width: 36rem; font-size: 1.02rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.1rem 0 1.6rem; }
+    .tag { padding: 0.35rem 0.8rem; border-radius: 10px; background: rgba(255, 215, 0,0.08); border: 1px solid var(--border); font-size: 0.88rem; color: var(--text); }
+    
+    .cta-row { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+    .btn { padding: 0.7rem 1.15rem; border-radius: 12px; border: 1px solid transparent; font-weight: 700; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .btn.primary { background: linear-gradient(120deg, #60a5fa, #FFD700); color: #0b1224; box-shadow: 0 10px 50px rgba(255, 215, 0,0.35); }
+    .btn.ghost { border-color: var(--border); color: var(--text); background: rgba(255,255,255,0.9); }
+
+    .hero-visual { position: relative; height: 360px; }
+    canvas { display: block; }
+    .scene { width: 100%; height: 100%; border-radius: 18px; overflow: hidden; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.85), rgba(224,231,255,0.5)); border: 1px solid var(--border); box-shadow: var(--glow); }
+    .parallax { position: absolute; inset: 0; pointer-events: none; }
+    .bubble { position: absolute; border-radius: 999px; filter: blur(0px); opacity: 0.35; transition: transform 0.5s ease, opacity 0.5s ease; }
+    .bubble:nth-child(1) { width: 150px; height: 150px; background: rgba(255, 215, 0,0.16); top: 8%; left: 4%; }
+    .bubble:nth-child(2) { width: 120px; height: 120px; background: rgba(218, 165, 32,0.16); bottom: 12%; right: 8%; }
+    .bubble:nth-child(3) { width: 90px; height: 90px; background: rgba(16,185,129,0.2); top: 48%; left: 58%; }
+    .hero-legend { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0.7rem; padding: 1rem; pointer-events: none; }
+    .legend-item { align-self: flex-start; background: rgba(255,255,255,0.9); border: 1px solid var(--border); padding: 0.55rem 0.75rem; border-radius: 10px; box-shadow: 0 10px 30px rgba(12,24,44,0.04); backdrop-filter: blur(6px); transition: transform 0.4s ease, opacity 0.4s ease; font-weight: 700; color: var(--text); }
+    .legend-item span { display: block; font-weight: 500; color: var(--muted); font-size: 0.9rem; }
+
+    /* --- TL;DR Context --- */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 4rem; }
+    .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: transform 0.3s ease; }
+    .summary-card:hover { transform: translateY(-3px); }
+    .sc-bad { border-top: 4px solid var(--danger); }
+    .sc-good { border-top: 4px solid var(--success); }
+    .sc-title { text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .sc-bad .sc-title { color: var(--danger); }
+    .sc-good .sc-title { color: var(--success); }
+    .sc-content { font-size: 1.05rem; color: #334155; }
+    .sc-content strong { color: var(--text); font-weight: 600; }
+
+    /* --- EXECUTIVE METRICS --- */
+    .metrics-deck { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; margin-bottom: 5rem; }
+    
+    /* ROI Card */
+    .m-roi { grid-column: span 12; background: #0f172a; color: white; border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 20px 60px -10px rgba(15, 23, 42, 0.5); }
+    @media (min-width: 900px) { .m-roi { grid-column: span 4; } }
+    .roi-head { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; }
+    .roi-big { font-size: 3.5rem; font-weight: 800; color: var(--success); line-height: 1; margin: 0.5rem 0 1rem; }
+    .roi-math { border-top: 1px solid rgba(255,255,255,0.15); padding-top: 1rem; font-size: 0.9rem; color: #cbd5e1; }
+    .math-row { display: flex; justify-content: space-between; margin-bottom: 0.3rem; }
+    .math-row.highlight { color: white; font-weight: 700; margin-top: 0.5rem; }
+
+    /* Data Card (Gap Analysis) */
+    .m-data { grid-column: span 12; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 1.8rem; }
+    @media (min-width: 900px) { .m-data { grid-column: span 8; } }
+
+    .chart-block h3 { font-size: 0.95rem; margin-bottom: 0.8rem; display: flex; justify-content: space-between; font-weight: 600; color: var(--text); }
+    .chart-block h3 span { color: var(--success); font-size: 0.85rem; background: #ecfdf5; padding: 2px 8px; border-radius: 4px; border: 1px solid #a7f3d0; }
+    
+    /* Chart Fix: Labels above bar */
+    .labels-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--muted); font-weight: 500; }
+    .labels-row strong { color: var(--text); font-weight: 700; }
+
+    .timeline { position: relative; height: 32px; background: #f1f5f9; border-radius: 8px; margin-bottom: 0.5rem; overflow: hidden; border: 1px solid var(--border); }
+    .timeline-bar { 
+      position: absolute; top: 0; left: 0; height: 100%; 
+      background: var(--accent-grad); 
+      width: 0; transition: width 1.2s cubic-bezier(0.2, 1, 0.3, 1);
+      z-index: 2; box-shadow: 4px 0 15px rgba(255, 215, 0,0.3);
+    }
+    .timeline-gap {
+      position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+      font-size: 0.8rem; font-weight: 600; color: var(--muted); z-index: 1;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .timeline-gap::before { content: ""; width: 6px; height: 6px; background: var(--success); border-radius: 50%; display: block; }
+
+    /* Cost Row - Expanded to 3 columns */
+    .cost-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: auto; }
+    .cost-item { font-size: 0.85rem; color: var(--muted); }
+    .cost-val { font-size: 1.35rem; font-weight: 700; color: var(--text); margin-top: 0.25rem; }
+    .cost-val span { font-size: 1rem; color: var(--danger); text-decoration: line-through; margin-left: 0.4rem; opacity: 0.6; }
+
+    /* Content Styling */
+    .section-title { display: flex; align-items: center; gap: 0.5rem; margin: 3rem 0 1rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.85rem; }
+    .section-title::after { content: ""; height: 1px; background: var(--border); flex: 1; opacity: 0.6; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem; box-shadow: 0 18px 50px rgba(12,24,44,0.06); position: relative; overflow: hidden; transition: transform 0.35s ease, box-shadow 0.35s ease; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 20px 55px rgba(12,24,44,0.08); }
+    .stat { font-size: 1.45rem; font-weight: 800; color: var(--accent); }
+
+    .flow { margin-top: 0.6rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.8rem; }
+    .flow .node { background: linear-gradient(145deg, rgba(255, 215, 0,0.14), rgba(255,255,255,0.9)); border: 1px solid var(--border); padding: 1rem; border-radius: 12px; position: relative; box-shadow: 0 12px 40px rgba(12,24,44,0.06); }
+    .flow .node .badge { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.55rem; border-radius: 999px; background: rgba(255,255,255,0.85); border: 1px solid var(--border); font-size: 0.78rem; color: var(--muted); margin-bottom: 0.6rem; }
+
+    .infographics { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 0.75rem; }
+    .canvas-wrap { background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 0.9rem; box-shadow: 0 10px 30px rgba(12,24,44,0.04); position: relative; overflow: hidden; }
+    .chart-title { font-weight: 700; color: var(--text); margin-bottom: 0.45rem; }
+    .inline-stat { display: flex; align-items: center; gap: 0.5rem; }
+    .inline-stat strong { color: var(--success); margin-right: 0.3rem; }
+
+    .metric-bar { height: 10px; background: var(--bg-alt); border-radius: 8px; overflow: hidden; position: relative; margin: 0.35rem 0 0.8rem; border: 1px solid var(--border); }
+    .metric-bar span { position: absolute; inset: 0; width: 0; background: linear-gradient(120deg, #60a5fa, #FFD700); border-radius: 8px; box-shadow: 0 10px 30px rgba(255, 215, 0,0.25); transform-origin: left; }
+
+    .loop { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.6rem; }
+    .loop .step { padding: 0.75rem; border-radius: 10px; background: rgba(255,255,255,0.9); border: 1px dashed var(--border); color: var(--muted); font-size: 0.93rem; transition: transform 0.3s ease; position: relative; overflow: hidden; }
+    .step strong { position: relative; z-index: 1; color: var(--text); display: block; margin-bottom: 0.25rem; }
+
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal.visible .metric-bar span { animation: grow 1s ease forwards; animation-delay: var(--delay, 0s); width: var(--value, 0%); }
+    .reveal.visible .timeline-bar { width: var(--w); }
+
+    footer { margin: 3rem 0 0; color: var(--muted); font-size: 0.9rem; text-align: center; padding-bottom: 2rem; }
+    @media (max-width: 960px) { .hero { grid-template-columns: 1fr; } .flow { grid-template-columns: 1fr; } .hero-visual { height: 320px; } .summary-grid { grid-template-columns: 1fr; } }
+    @keyframes grow { from { width: 0; } to { width: var(--value, 100%); } }
+  </style>
+</head>
+<body>
+  <div class="nav-shell">
+    <nav class="top-nav">
+      <div class="brand">
+        <div class="orb"></div>
+        <h1>Systems & Lifecycle Frameworks</h1>
+      </div>
+      <div class="nav-links">
+        <a class="btn ghost" href="index.html">Home</a>
+        <a class="btn primary" href="inspection-whitepaper.html">Whitepaper</a>
+      </div>
+    </nav>
+  </div>
+
+  <main>
+    <section class="hero">
+      <div class="hero-left">
+        <div class="pill">Impact reel</div>
+        <h1>Inspection systems – <span>Evidence you can trust</span></h1>
+        <p>Digital inspections, exception-first routing, and audit-ready trails that protect safety and compliance.</p>
+        <div class="tags">
+          <div class="tag">Exception-first</div>
+          <div class="tag">Immutable evidence</div>
+          <div class="tag">AI detection</div>
+          <div class="tag">Offline resilience</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn primary" href="#metrics">View Business Impact</a>
+          <a class="btn ghost" href="inspection-whitepaper.html">Read the whitepaper</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <canvas id="inspectionScene" class="scene" aria-label="3D particle background"></canvas>
+        <div class="parallax">
+          <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+        </div>
+        <div class="hero-legend" aria-hidden="true">
+          <div class="legend-item">Triggering <span>telemetry + cadences</span></div>
+          <div class="legend-item">Execution <span>guided workflows + AI</span></div>
+          <div class="legend-item">Traceability <span>ledger + GPS</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="summary-grid reveal">
+      <div class="summary-card sc-bad">
+        <div class="sc-title"><span>⚠</span> The Friction</div>
+        <div class="sc-content">
+          Paper forms and "pencil-whipping" create <strong>compliance blindspots</strong>. Reactive data entry leads to <strong>failed audits</strong> and delayed incident response.
+        </div>
+      </div>
+      <div class="summary-card sc-good">
+        <div class="sc-title"><span>⚡</span> The Solution</div>
+        <div class="sc-content">
+          Digital workflows force <strong>evidence capture</strong> (photos, readings). Anomalies auto-route to maintenance, ensuring <strong>instant audit readiness</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" id="metrics">Executive Business Case</div>
+    <div class="metrics-deck">
+      
+      <div class="m-roi reveal">
+        <div class="roi-head">Projected 3-Year ROI</div>
+        <div class="roi-big">345%</div>
+        <div class="roi-math">
+          <div class="math-row"><span>Implementation</span> <span>$180,000</span></div>
+          <div class="math-row"><span>Risk Avoidance</span> <span>$800,000</span></div>
+          <div class="math-row highlight"><span>Net Value</span> <span>+$620,000</span></div>
+        </div>
+      </div>
+
+      <div class="m-data reveal">
+        <div>
+          <div class="chart-block">
+            <h3>Audit Prep Time <span>Instant</span></h3>
+            <div class="labels-row">
+              <strong>New: 0 Days (Real-time)</strong>
+              <span>Legacy: 2 Weeks</span>
+            </div>
+            <div class="timeline">
+              <div class="timeline-bar" style="--w: 5%"></div>
+              <div class="timeline-gap">Gap: 100% Efficiency</div>
+            </div>
+          </div>
+          
+          <div class="chart-block" style="margin-top: 1.5rem;">
+            <h3>Incident Reaction <span>18x Faster</span></h3>
+            <div class="labels-row">
+              <strong>New: 4 Hours</strong>
+              <span>Legacy: 72 Hours</span>
+            </div>
+            <div class="timeline">
+              <div class="timeline-bar" style="--w: 12%"></div>
+              <div class="timeline-gap">Gap: Days Saved</div>
+            </div>
+          </div>
+
+          <div class="chart-block" style="margin-top: 1.5rem;">
+            <h3>Global Rollout Velocity <span>IoT + ERP + 3rd Party</span></h3>
+            <div class="labels-row">
+              <strong>New: 4 Months</strong>
+              <span>Legacy (Custom Dev): 14 Months</span>
+            </div>
+            <div class="timeline">
+              <div class="timeline-bar" style="--w: 30%"></div>
+              <div class="timeline-gap">Gap: 10 Months Saved</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cost-row">
+          <div class="cost-item">
+            Compliance Fines
+            <div class="cost-val" style="color:var(--success)">-100%</div>
+          </div>
+          <div class="cost-item">
+            Asset Uptime
+            <div class="cost-val">+15%</div>
+          </div>
+          <div class="cost-item">
+            Impl. Savings
+            <div class="cost-val">$280k <span>$650k</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Outcome board</div>
+    <div class="grid" id="infographics">
+      <div class="card reveal"><div class="stat">✔ First-pass quality</div><p>Right inspections happen automatically with guided checks and clear criteria.</p><div class="metric-bar" aria-hidden="true"><span style="--value:92%; --delay:0.1s"></span></div></div>
+      <div class="card reveal"><div class="stat">⏱ Faster cycles</div><p>Technicians receive prioritized queues and kitted parts so work completes on time.</p><div class="metric-bar" aria-hidden="true"><span style="--value:82%; --delay:0.2s"></span></div></div>
+      <div class="card reveal"><div class="stat">🧭 Traceability</div><p>Immutable evidence links every asset event to approvals, photos, and rules.</p><div class="metric-bar" aria-hidden="true"><span style="--value:95%; --delay:0.3s"></span></div></div>
+      <div class="card reveal"><div class="stat">🚦 Risk visibility</div><p>Dashboards light up risky regions or vendors before incidents happen.</p><div class="metric-bar" aria-hidden="true"><span style="--value:78%; --delay:0.4s"></span></div></div>
+    </div>
+
+    <div class="section-title">Inspection dataflow</div>
+    <div class="card reveal">
+      <div class="flow">
+        <div class="node"><div class="badge">Trigger</div><strong>Signals</strong><p class="muted">Telemetry, schedules, and regulatory cadences fire work orders with full context.</p></div>
+        <div class="node"><div class="badge">Prepare</div><strong>Pairing</strong><p class="muted">Assignment logic pairs people, tools, and BOMs; pre-checklists prevent site delays.</p></div>
+        <div class="node"><div class="badge">Execute</div><strong>Guided</strong><p class="muted">Workflows capture readings, photos, and AI-detected anomalies with guardrails.</p></div>
+        <div class="node"><div class="badge">Close & learn</div><strong>Evidence</strong><p class="muted">Exceptions roll into models and compliance reports with ledger-backed proof.</p></div>
+      </div>
+    </div>
+
+    <div class="section-title">Animated scenario boards</div>
+    <div class="infographics">
+      <div class="canvas-wrap reveal">
+        <div class="chart-title">Critical infrastructure</div>
+        <div class="inline-stat"><strong class="stat">-19%</strong><span>downtime</span></div>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:72%; --delay:0.15s"></span></div>
+        <div class="loop">
+          <div class="step"><strong>Coordinated outages</strong><p>Inspections align with grid/utility windows to minimize service loss.</p></div>
+          <div class="step"><strong>Chain of custody</strong><p>Parts and tools staged with calibration proof and location stamps.</p></div>
+          <div class="step"><strong>Fallbacks</strong><p>Detours and access changes surfaced in-app with rerouted permits.</p></div>
+        </div>
+      </div>
+      <div class="canvas-wrap reveal">
+        <div class="chart-title">Manufacturing</div>
+        <div class="inline-stat"><strong class="stat">-24%</strong><span>containment time</span></div>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:74%; --delay:0.2s"></span></div>
+        <div class="loop">
+          <div class="step"><strong>Batch trace</strong><p>Digital twins map defects to upstream batches for rapid containment.</p></div>
+          <div class="step"><strong>Visual cues</strong><p>AR overlays ensure every torque, seal, and test is completed.</p></div>
+          <div class="step"><strong>Instant disposition</strong><p>Nonconformances auto-route to holds with ledgered approvals.</p></div>
+        </div>
+      </div>
+      <div class="canvas-wrap reveal">
+        <div class="chart-title">Regulatory audits</div>
+        <div class="inline-stat"><strong class="stat">+21%</strong><span>audit readiness</span></div>
+        <div class="metric-bar" aria-hidden="true"><span style="--value:80%; --delay:0.25s"></span></div>
+        <div class="loop">
+          <div class="step"><strong>Evidence bundles</strong><p>Exports include signatures, GPS, timestamps, and rule versions.</p></div>
+          <div class="step"><strong>Policy propagation</strong><p>Checklist updates publish instantly with backward traceability.</p></div>
+          <div class="step"><strong>Coaching signals</strong><p>Variance trends surface operator coaching and systemic fixes.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Controls and trust</div>
+    <div class="grid reveal">
+      <div class="card"><h3>Data quality</h3><p>Media and sensor readings validated on-device to avoid corrupt evidence.</p><div class="metric-bar" aria-hidden="true"><span style="--value:92%; --delay:0.1s"></span></div></div>
+      <div class="card"><h3>Resilience</h3><p>Offline-friendly workflows sync when coverage returns, with conflict resolution and SLAs.</p><div class="metric-bar" aria-hidden="true"><span style="--value:86%; --delay:0.2s"></span></div></div>
+      <div class="card"><h3>Experience</h3><p>Technicians see only steps and assets relevant to their role; stakeholders track live proof.</p><div class="metric-bar" aria-hidden="true"><span style="--value:88%; --delay:0.3s"></span></div></div>
+    </div>
+
+    <footer>
+      See the architecture in the <a href="inspection-whitepaper.html">whitepaper</a>.
+    </footer>
+  </main>
+
+  <script>
+    const createImpactScene = (canvasId, palette) => {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas || !window.THREE) return;
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.6));
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(55, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+      camera.position.set(0, 0.2, 6);
+
+      const resize = () => {
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h; camera.updateProjectionMatrix();
+      };
+      resize();
+      window.addEventListener('resize', resize);
+
+      const group = new THREE.Group();
+      const signals = new THREE.Group();
+      scene.add(group); scene.add(signals);
+
+      const createCluster = (color, count, spread, offsetY = 0) => {
+        const positions = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+          positions[i * 3] = (Math.random() - 0.5) * spread;
+          positions[i * 3 + 1] = (Math.random() - 0.5) * spread + offsetY;
+          positions[i * 3 + 2] = (Math.random() - 0.5) * spread;
+        }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const mat = new THREE.PointsMaterial({ color, size: 0.06, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false });
+        return new THREE.Points(geo, mat);
+      };
+
+      group.add(createCluster(palette[0], 260, 6, 0.5));
+      group.add(createCluster(palette[1], 180, 5, -0.4));
+      group.add(createCluster(palette[2], 140, 4, 0));
+
+      const curves = [
+        new THREE.QuadraticBezierCurve3(
+          new THREE.Vector3(-2.1, -0.4, -1.2),
+          new THREE.Vector3(0, 1.1, 0),
+          new THREE.Vector3(2.2, 0.5, 1.2)
+        ),
+        new THREE.QuadraticBezierCurve3(
+          new THREE.Vector3(-2.4, 0.8, 1.2),
+          new THREE.Vector3(0, -0.9, 0),
+          new THREE.Vector3(2.1, -0.3, -1.3)
+        )
+      ];
+
+      curves.forEach((curve, idx) => {
+        const points = curve.getPoints(60);
+        const geo = new THREE.BufferGeometry().setFromPoints(points);
+        const mat = new THREE.LineBasicMaterial({ color: palette[idx], transparent: true, opacity: 0.6 });
+        signals.add(new THREE.Line(geo, mat));
+      });
+
+      const pulseMat = new THREE.MeshBasicMaterial({ color: palette[2], transparent: true, opacity: 0.3 });
+      const pulseGeo = new THREE.SphereGeometry(0.14, 32, 32);
+      const pulses = [];
+      [
+        new THREE.Vector3(-1.6, 0.2, -0.4),
+        new THREE.Vector3(0.2, -0.5, 0.6),
+        new THREE.Vector3(1.6, 0.7, -0.2)
+      ].forEach(pos => {
+        const m = new THREE.Mesh(pulseGeo, pulseMat.clone());
+        m.position.copy(pos);
+        signals.add(m);
+        pulses.push(m);
+      });
+
+      const light1 = new THREE.PointLight(palette[0], 1.1, 40); light1.position.set(4, 4, 8); scene.add(light1);
+      const light2 = new THREE.PointLight(palette[2], 0.9, 30); light2.position.set(-5, -3, 6); scene.add(light2);
+      scene.add(new THREE.AmbientLight('#ffffff', 0.45));
+
+      let mouseX = 0, mouseY = 0, scrollProgress = 0;
+      const bubbles = canvas.parentElement.querySelectorAll('.bubble');
+      canvas.addEventListener('pointermove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = (e.clientX - rect.left) / rect.width - 0.5;
+        mouseY = (e.clientY - rect.top) / rect.height - 0.5;
+        bubbles.forEach((b, idx) => {
+          const depth = (idx + 1) * 8;
+          b.style.transform = `translate(${mouseX * depth}px, ${mouseY * depth}px)`;
+          b.style.opacity = 0.3 + (idx * 0.1);
+        });
+      });
+
+      const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+      const hero = document.querySelector('.hero');
+      const handleScroll = () => {
+        const rect = hero.getBoundingClientRect();
+        const mid = rect.top + rect.height / 2;
+        scrollProgress = clamp(1 - mid / window.innerHeight, 0, 1);
+      };
+      document.addEventListener('scroll', handleScroll, { passive: true });
+      handleScroll();
+
+      const animate = () => {
+        requestAnimationFrame(animate);
+        const time = performance.now() * 0.001;
+
+        group.rotation.y += 0.0008;
+        signals.rotation.y -= 0.0006;
+        signals.rotation.x = THREE.MathUtils.lerp(signals.rotation.x, mouseY * 0.4, 0.08);
+        group.rotation.z = THREE.MathUtils.lerp(group.rotation.z, mouseX * 0.3, 0.08);
+
+        pulses.forEach((p, idx) => {
+          p.material.opacity = 0.25 + Math.sin(time * 2 + idx) * 0.15;
+          p.scale.setScalar(1 + Math.sin(time * 1.6 + idx) * 0.3);
+        });
+
+        const targetX = mouseX * 0.6;
+        const targetY = mouseY * 0.4 + (scrollProgress - 0.5) * 0.6;
+        const targetZ = 6 + scrollProgress * 1.2;
+        camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetX, 0.05);
+        camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, 0.05);
+        camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.05);
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+      };
+      animate();
+    };
+
+    createImpactScene('inspectionScene', ['#60a5fa', '#FFD700', '#10b981']);
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.25 });
+    document.querySelectorAll('.reveal, .card').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RFDS – Impact Visual</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    main { position: relative; }
+    .flow { margin-top: 1.2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.9rem; }
+    .flow .card { background: linear-gradient(145deg, rgba(255, 215, 0,0.14), rgba(255,255,255,0.95)); }
+    .mini { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <div class="nav-shell">
+    <nav class="top-nav">
+      <div class="brand">
+        <div class="orb"></div>
+        <h1>Systems & Lifecycle Frameworks</h1>
+      </div>
+      <div class="nav-links">
+        <a class="btn ghost" href="index.html">Home</a>
+        <a class="btn primary" href="RFDS.html">Whitepaper</a>
+      </div>
+    </nav>
+  </div>
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-left">
+        <div class="pill">Impact deck</div>
+        <h1>Responsive RFDS program <span>with live guardrails</span></h1>
+        <p>Illustrates how field data sheet requests trigger automated validations, lineage capture, and downstream workflow routing.</p>
+        <div class="tags">
+          <div class="tag">Approvals automation</div>
+          <div class="tag">Data contracts</div>
+          <div class="tag">Lineage proofs</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn primary" href="RFDS.html">Read whitepaper</a>
+          <a class="btn ghost" href="index.html#portfolio">Back to portfolio</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <canvas class="scene" aria-hidden="true"></canvas>
+        <div class="parallax">
+          <div class="bubble"></div>
+          <div class="bubble"></div>
+          <div class="bubble"></div>
+        </div>
+        <div class="hero-legend">
+          <div class="legend-item">Signal intake <span>Templates + API ingest</span></div>
+          <div class="legend-item">Policy mesh <span>Auto-validate RFDS answers</span></div>
+          <div class="legend-item">Ledgered routes <span>Evidence + alerting</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-title">Highlights</div>
+    <div class="grid">
+      <div class="card">
+        <div class="stat">72% faster</div>
+        <h3>RFDS approval cycles</h3>
+        <p>Template enforcement and approver auto-suggest keep cycles short without sacrificing auditability.</p>
+      </div>
+      <div class="card">
+        <div class="stat">Zero blind spots</div>
+        <h3>Live lineage</h3>
+        <p>Each RFDS answer is tagged with source, reviewer, and consumer applications for downstream alerts.</p>
+      </div>
+      <div class="card">
+        <div class="stat">Playbook ready</div>
+        <h3>Exception-first routing</h3>
+        <p>High-risk RFDS items route to specialist queues with prebuilt mitigations and rollbacks.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Flow</div>
+    <div class="flow">
+      <div class="card">
+        <div class="pill">Sense</div>
+        <h3>Intake & normalize</h3>
+        <p>Inbound RFDS files, forms, and APIs normalized against the canonical schema with instant feedback.</p>
+      </div>
+      <div class="card">
+        <div class="pill">Decide</div>
+        <h3>Policy & risk lenses</h3>
+        <p>Rule packs check ownership, completeness, impact radius, and risk before work is scheduled.</p>
+      </div>
+      <div class="card">
+        <div class="pill">Act</div>
+        <h3>Route & evidence</h3>
+        <p>Approved RFDS requests push downstream contracts, alerts, and ledger entries for every consumer.</p>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
+

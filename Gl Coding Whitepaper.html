@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Architecting a Dynamic General Ledger Coding System</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: rgba(255, 255, 255, 0.9);
+      --panel-solid: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: rgba(12, 24, 44, 0.12);
+      --border-hover: rgba(255, 215, 0, 0.35);
+      --shadow: 0 20px 50px rgba(12,24,44,0.06);
+      --accent: #d4af37;
+      --accent-bg: rgba(255, 215, 0, 0.12);
+      --highlight: rgba(255, 215, 0, 0.18);
+      --radius: 16px;
+      --sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    html, body {
+      height: 100%;
+      color: var(--text);
+      font-family: var(--sans);
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    
+    .shell {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    @media (max-width: 1024px) {
+      .shell { grid-template-columns: 1fr; }
+      .toc { position: relative; top: 0; margin-bottom: 20px; }
+    }
+
+    /* CARD STYLING */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    /* TABLE OF CONTENTS */
+    .toc {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 48px);
+    }
+
+    .toc h2 {
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    /* SEARCH */
+    .search {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text);
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .search input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-bg);
+    }
+
+    .search button {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .search button:hover {
+      background: #f8fafc;
+      color: var(--text);
+      border-color: var(--border-hover);
+    }
+
+    .toc .meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .toc .actions {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .chip {
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.5);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip:hover {
+      background: #ffffff;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .toc-links {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .toc-links::-webkit-scrollbar { width: 4px; }
+    .toc-links::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+
+    .toc-link {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border-left: 3px solid transparent;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+      transition: all 0.2s;
+    }
+    .toc-link:hover {
+      background: rgba(255,255,255,0.6);
+      color: var(--text);
+    }
+    .toc-link.active {
+      background: var(--accent-bg);
+      color: var(--accent);
+      border-left-color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* MAIN CONTENT */
+    .content { padding: 40px; }
+
+    .hero { margin-bottom: 32px; }
+    .hero h1 { margin: 0 0 8px; font-size: 32px; line-height: 1.1; letter-spacing: -0.03em; color: #0f172a; }
+    .hero .subtitle { margin: 0; color: var(--muted); font-size: 16px; font-weight: 400; }
+    .hero .rule { height: 1px; background: linear-gradient(90deg, var(--accent), transparent); margin-top: 20px; opacity: 0.3; }
+
+    /* SECTIONS */
+    details.section {
+      margin-bottom: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      transition: box-shadow 0.2s;
+    }
+    details.section:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(248, 250, 252, 0.5);
+    }
+    summary::-webkit-details-marker { display: none; }
+
+    .sec-title { font-weight: 700; font-size: 16px; color: #334155; }
+    .sec-kicker { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-top: 4px; font-weight: 600; }
+    .chev { width: 20px; height: 20px; color: var(--muted); transition: transform 0.2s ease; }
+    details[open] .chev { transform: rotate(180deg); color: var(--text); }
+
+    .sec-body { padding: 0 24px 24px; border-top: 1px solid var(--border); color: #475569; }
+    .sec-body p { margin: 16px 0; font-size: 15px; line-height: 1.7; }
+    .sec-body h3 { margin: 24px 0 12px; font-size: 16px; color: #1e293b; font-weight: 700; }
+
+    /* LISTS & TABLES */
+    .wp-list, .wp-olist { margin: 16px 0 16px 20px; padding-left: 10px; }
+    .wp-list li, .wp-olist li { margin-bottom: 8px; font-size: 15px; }
+    .wp-hr { border: none; height: 1px; background: var(--border); margin: 32px 0; }
+    .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); margin: 20px 0; }
+    table.wp-table { width: 100%; border-collapse: collapse; min-width: 600px; background: #ffffff; }
+    .wp-table th { text-align: left; background: #f1f5f9; padding: 12px 16px; font-size: 13px; font-weight: 600; color: #475569; border-bottom: 1px solid var(--border); }
+    .wp-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .wp-table tr:last-child td { border-bottom: none; }
+
+    mark { background: var(--highlight); color: #0f172a; padding: 0 2px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="nav-shell">
+    <nav class="top-nav">
+      <div class="brand">
+        <div class="orb"></div>
+        <h1>Systems & Lifecycle Frameworks</h1>
+      </div>
+      <div class="nav-links">
+        <a class="btn ghost" href="index.html">Home</a>
+        <a class="btn primary" href="gl-coding-impact.html">Impact</a>
+      </div>
+    </nav>
+  </div>
+  <main class="page-shell">
+  <div class="shell">
+    
+    <aside class="toc card" aria-label="Contents">
+      <h2>Contents</h2>
+      <div class="search" role="search">
+        <input id="searchBox" type="search" placeholder="Search..." aria-label="Search text" />
+        <button id="clearBtn" type="button" title="Clear">Clear</button>
+      </div>
+      <div class="meta">
+        <span id="matchMeta">0 matches</span>
+        <span id="openMeta">0 open</span>
+      </div>
+      <div class="actions">
+        <div class="chip" id="expandAll" role="button" tabindex="0">Expand</div>
+        <div class="chip" id="collapseAll" role="button" tabindex="0">Collapse</div>
+      </div>
+      <nav class="toc-links" id="tocLinks">
+        <a class='toc-link' href='#intro' data-target='intro'>1.0 Introduction</a>
+        <a class='toc-link' href='#sec-2' data-target='sec-2'>2.0 Strategic Imperative</a>
+        <a class='toc-link' href='#sec-3' data-target='sec-3'>3.0 System Architecture</a>
+        <a class='toc-link' href='#sec-4' data-target='sec-4'>4.0 Core Workflows</a>
+        <a class='toc-link' href='#sec-5' data-target='sec-5'>5.0 The Report Code</a>
+        <a class='toc-link' href='#sec-6' data-target='sec-6'>6.0 Business Outcomes</a>
+        <a class='toc-link' href='#sec-7' data-target='sec-7'>7.0 Broader Applications</a>
+        <a class='toc-link' href='#sec-8' data-target='sec-8'>8.0 Conclusion</a>
+      </nav>
+    </aside>
+
+    <main class="content card">
+      <header class="hero">
+        <h1>Architecting a Dynamic General Ledger Coding System for Complex, Multi-Project Environments</h1>
+        <p class="subtitle">Financial Governance Whitepaper</p>
+        <div class="rule"></div>
+      </header>
+
+      <section id="sections">
+        
+        <details class="section" id="intro" open>
+          <summary>
+            <div>
+              <div class="sec-title">1.0 Introduction: The Challenge of Financial Governance</div>
+              <div class="sec-kicker">Overview</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>Large enterprises managing a diverse and growing portfolio of projects face a significant operational challenge: maintaining financial governance and accuracy with an inflexible accounting structure. When a General Ledger (GL) coding system is designed for a single type of project—such as capital-intensive new builds—it quickly becomes a bottleneck. This static approach introduces substantial financial risk when the business expands into new initiatives, such as site modifications, data center construction, and commercial ventures, which involve a complex mix of capital (CapEx) and operational (OpEx) expenditures.</p>
+            
+            
+            
+            <p>The strategic solution to this challenge is the implementation of a dynamic, configurable GL coding system. This architecture replaces rigid, hard-coded financial logic with a flexible, rules-based engine capable of generating precise accounting codes for any project type.</p>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+        
+        <details class="section" id="sec-2">
+          <summary>
+            <div>
+              <div class="sec-title">2.0 The Strategic Imperative for Dynamic Financial Coding</div>
+              <div class="sec-kicker">Strategy</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>Moving beyond a rigid financial coding structure is not merely a technical upgrade; it is a fundamental business necessity for any enterprise seeking to maintain fiscal control while pursuing strategic agility. A static system, where accounting rules are hard-coded for a narrow set of activities, fundamentally constrains an organization's ability to adapt and grow.</p>
+            <p>An inflexible GL coding system creates a cascade of operational and financial problems that can undermine business objectives. The core issues include:</p>
+            <ul class='wp-list'>
+              <li><strong>Inaccurate Cost Classification:</strong> A system built exclusively for CapEx is incapable of properly distinguishing or processing OpEx costs for new project types, leading to miscategorized expenditures and flawed financial statements.</li>
+              <li><strong>Poor Cost Allocation for New Ventures:</strong> When launching new business lines such as equipment modifications, data center builds, or commercial projects, a static system cannot accurately allocate costs to these specific initiatives, obscuring their true financial performance and ROI.</li>
+              <li><strong>Compromised Asset Capitalization:</strong> Without a mechanism to segregate assets by project, there is a significant risk of incorrectly grouping assets from a new build with those from a subsequent modification, leading to improper capitalization and compliance issues.</li>
+            </ul>
+            
+            
+            
+            <p>In direct response to these risks, a dynamic GL coding system delivers a suite of powerful benefits including enhanced financial accuracy via configurable lookup tables, improved data integrity by systematically segregating assets, increased operational efficiency through automation, and a foundation for scalability that allows rapid onboarding of new projects.</p>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+        
+        <details class="section" id="sec-3">
+          <summary>
+            <div>
+              <div class="sec-title">3.0 System Architecture: Deconstructing the Dynamic GL Code</div>
+              <div class="sec-kicker">Architecture</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>The power of this system resides in its decoupled, metadata-driven architecture. Rather than relying on a static, monolithic string, the GL code is an assembly of distinct components, each governed by business rules stored in configurable lookup tables.</p>
+            
+            
+            
+            <div class="table-wrap">
+              <table class="wp-table">
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th>Function &amp; Determination Logic</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Company</strong></td>
+                    <td>Distinguishes expense types. Maps to 202 for Capital (CapEx) and 203 for Operational (OpEx) expenditures based on item classification.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Department</strong></td>
+                    <td>Assigns costs to business units. Project-dependent: 300 for CapEx/field mods, 200 for data center OpEx.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Facility</strong></td>
+                    <td>Links costs to a physical location. Derived from a lookup table based on the site's geographic Region and Market.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Account</strong></td>
+                    <td>Specifies the GL account. Services map ERP Item Category Codes to Account Codes; CapEx services go to 12121 (CIP), while OpEx services receive variable codes.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Activity</strong></td>
+                    <td>Tracks work type. Hierarchical logic: checks product record first; if null, defaults to "GL Activity Lookup table" based on the project site's Report Code.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Other</strong></td>
+                    <td>Additional classification for services. Checks "Other Code Reference Milestone"; if actualized or blank, references Class lookup. If not, checks "Default Field" flag.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+        
+        <details class="section" id="sec-4">
+          <summary>
+            <div>
+              <div class="sec-title">4.0 Core Workflows and Process Integration</div>
+              <div class="sec-kicker">Operations</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>The dynamic GL code architecture is not a standalone module but is deeply embedded within the enterprise's core business processes. Its logic is invoked at critical stages of the project and asset lifecycle, ensuring that financial data remains accurate and synchronized across integrated systems.</p>
+            
+            
+            
+            <h3>Project Site Initiation</h3>
+            <p>The workflow for new project types begins with the creation of a unique site instance. To maintain data integrity, a new modification site is created by cloning a baseline site from a primary project, preserving essential location data while assigning a unique system identifier.</p>
+            
+            <h3>Procurement and Purchase Order Generation</h3>
+            <p>During procurement, the system automatically constructs the correct, multi-part GL code for each Bill of Materials (BOM) line item. It references the site's unique 'Report Code' and the 'Item Category' of the requested goods or services to dynamically populate purchase order creation files.</p>
+            
+            <h3>Asset Segregation and Capitalization</h3>
+            <p>Upon the actualization of a key project milestone, the system generates an Inventory asset data file for the ERP fixed asset system. This file is automatically filtered to include only those assets matching the specific Report Code of the site instance being capitalized, ensuring proper segregation.</p>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+        
+        <details class="section" id="sec-5">
+          <summary>
+            <div>
+              <div class="sec-title">5.0 The 'Report Code': A Linchpin for Data Cohesion</div>
+              <div class="sec-kicker">Integration</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>At the heart of this dynamic financial architecture is the 'Report Code,' the semantic key that functions as the linchpin for data cohesion across the enterprise ecosystem. The Report Code is an enterprise-wide namespace that provides a unique, standardized identifier for every project and sub-project instance.</p>
+            
+            
+            
+            <p>The multi-faceted impact of the 'Report Code' includes:</p>
+            <ul class='wp-list'>
+              <li><strong>Driving Configuration Logic:</strong> Acts as the primary key for the "GL Activity Lookup table" to determine the correct Activity Code segment.</li>
+              <li><strong>Enabling Cross-System Synchronization:</strong> Serves as a mandatory data element in key data interchanges, such as API responses from the Warehouse Management System (WMS).</li>
+              <li><strong>Ensuring Asset Integrity:</strong> Acts as the critical filter during asset capitalization to isolate assets matching the project instance.</li>
+              <li><strong>Enhancing User Interface (UI) Visibility:</strong> A 'Report Code' column has been added to numerous UI screens (BOMs, PORs, Invoices) to provide immediate operational context.</li>
+            </ul>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+
+        <details class="section" id="sec-6">
+          <summary>
+            <div>
+              <div class="sec-title">6.0 Tangible Business Outcomes and Strategic Value</div>
+              <div class="sec-kicker">Results</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>The implementation of a dynamic GL coding system has transitioned from a technical solution to a strategic business asset.</p>
+            <ul class='wp-list'>
+              <li><strong>Achieved Financial Control:</strong> Provides granular control over enterprise-wide cost allocation, distinguishing CapEx vs. OpEx across diverse portfolios.</li>
+              <li><strong>De-risked Asset Management:</strong> Mitigates financial risk of improper asset capitalization by automating asset segregation.</li>
+              <li><strong>Enabled Agile Business Expansion:</strong> Empowers the business to launch new initiatives with minimal system development overhead.</li>
+              <li><strong>Created a Single Source of Truth:</strong> Establishes a common language for financial and operational data, breaking down information silos.</li>
+            </ul>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+
+        <details class="section" id="sec-7">
+          <summary>
+            <div>
+              <div class="sec-title">7.0 Broader Applications in Complex Enterprise Environments</div>
+              <div class="sec-kicker">Market Fit</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>While tailored to telecommunications, the core architectural principles are universally applicable to any large-scale enterprise managing complex operations.</p>
+            <ul class='wp-list'>
+              <li><strong>Large-Scale Infrastructure:</strong> Tracking costs for different project phases and distinguishing between capital build-out and operational maintenance.</li>
+              <li><strong>Manufacturing and Supply Chain:</strong> Tracking expenses tied to specific product lines or facilities using item classification to differentiate raw materials from finished goods.</li>
+              <li><strong>Telecommunications and Utilities:</strong> Managing distributed assets by financially distinguishing between new network build-outs, capacity upgrades, and routine maintenance.</li>
+            </ul>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+
+        <details class="section" id="sec-8">
+          <summary>
+            <div>
+              <div class="sec-title">8.0 Conclusion: A Strategic Enabler for Financial Governance</div>
+              <div class="sec-kicker">Summary</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>The transition from a static to a dynamic General Ledger coding system represents a critical and strategic evolution for any enterprise aiming for scalable growth. By deconstructing the GL code into modular, rule-driven components and anchoring the entire architecture to a universal project identifier—the 'Report Code'—an organization can achieve unprecedented financial clarity and control. This architecture is a core enabler of business agility, data-driven decision-making, and robust corporate governance.</p>
+          </div>
+        </details>
+
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sections = Array.from(document.querySelectorAll('details.section'));
+    const tocLinks = Array.from(document.querySelectorAll('.toc-link'));
+    const searchBox = document.getElementById('searchBox');
+    const clearBtn = document.getElementById('clearBtn');
+    const matchMeta = document.getElementById('matchMeta');
+    const openMeta = document.getElementById('openMeta');
+    const expandAll = document.getElementById('expandAll');
+    const collapseAll = document.getElementById('collapseAll');
+
+    function updateOpenMeta() {
+      const openCount = sections.filter(s => s.open).length;
+      openMeta.textContent = `${openCount} open`;
+    }
+
+    function setAll(open) {
+      sections.forEach(s => s.open = open);
+      updateOpenMeta();
+    }
+
+    function escapeRegExp(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function clearHighlights(root) {
+      const marks = root.querySelectorAll('mark');
+      marks.forEach(m => {
+        const parent = m.parentNode;
+        parent.replaceChild(document.createTextNode(m.textContent), m);
+        parent.normalize();
+      });
+    }
+
+    function highlightInElement(el, query) {
+      if (!query) return 0;
+      const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+        acceptNode: (node) => {
+          if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          if (node.parentElement && (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE')) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      const re = new RegExp(escapeRegExp(query), 'gi');
+      let matches = 0;
+      const nodes = [];
+      while (walk.nextNode()) nodes.push(walk.currentNode);
+
+      nodes.forEach(node => {
+        const text = node.nodeValue;
+        let lastIndex = 0;
+        let m;
+        re.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let found = false;
+
+        while ((m = re.exec(text)) !== null) {
+          found = true;
+          matches++;
+          const start = m.index;
+          const end = start + m[0].length;
+          if (start > lastIndex) frag.appendChild(document.createTextNode(text.slice(lastIndex, start)));
+          const mark = document.createElement('mark');
+          mark.textContent = text.slice(start, end);
+          frag.appendChild(mark);
+          lastIndex = end;
+        }
+
+        if (found) {
+          if (lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+          node.parentNode.replaceChild(frag, node);
+        }
+      });
+      return matches;
+    }
+
+    function runSearch() {
+      const q = searchBox.value.trim();
+      sections.forEach(s => clearHighlights(s));
+      if (!q) {
+        matchMeta.textContent = '0 matches';
+        return;
+      }
+      let total = 0;
+      sections.forEach(s => {
+        const found = highlightInElement(s, q);
+        total += found;
+        if (found > 0) s.open = true;
+      });
+      updateOpenMeta();
+      matchMeta.textContent = `${total} match${total===1?'':'es'}`;
+      const first = document.querySelector('mark');
+      if (first) first.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+
+    function syncActiveToc() {
+      const fromTop = window.scrollY + 120;
+      let currentId = null;
+      sections.forEach(s => {
+        const top = s.getBoundingClientRect().top + window.scrollY;
+        if (top <= fromTop) currentId = s.id;
+      });
+      tocLinks.forEach(a => a.classList.toggle('active', a.dataset.target === currentId));
+    }
+
+    searchBox.addEventListener('input', () => {
+      window.clearTimeout(window.__searchT);
+      window.__searchT = window.setTimeout(runSearch, 120);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchBox.value = '';
+      sections.forEach(s => clearHighlights(s));
+      matchMeta.textContent = '0 matches';
+    });
+
+    expandAll.addEventListener('click', () => setAll(true));
+    collapseAll.addEventListener('click', () => setAll(false));
+
+    sections.forEach(s => s.addEventListener('toggle', updateOpenMeta));
+    tocLinks.forEach(a => a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = a.dataset.target;
+      const el = document.getElementById(id);
+      if (el) {
+        el.open = true;
+        updateOpenMeta();
+        el.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+    }));
+
+    window.addEventListener('scroll', syncActiveToc, {passive: true});
+
+    updateOpenMeta();
+    syncActiveToc();
+  </script>
+  </div>
+  </main>
+</body>
+</html>
+
+

@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A Framework for an Integrated Order and Fulfillment Management System</title>
+  <style>
+    :root {
+      /* Theme Variables matched to Inspection Page */
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: rgba(12, 24, 44, 0.12);
+      --accent: #d4af37;
+      --accent-soft: rgba(255, 215, 0, 0.1);
+      --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+      --radius: 16px;
+      --sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      /* Exact gradient from Inspection page */
+      background: radial-gradient(circle at 18% 22%, rgba(255, 215, 0,0.12), transparent 28%), 
+                  radial-gradient(circle at 82% 12%, rgba(218, 165, 32,0.12), transparent 32%), 
+                  radial-gradient(circle at 40% 76%, rgba(16,185,129,0.12), transparent 30%), 
+                  var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      margin: 0;
+      line-height: 1.65;
+    }
+
+    a { color: inherit; text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent); }
+
+    /* Layout Shell */
+    .shell {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    @media (max-width: 980px) {
+      .shell { grid-template-columns: 1fr; }
+      .toc { position: relative; top: 0; margin-bottom: 24px; }
+    }
+
+    /* Card Styling */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* Sidebar (TOC) */
+    .toc {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      padding: 20px;
+    }
+
+    .toc h2 {
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    /* Search Input */
+    .search {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--text);
+      outline: none;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    .search input:focus { border-color: var(--accent); background: white; }
+
+    .search button {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .search button:hover { background: #f1f5f9; color: var(--text); }
+
+    /* Meta & Actions */
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .chip {
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+    }
+    .chip:hover { background: white; color: var(--accent); border-color: var(--accent); }
+
+    /* TOC Links */
+    .toc-links {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: calc(100vh - 280px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .toc-links::-webkit-scrollbar { width: 4px; }
+    .toc-links::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    .toc-link {
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.4;
+      border-left: 2px solid transparent;
+    }
+    .toc-link:hover {
+      background: #f8fafc;
+      color: var(--text);
+    }
+    .toc-link.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-left-color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Main Content */
+    .content { padding: 40px; }
+
+    .hero { margin-bottom: 40px; }
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: 2.2rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .hero .subtitle {
+      margin: 0;
+      color: var(--accent);
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+    .hero .rule {
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+      margin-top: 24px;
+    }
+
+    /* Sections (Details/Summary) */
+    details.section {
+      margin: 16px 0;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: white;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    details.section[open] {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      background: #fcfcfc;
+      transition: background 0.2s;
+    }
+    summary:hover { background: #f8fafc; }
+    summary::-webkit-details-marker { display: none; }
+
+    .sec-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+    .sec-kicker {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+    .chev {
+      width: 20px;
+      height: 20px;
+      color: var(--muted);
+      transition: transform 0.2s ease;
+    }
+    details[open] .chev { transform: rotate(180deg); color: var(--accent); }
+
+    .sec-body {
+      padding: 24px 32px;
+      border-top: 1px solid var(--border);
+      background: white;
+    }
+    .sec-body p { margin: 0 0 16px; color: #334155; font-size: 1rem; }
+
+    /* Lists */
+    .wp-list { margin: 16px 0; padding-left: 20px; color: #334155; }
+    .wp-list li { margin-bottom: 8px; }
+    .wp-list li strong { color: var(--text); }
+
+    /* Headings inside body */
+    h3 {
+      font-size: 1.1rem;
+      margin: 32px 0 12px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    table.wp-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+      font-size: 0.9rem;
+    }
+    .wp-table th {
+      text-align: left;
+      background: #f1f5f9;
+      padding: 12px 16px;
+      color: var(--muted);
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+    }
+    .wp-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: #334155;
+    }
+    .wp-table tr:last-child td { border-bottom: none; }
+
+    /* Highlights */
+    mark {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    
+    <aside class="toc card" aria-label="Contents">
+      <h2>Contents</h2>
+      
+      <div class="search" role="search">
+        <input id="searchBox" type="search" placeholder="Filter sections..." aria-label="Search text" />
+        <button id="clearBtn" type="button" title="Clear search">✕</button>
+      </div>
+      
+      <div class="meta">
+        <span id="matchMeta">0 matches</span>
+        <span id="openMeta">0 open</span>
+      </div>
+      
+      <div class="actions" aria-label="Section controls">
+        <div class="chip" id="expandAll" role="button" tabindex="0">Expand All</div>
+        <div class="chip" id="collapseAll" role="button" tabindex="0">Collapse All</div>
+      </div>
+      
+      <nav class="toc-links" id="tocLinks">
+        <a class='toc-link' href='#sec-1' data-target='sec-1'>1.0 Introduction</a>
+        <a class='toc-link' href='#sec-2' data-target='sec-2'>2.0 Unified System Architecture</a>
+        <a class='toc-link' href='#sec-3' data-target='sec-3'>3.0 Order Initiation Lifecycle</a>
+        <a class='toc-link' href='#sec-4' data-target='sec-4'>4.0 Core Workflows</a>
+        <a class='toc-link' href='#sec-5' data-target='sec-5'>5.0 Fulfillment Lifecycle</a>
+        <a class='toc-link' href='#sec-6' data-target='sec-6'>6.0 Strategic Benefits</a>
+        <a class='toc-link' href='#sec-7' data-target='sec-7'>7.0 Broader Applications</a>
+        <a class='toc-link' href='#sec-8' data-target='sec-8'>8.0 Conclusion</a>
+      </nav>
+    </aside>
+
+    <main class="content card">
+      <header class="hero">
+        <p class="subtitle">Operational Excellence Whitepaper</p>
+        <h1>A Framework for an Integrated Order and Fulfillment Management System</h1>
+        <div class="rule"></div>
+      </header>
+
+      <section id="sections">
+        
+        <details class="section" id="sec-1" open>
+          <summary>
+            <div>
+              <div class="sec-title">1.0 Introduction: Addressing Modern Supply Chain Complexities</div>
+              <div class="sec-kicker">Overview</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </summary>
+          <div class="sec-body">
+            <p>In today's complex and fast-paced logistical environments, the strategic importance of a robust, integrated, and intelligent order management system cannot be overstated. Many organizations find their supply chain operations constrained by a reliance on fragmented systems, manual spreadsheets, and error-prone processes.</p>
+            
+            <p>This operational model inevitably leads to significant challenges, including a lack of real-time inventory visibility, inconsistent fulfillment logic, frequent order errors, and an inability to track backlogged requests automatically. The result is a reactive and inefficient supply chain that struggles with data inaccuracy, increased operational costs, and diminished control.</p>
+            <p>This document presents a comprehensive blueprint for a unified and automated framework designed to overcome these fundamental challenges. By centralizing order management logic, deeply integrating with peripheral logistics systems, and automating core workflows, this framework provides a pathway to significant improvements in operational efficiency, data integrity, and end-to-end control.</p>
+          </div>
+        </details>
+
+        <details class="section" id="sec-2">
+          <summary>
+            <div>
+              <div class="sec-title">2.0 The Unified System Architecture: A Hub-and-Spoke Integration Model</div>
+              <div class="sec-kicker">Architecture</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </summary>
+          <div class="sec-body">
+            <p>The foundation of this framework is a deeply integrated system architecture that functions as a central nervous system for all order and fulfillment activities. The strategic imperative behind this "hub-and-spoke" model is the elimination of data silos to enable real-time visibility and process orchestration across the entire supply chain.</p>
+            
+            <p>The key components of this integrated architecture include:</p>
+            <ul class="wp-list">
+              <li><strong>The Central Order Management Platform:</strong> The core "hub" and single system of engagement for users, housing all order management logic and process orchestration.</li>
+              <li><strong>Warehouse Management System (WMS):</strong> Manages physical warehouse operations and provides real-time status updates like "Pick in Scale" and "Ship Confirm."</li>
+              <li><strong>Transportation Management System (TMS):</strong> Responsible for logistics activities and in-transit updates such as "Carrier picks up order" and "Carrier delivers product."</li>
+              <li><strong>Enterprise Resource Planning (ERP) System:</strong> Serves as the financial backbone, processing inter-organizational transfers and asset write-offs.</li>
+              <li><strong>Planning and Forecasting System:</strong> Provides demand data crucial for intelligent backlog management and inventory allocation.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="section" id="sec-3">
+          <summary>
+            <div>
+              <div class="sec-title">3.0 The Order Initiation Lifecycle: Guided and Automated Pathways</div>
+              <div class="sec-kicker">Process</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </summary>
+          <div class="sec-body">
+            <p>A primary source of error in traditional order processes is the manual selection of fulfillment paths. This framework mandates a Guided Menu as the sole interface for all order initiation, functioning as a dynamic Q&A workflow that removes user guesswork.</p>
+            
+            <p>Based on the user's answers, the central platform combines this input with a series of automated backend logic checks to determine the correct order type. These logic checks include evaluating:</p>
+            <ul class="wp-list">
+              <li>Project milestones (e.g., whether a key construction milestone has been actualized).</li>
+              <li>Real-time inventory levels at various locations.</li>
+              <li>The type of location requesting materials (e.g., standard site vs. spares-holding).</li>
+            </ul>
+            <p>This intelligent routing logic automatically directs the user to one of several primary order pathways, ensuring that every order begins its lifecycle on the correct path.</p>
+          </div>
+        </details>
+
+        <details class="section" id="sec-4">
+          <summary>
+            <div>
+              <div class="sec-title">4.0 Core Order Process Workflows</div>
+              <div class="sec-kicker">Workflows</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </summary>
+          <div class="sec-body">
+            <p>The system employs specialized workflows tailored to the unique requirements of different order types, ensuring appropriate logic, validation, and approvals.</p>
+            
+            
+            <h3>4.1 Forward Logistics: New Part and Modification Orders</h3>
+            <p>This workflow manages Bill of Materials (BOMs) for new site builds and modifications. It uses a <strong>Real-Time BOM Validator</strong> that runs in the background to provide immediate feedback on duplicate parts, restricted items, and real-time inventory checks. To prevent delays, the system includes taxonomy-driven alternate part suggestions when stockouts occur.</p>
+
+            <h3>4.2 Inventory Management: Stock Transfer and Replenishment Orders</h3>
+            <p>The system utilizes distinct logic for immediate needs versus proactive replenishment.</p>
+            <div class="table-wrap">
+              <table class="wp-table">
+                <thead>
+                  <tr>
+                    <th>Feature</th>
+                    <th>Stock Transfer Order (STO)</th>
+                    <th>Spares Stock Transfer Order (Spares STO)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Primary Purpose</strong></td>
+                    <td>Fulfill a specific material need at a location.</td>
+                    <td>Replenish inventory at a Forward Stocking Location (FSL).</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Initiation Method</strong></td>
+                    <td>Primarily user-driven via guided questions.</td>
+                    <td>User-driven or automatically triggered by stock thresholds.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Search Logic</strong></td>
+                    <td>Checks nearest FSLs first, then Hubs.</td>
+                    <td>Checks only Hub inventory.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Fulfillment Rule</strong></td>
+                    <td>No partial fulfillment allowed.</td>
+                    <td>Source Hub must have all parts and quantities.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>4.3 Reverse Logistics & Backlog Management</h3>
+            <p>The system automates reverse logistics by determining if a return is a standard logistics movement or a fault report requiring replacement. Additionally, an <strong>Intelligent Backlog Management</strong> pool queues deferred requests and processes them via automated jobs based on FIFO principles and rolling forecast cadences.</p>
+          </div>
+        </details>
+
+        <details class="section" id="sec-5">
+          <summary>
+            <div>
+              <div class="sec-title">5.0 The Unified Fulfillment and Receiving Lifecycle</div>
+              <div class="sec-kicker">Lifecycle</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </summary>
+          <div class="sec-body">
+            <p>Once allocated, all orders enter a standardized fulfillment lifecycle. This consistency ensures predictable execution and complete visibility for all stakeholders.</p>
+            
+            <h3>Serialization and Chain of Custody</h3>
+            <p>The system maintains a "Parent-Child Linkage" for complex assemblies, tracking every serialized sub-component within a parent unit. Serial numbers are captured during kitting in the WMS and validated at every subsequent scan point.</p>
+
+            <h3>Receiving and Discrepancy Handling</h3>
+            <p>Upon shipment, the central platform creates an expected receive document. The system automates the "Happy Path" for perfect matches but also includes workflows for exceptions:</p>
+            <ul class="wp-list">
+              <li><strong>Partial Receipt:</strong> Automatically cancels missing serials, notifies the origin, and creates a corrected order.</li>
+              <li><strong>Extra Items:</strong> Flags unmanifested items for user confirmation and creates an "Order Discrepancy" flag for investigation.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="section" id="sec-6">
+          <summary>
+            <div>
+              <div class="sec-title">6.0 Strategic Business Benefits</div>
+              <div class="sec-kicker">Benefits</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </summary>
+          <div class="sec-body">
+            <ul class="wp-list">
+              <li><strong>Enhanced Operational Efficiency:</strong> Features like guided menus and automated routing eliminate tedious data entry and rework, accelerating the order-to-cash cycle.</li>
+              <li><strong>Improved Data Integrity:</strong> Real-time BOM validation and mandatory serial number scanning eliminate common errors, providing a reliable foundation for financial reporting.</li>
+              <li><strong>Total Visibility and Control:</strong> The hub-and-spoke architecture offers a single view of the order lifecycle, enabling proactive management and faster decision-making.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="section" id="sec-7">
+          <summary>
+            <div>
+              <div class="sec-title">7.0 Broader Applications in Key US Sectors</div>
+              <div class="sec-kicker">Applications</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </summary>
+          <div class="sec-body">
+            <p>The principles of rules-based automation and end-to-end traceability have transformative potential beyond general logistics:</p>
+            <ul class="wp-list">
+              <li><strong>High-Tech Manufacturing:</strong> Streamlining production with parent-child serialization to track components from warehouse to final product.</li>
+              <li><strong>Healthcare Logistics:</strong> Managing cold chains for biologics with unbroken, auditable records to ensure regulatory compliance and patient safety.</li>
+              <li><strong>Critical Infrastructure:</strong> Automating maintenance parts logistics for utilities to minimize downtime by guiding field engineers to the nearest available parts.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="section" id="sec-8">
+          <summary>
+            <div>
+              <div class="sec-title">8.0 Conclusion</div>
+              <div class="sec-kicker">Summary</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </summary>
+          <div class="sec-body">
+            <p>The operational friction caused by fragmented systems represents a significant barrier to growth. This framework outlines a definitive solution: a unified system that serves as a central hub for all order activities. By leveraging real-time data and intelligent logic, it transforms the order lifecycle into a seamless process, equipping organizations with the resilient and scalable supply chains needed to compete in the modern economy.</p>
+          </div>
+        </details>
+
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sections = Array.from(document.querySelectorAll('details.section'));
+    const tocLinks = Array.from(document.querySelectorAll('.toc-link'));
+    const searchBox = document.getElementById('searchBox');
+    const clearBtn = document.getElementById('clearBtn');
+    const matchMeta = document.getElementById('matchMeta');
+    const openMeta = document.getElementById('openMeta');
+    const expandAll = document.getElementById('expandAll');
+    const collapseAll = document.getElementById('collapseAll');
+
+    function updateOpenMeta() {
+      const openCount = sections.filter(s => s.open).length;
+      openMeta.textContent = `${openCount} open`;
+    }
+
+    function setAll(open) {
+      sections.forEach(s => s.open = open);
+      updateOpenMeta();
+    }
+
+    function escapeRegExp(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function clearHighlights(root) {
+      const marks = root.querySelectorAll('mark');
+      marks.forEach(m => {
+        const parent = m.parentNode;
+        parent.replaceChild(document.createTextNode(m.textContent), m);
+        parent.normalize();
+      });
+    }
+
+    function highlightInElement(el, query) {
+      if (!query) return 0;
+      const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+        acceptNode: (node) => {
+          if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          if (node.parentElement && (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE')) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      const re = new RegExp(escapeRegExp(query), 'gi');
+      let matches = 0;
+      const nodes = [];
+      while (walk.nextNode()) nodes.push(walk.currentNode);
+
+      nodes.forEach(node => {
+        const text = node.nodeValue;
+        let lastIndex = 0;
+        let m;
+        re.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let found = false;
+
+        while ((m = re.exec(text)) !== null) {
+          found = true;
+          matches++;
+          const start = m.index;
+          const end = start + m[0].length;
+          if (start > lastIndex) frag.appendChild(document.createTextNode(text.slice(lastIndex, start)));
+          const mark = document.createElement('mark');
+          mark.textContent = text.slice(start, end);
+          frag.appendChild(mark);
+          lastIndex = end;
+        }
+
+        if (found) {
+          if (lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+          node.parentNode.replaceChild(frag, node);
+        }
+      });
+      return matches;
+    }
+
+    function runSearch() {
+      const q = searchBox.value.trim();
+      sections.forEach(s => clearHighlights(s));
+      if (!q) {
+        matchMeta.textContent = '0 matches';
+        return;
+      }
+      let total = 0;
+      sections.forEach(s => {
+        const found = highlightInElement(s, q);
+        total += found;
+        if (found > 0) s.open = true;
+      });
+      updateOpenMeta();
+      matchMeta.textContent = `${total} match${total===1?'':'es'}`;
+      const first = document.querySelector('mark');
+      if (first) first.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+
+    function syncActiveToc() {
+      const fromTop = window.scrollY + 120;
+      let currentId = null;
+      sections.forEach(s => {
+        const top = s.getBoundingClientRect().top + window.scrollY;
+        if (top <= fromTop) currentId = s.id;
+      });
+      tocLinks.forEach(a => a.classList.toggle('active', a.dataset.target === currentId));
+    }
+
+    searchBox.addEventListener('input', () => {
+      window.clearTimeout(window.__searchT);
+      window.__searchT = window.setTimeout(runSearch, 120);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchBox.value = '';
+      sections.forEach(s => clearHighlights(s));
+      matchMeta.textContent = '0 matches';
+    });
+
+    expandAll.addEventListener('click', () => setAll(true));
+    collapseAll.addEventListener('click', () => setAll(false));
+
+    sections.forEach(s => s.addEventListener('toggle', updateOpenMeta));
+    tocLinks.forEach(a => a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = a.dataset.target;
+      const el = document.getElementById(id);
+      if (el) {
+        el.open = true;
+        updateOpenMeta();
+        el.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+    }));
+
+    window.addEventListener('scroll', syncActiveToc, {passive: true});
+
+    updateOpenMeta();
+    syncActiveToc();
+  </script>
+</body>
+</html>
+
