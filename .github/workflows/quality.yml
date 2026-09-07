@@ -46,6 +46,7 @@ jobs:
         with:
           name: portfolio-test-artifacts
           path: |
+            package-lock.json
             playwright-report/
             test-results/
           if-no-files-found: ignore
