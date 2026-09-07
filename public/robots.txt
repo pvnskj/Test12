@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pvnskj.github.io/Test12/sitemap-index.xml

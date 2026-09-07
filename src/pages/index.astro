@@ -1,0 +1,206 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { featuredProjects, projects } from '../data/projects';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout>
+  <section class="hero-section shell">
+    <div class="hero-copy" data-reveal>
+      <p class="eyebrow">Complex systems · Real-world impact</p>
+      <h1>Turning complexity<br />into progress.</h1>
+      <p class="hero-lede">
+        I bridge business strategy and engineering reality, translating ambiguity into product
+        systems that can be understood, built, operated, and measured.
+      </p>
+
+      <div class="lifecycle-line" aria-label="Operating lifecycle">
+        <div><span></span><strong>Strategy</strong><small>Frame the problem</small></div>
+        <div><span></span><strong>Architecture</strong><small>Design for scale</small></div>
+        <div><span></span><strong>Execution</strong><small>Turn plans into product</small></div>
+        <div><span></span><strong>Evidence</strong><small>Measure what matters</small></div>
+      </div>
+
+      <div class="hero-actions">
+        <a class="button button-primary" href="#work">Explore my work <span aria-hidden="true">→</span></a>
+        <a class="button button-secondary" href="#approach">See how I work</a>
+      </div>
+    </div>
+
+    <div class="hero-system glass-card" role="group" aria-label="Systems thinking illustration" data-reveal>
+      <div class="hero-system-label">
+        <span>Connected systems.</span>
+        <strong>Greater clarity.</strong>
+      </div>
+      <div class="stack-visual" aria-hidden="true">
+        <div class="stack-layer layer-people"><span>People</span></div>
+        <div class="stack-layer layer-products"><span>Products</span></div>
+        <div class="stack-layer layer-data"><span>Data</span></div>
+        <div class="stack-layer layer-systems"><span>Systems</span></div>
+        <div class="stack-layer layer-operations"><span>Operations</span></div>
+        <div class="stack-axis"></div>
+      </div>
+      <div class="hero-system-caption">Complexity → structure → evidence</div>
+    </div>
+  </section>
+
+  <section class="proof-strip shell glass-panel" aria-label="Portfolio proof points" data-reveal>
+    <div><strong>10+</strong><span>Years represented in the current profile</span></div>
+    <div><strong>9</strong><span>System case studies retained</span></div>
+    <div><strong>Technical</strong><span>Distributed, event-driven, cloud-native focus</span></div>
+    <div><strong>Outcome-led</strong><span>Impact claims traced to existing source pages</span></div>
+  </section>
+
+  <section id="work" class="section shell">
+    <div class="section-heading" data-reveal>
+      <div>
+        <p class="eyebrow">Featured work</p>
+        <h2>Systems that make a difference.</h2>
+      </div>
+      <p>
+        Four projects lead the story. Every other legitimate project remains available in the full
+        portfolio below.
+      </p>
+    </div>
+
+    <div class="featured-grid">
+      {featuredProjects.map((project) => <ProjectCard project={project} featured />)}
+    </div>
+  </section>
+
+  <section class="section shell">
+    <div class="portfolio-map glass-card" data-reveal>
+      <div class="map-copy">
+        <p class="eyebrow">Portfolio map</p>
+        <h2>A connected view of the work.</h2>
+        <p>
+          Different domains, one recurring product pattern: establish trusted signals, make better
+          decisions, route action, and preserve evidence.
+        </p>
+        <div class="map-legend" aria-label="Portfolio domains">
+          <span><i class="legend-dot legend-blue"></i> Data & information</span>
+          <span><i class="legend-dot legend-indigo"></i> Operations</span>
+          <span><i class="legend-dot legend-green"></i> Financial systems</span>
+          <span><i class="legend-dot legend-slate"></i> Trust & governance</span>
+        </div>
+      </div>
+
+      <nav class="map-canvas" aria-label="Nine connected portfolio projects">
+        <svg class="map-lines" viewBox="0 0 700 470" aria-hidden="true">
+          <g>
+            <path d="M350 235 350 66" /><path d="M350 235 530 122" />
+            <path d="M350 235 586 260" /><path d="M350 235 490 395" />
+            <path d="M350 235 273 415" /><path d="M350 235 102 320" />
+            <path d="M350 235 108 154" /><path d="M350 235 250 91" />
+            <path d="M350 235 420 126" />
+          </g>
+        </svg>
+        <div class="map-core glass-node"><span>Systems</span><strong>for better<br />decisions</strong></div>
+        {projects.map((project, index) => (
+          <a class={`map-node map-node-${index + 1} glass-node`} href={`${base}work/${project.slug}/`}>
+            <span>{project.index}</span><strong>{project.title}</strong>
+          </a>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  <section id="approach" class="section shell">
+    <div class="section-heading" data-reveal>
+      <div><p class="eyebrow">How I work</p><h2>From context to evidence.</h2></div>
+      <p>
+        The current portfolio describes a 4W framing model, architecture co-design, SMART/INVEST
+        execution, and technical fluency. The redesign turns that material into one operating model.
+      </p>
+    </div>
+
+    <div class="approach-grid">
+      <div class="approach-list glass-card" data-reveal>
+        <article class="approach-step is-active"><span>01</span><div><strong>Understand</strong><p>Clarify the Why, What, Who, and When before committing delivery capacity.</p></div></article>
+        <article class="approach-step"><span>02</span><div><strong>Design</strong><p>Co-design architecture, dependencies, contracts, and operational guardrails.</p></div></article>
+        <article class="approach-step"><span>03</span><div><strong>Deliver</strong><p>Translate the mission into measurable goals, testable work, and clear evidence.</p></div></article>
+        <article class="approach-step"><span>04</span><div><strong>Measure</strong><p>Use metrics, lineage, and operational signals to validate outcomes and iterate.</p></div></article>
+      </div>
+
+      <div class="approach-graphic glass-card" data-reveal>
+        <div class="approach-orbit" aria-hidden="true">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="orbit-center"><span>WHAT</span><strong>Product & outcomes</strong></div>
+          <div class="orbit-label orbit-why"><strong>WHY</strong><span>Business value</span></div>
+          <div class="orbit-label orbit-who"><strong>WHO</strong><span>Users & stakeholders</span></div>
+          <div class="orbit-label orbit-when"><strong>WHEN</strong><span>Timing & constraints</span></div>
+          <div class="orbit-path"><span>Architecture</span><i></i><span>Execution</span><i></i><span>Evidence</span></div>
+        </div>
+        <div class="approach-note">
+          <p class="eyebrow">Operating principle</p>
+          <strong>Turning strategy into scalable reality.</strong>
+          <p>Business intent, technical depth, and execution discipline stay connected instead of becoming separate conversations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section shell" id="all-work">
+    <div class="section-heading" data-reveal>
+      <div><p class="eyebrow">All systems</p><h2>Nothing substantive is being discarded.</h2></div>
+      <p>The archive keeps every current project while clearly marking source material that still needs validation.</p>
+    </div>
+    <div class="archive-list glass-card" data-reveal>
+      {projects.map((project) => (
+        <a class="archive-row" href={`${base}work/${project.slug}/`}>
+          <span class="archive-index">{project.index}</span>
+          <div><strong>{project.title}</strong><span>{project.category}</span></div>
+          <div class="archive-tags">{project.tags.slice(0, 2).map((tag) => <span>{tag}</span>)}</div>
+          <span class:list={['source-status', project.sourceStatus === 'review' && 'source-status--review']}>
+            {project.sourceStatus === 'review' ? 'Review source' : 'Ready'}
+          </span>
+          <span class="archive-arrow" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section id="about" class="section shell">
+    <div class="about-grid">
+      <div class="about-copy" data-reveal>
+        <p class="eyebrow">About the portfolio</p>
+        <h2>Technical product ownership presented as systems thinking.</h2>
+        <p>
+          The current profile describes more than ten years of experience bridging business strategy
+          and engineering reality, with an emphasis on distributed systems, event-driven architecture,
+          cloud-native patterns, and reducing technical debt while preserving business velocity.
+        </p>
+        <p>
+          This redesign keeps those claims intact and shifts the presentation from a visual demo to
+          an evidence-led portfolio: context, system, decision path, measurable signal, and source material.
+        </p>
+      </div>
+      <div class="about-system glass-card" data-reveal>
+        <div class="about-system-head"><span class="eyebrow">Core translation layer</span><strong>Business ↔ Product ↔ Engineering</strong></div>
+        <div class="translation-flow">
+          <div><span>Business</span><small>Value · risk · timing</small></div><i>→</i>
+          <div><span>Product</span><small>Decisions · scope · evidence</small></div><i>→</i>
+          <div><span>Engineering</span><small>Architecture · APIs · operations</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section shell">
+    <div class="contact-panel glass-card" data-reveal>
+      <div>
+        <p class="eyebrow">Contact</p><h2>Continue the conversation.</h2>
+        <p>
+          The current repository contains placeholder email and LinkedIn values, so I am not publishing
+          fake contact details. GitHub is the only verified public destination connected to this portfolio right now.
+        </p>
+      </div>
+      <div class="contact-actions">
+        <a class="button button-primary" href="https://github.com/pvnskj">GitHub profile →</a>
+        <span class="contact-pending">Email / LinkedIn pending confirmation</span>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

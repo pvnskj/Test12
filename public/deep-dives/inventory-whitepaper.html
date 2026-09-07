@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A Framework for Automated, End-to-End Inventory and Asset Lifecycle Management</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: rgba(255, 255, 255, 0.9);
+      --panel-solid: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: rgba(12, 24, 44, 0.12);
+      --border-hover: rgba(255, 215, 0, 0.35);
+      --shadow: 0 20px 50px rgba(12,24,44,0.06);
+      --accent: #d4af37;
+      --accent-bg: rgba(255, 215, 0, 0.12);
+      --highlight: rgba(255, 215, 0, 0.18);
+      --radius: 16px;
+      --sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    html, body {
+      height: 100%;
+      color: var(--text);
+      font-family: var(--sans);
+      margin: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    
+    .shell {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    @media (max-width: 1024px) {
+      .shell { grid-template-columns: 1fr; }
+      .toc { position: relative; top: 0; margin-bottom: 20px; }
+    }
+
+    /* CARD STYLING */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    /* TABLE OF CONTENTS */
+    .toc {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 48px);
+    }
+
+    .toc h2 {
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    /* SEARCH */
+    .search {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text);
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .search input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-bg);
+    }
+
+    .search button {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .search button:hover {
+      background: #f8fafc;
+      color: var(--text);
+      border-color: var(--border-hover);
+    }
+
+    .toc .meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .toc .actions {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .chip {
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.5);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip:hover {
+      background: #ffffff;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .toc-links {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .toc-links::-webkit-scrollbar { width: 4px; }
+    .toc-links::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+
+    .toc-link {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border-left: 3px solid transparent;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+      transition: all 0.2s;
+    }
+    .toc-link:hover {
+      background: rgba(255,255,255,0.6);
+      color: var(--text);
+    }
+    .toc-link.active {
+      background: var(--accent-bg);
+      color: var(--accent);
+      border-left-color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* MAIN CONTENT */
+    .content { padding: 40px; }
+
+    .hero { margin-bottom: 32px; }
+    .hero h1 { margin: 0 0 8px; font-size: 32px; line-height: 1.1; letter-spacing: -0.03em; color: #0f172a; }
+    .hero .subtitle { margin: 0; color: var(--muted); font-size: 16px; font-weight: 400; }
+    .hero .rule { height: 1px; background: linear-gradient(90deg, var(--accent), transparent); margin-top: 20px; opacity: 0.3; }
+
+    /* SECTIONS */
+    details.section {
+      margin-bottom: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      transition: box-shadow 0.2s;
+    }
+    details.section:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(248, 250, 252, 0.5);
+    }
+    summary::-webkit-details-marker { display: none; }
+
+    .sec-title { font-weight: 700; font-size: 16px; color: #334155; }
+    .sec-kicker { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-top: 4px; font-weight: 600; }
+    .chev { width: 20px; height: 20px; color: var(--muted); transition: transform 0.2s ease; }
+    details[open] .chev { transform: rotate(180deg); color: var(--text); }
+
+    .sec-body { padding: 0 24px 24px; border-top: 1px solid var(--border); color: #475569; }
+    .sec-body p { margin: 16px 0; font-size: 15px; line-height: 1.7; }
+    .sec-body h3 { margin: 24px 0 12px; font-size: 16px; color: #1e293b; font-weight: 700; }
+
+    /* LISTS & TABLES */
+    .wp-list, .wp-olist { margin: 16px 0 16px 20px; padding-left: 10px; }
+    .wp-list li, .wp-olist li { margin-bottom: 8px; font-size: 15px; }
+    .wp-hr { border: none; height: 1px; background: var(--border); margin: 32px 0; }
+    .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); margin: 20px 0; }
+    table.wp-table { width: 100%; border-collapse: collapse; min-width: 600px; background: #ffffff; }
+    .wp-table th { text-align: left; background: #f1f5f9; padding: 12px 16px; font-size: 13px; font-weight: 600; color: #475569; border-bottom: 1px solid var(--border); }
+    .wp-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .wp-table tr:last-child td { border-bottom: none; }
+
+    mark { background: var(--highlight); color: #0f172a; padding: 0 2px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="nav-shell">
+    <nav class="top-nav">
+      <div class="brand">
+        <div class="orb"></div>
+        <h1>Systems & Lifecycle Frameworks</h1>
+      </div>
+      <div class="nav-links">
+        <a class="btn ghost" href="index.html">Home</a>
+        <a class="btn primary" href="inventory-impact.html">Impact</a>
+      </div>
+    </nav>
+  </div>
+  <main class="page-shell">
+  <div class="shell">
+    
+    <aside class="toc card" aria-label="Contents">
+      <h2>Contents</h2>
+      <div class="search" role="search">
+        <input id="searchBox" type="search" placeholder="Search..." aria-label="Search text" />
+        <button id="clearBtn" type="button" title="Clear">Clear</button>
+      </div>
+      <div class="meta">
+        <span id="matchMeta">0 matches</span>
+        <span id="openMeta">0 open</span>
+      </div>
+      <div class="actions">
+        <div class="chip" id="expandAll" role="button" tabindex="0">Expand</div>
+        <div class="chip" id="collapseAll" role="button" tabindex="0">Collapse</div>
+      </div>
+      <nav class="toc-links" id="tocLinks">
+        <a class='toc-link' href='#intro' data-target='intro'>Introduction: Overcoming Fragmentation</a>
+        <a class='toc-link' href='#sec-1' data-target='sec-1'>1. Architectural Philosophy</a>
+        <a class='toc-link' href='#sec-2' data-target='sec-2'>2. Serialization: Single Source of Truth</a>
+        <a class='toc-link' href='#sec-3' data-target='sec-3'>3. Forward Logistics Workflow</a>
+        <a class='toc-link' href='#sec-4' data-target='sec-4'>4. Reverse Logistics &amp; State Mgmt</a>
+        <a class='toc-link' href='#sec-5' data-target='sec-5'>5. Strategic Benefits</a>
+        <a class='toc-link' href='#sec-6' data-target='sec-6'>6. Broader Applications</a>
+        <a class='toc-link' href='#sec-7' data-target='sec-7'>7. Conclusion</a>
+      </nav>
+    </aside>
+
+    <main class="content card">
+      <header class="hero">
+        <h1>A Framework for Automated, End-to-End Inventory and Asset Lifecycle Management</h1>
+        <p class="subtitle">Inventory Whitepaper</p>
+        <div class="rule"></div>
+      </header>
+
+      <section id="sections">
+        
+        <details class="section" id="intro" open>
+          <summary>
+            <div>
+              <div class="sec-title">Introduction: Overcoming Fragmentation in Modern Supply Chains</div>
+              <div class="sec-kicker">Overview</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>Modern enterprises face a persistent disconnect between operational systems of record, such as a Warehouse Management System (WMS), and financial systems of record, like an ERP’s Fixed Asset module. This fragmentation, exacerbated by manual processes, inconsistent tracking protocols, and disparate data silos, creates significant compliance exposure and operational opacity. Without a unified view of an asset's lifecycle, organizations are vulnerable to inventory shrinkage, audit failures, and inefficient capital allocation.</p>
+            <p>The purpose of this whitepaper is to present a comprehensive framework for an automated, integrated inventory and asset management system designed to resolve these fundamental challenges. The core value proposition of this framework is the establishment of end-to-end visibility and unimpeachable data integrity, driving operational efficiency from the moment an asset is procured to its final retirement.</p>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+        
+        <details class="section" id="sec-1">
+          <summary>
+            <div>
+              <div class="sec-title">1. The Architectural Philosophy: A Centralized System for Custody and Integration</div>
+              <div class="sec-kicker">Architecture</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>The strategic power of this framework lies in its architectural philosophy. It is not designed as a monolithic Enterprise Resource Planning (ERP) system that attempts to perform all functions, but rather as a central "custody tracking system" that serves as a powerful integration and orchestration layer. This system acts as a central hub, specifically engineered to ingest, consolidate, and synchronize data from the multiple specialized enterprise platforms that an organization relies upon.</p>
+            
+            
+
+            <p>The system's primary role is to create a single, cohesive narrative for every asset by integrating data from various sources of truth across the enterprise. These integrated systems include:</p>
+            <ul class='wp-list'>
+              <li><strong>ERP System:</strong> The authoritative source for Purchase Orders (POs), overarching financial data, and the final capitalization status of assets.</li>
+              <li><strong>Warehouse Management System (WMS):</strong> The source for all physical receipt data, kitting activities, and warehouse movements.</li>
+              <li><strong>Fixed Assets (FA) Module:</strong> The official destination for capitalized asset data, managed within the ERP but architecturally distinct from the inventory module.</li>
+              <li><strong>Planning &amp; Forecasting Systems:</strong> Platforms responsible for inventory lifecycle management, demand planning, and usage tracking.</li>
+              <li><strong>Receiving &amp; Validation Systems:</strong> A designated receiving system or "warranty database" that serves as the ingestion point for capturing critical identity data like serial numbers and asset condition upon physical receipt.</li>
+            </ul>
+            <p>The strategic benefit of this integrated "system of systems" approach is profound. It ensures that operational events, such as the physical scan of an asset at a warehouse, are automatically reconciled with financial records in the ERP in near real-time.</p>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+        
+        <details class="section" id="sec-2">
+          <summary>
+            <div>
+              <div class="sec-title">2. The Core Principle: Serialization as the Single Source of Truth</div>
+              <div class="sec-kicker">Methodology</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>Serialization is the foundational principle of the entire framework. The assignment of a unique identifier to every critical asset serves as the immutable anchor for all subsequent tracking, validation, and auditing activities throughout its lifecycle.</p>
+            
+            
+
+            <p>To maintain 100% tracking from day one for designated assets, the system automatically generates unique "dummy" serials as placeholders where needed. These placeholders can be updated with the actual serial number at a later scan point, ensuring that a complete chain of custody is maintained without interruption.</p>
+            <h3>Key Serialization Controls and Their Impact</h3>
+            <div class="table-wrap">
+              <table class="wp-table">
+                <thead>
+                  <tr>
+                    <th>Control Mechanism</th>
+                    <th>Strategic Impact</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>ASN Cross-Validation</strong></td>
+                    <td>Identifies vendor shipping discrepancies at the point of entry by comparing physically scanned serials against the vendor's Advance Ship Notice (ASN).</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Physical Scan as Source of Truth</strong></td>
+                    <td>Corrects vendor shipping errors or ASN inaccuracies at the point of entry by designating the physical scan as the record of truth.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Format Validation</strong></td>
+                    <td>Prevents data conflicts by enforcing serial number format validation (e.g., RegEx) at every scan point.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Parent-Child Validation</strong></td>
+                    <td>Ensures integrity of kitted products by validating subcomponent serials match the master Bill of Materials (BOM).</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+        
+        <details class="section" id="sec-3">
+          <summary>
+            <div>
+              <div class="sec-title">3. Forward Logistics Workflow: From Procurement to Deployment</div>
+              <div class="sec-kicker">Operations</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>The forward logistics workflow is the critical first chapter in an asset’s lifecycle. This automated, event-driven process ensures that from the moment an asset is ordered, its journey is meticulously tracked, validated, and recorded.</p>
+            
+            
+
+            <ol class='wp-olist'>
+              <li><strong>Order Ingestion:</strong> The lifecycle begins when a PO is generated in the ERP system. The custody system creates a record with an <em>Ordered</em> status.</li>
+              <li><strong>Vendor Acceptance &amp; Shipment:</strong> Data feeds from the ERP update the asset's status to <em>Accepted</em> and then <em>Vendor Shipped</em>.</li>
+              <li><strong>Hub Receipt &amp; Ownership Transfer:</strong> Upon physical receipt, a scan updates the status to <em>Hub Received</em>. Ownership transfers to the enterprise, flagged as <em>Uncapitalized</em>.</li>
+              <li><strong>Validation and Condition Check:</strong> Serials are scanned and validated against the ASN. Conditions (e.g., Damaged) are recorded immediately.</li>
+              <li><strong>Movement to Field:</strong> Handoffs through Forward Stocking Locations (FSLs) trigger sequential updates: <em>FSL Received</em> → <em>FSL Shipped</em> → <em>Field Received</em>.</li>
+              <li><strong>Site Arrival:</strong> A final scan by field personnel updates the status to <em>Site Received</em>, confirming readiness for installation.</li>
+            </ol>
+            <p>This automated workflow mitigates the risk of financial misstatements and compliance failures by creating an immutable, real-time link between physical assets and financial records.</p>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+        
+        <details class="section" id="sec-4">
+          <summary>
+            <div>
+              <div class="sec-title">4. Reverse Logistics and Asset State Management</div>
+              <div class="sec-kicker">Operations</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>The strategic challenges of reverse logistics are often more complex than those of forward logistics, particularly when dealing with capitalized assets. This workflow is critical not only for managing returns, repairs, and asset retirement but also for maintaining strict financial compliance.</p>
+            
+            
+
+            <p>Handling the return of previously capitalized assets requires a specialized workflow to navigate architectural challenges. Capitalized assets reside in the ERP's Fixed Assets (FA) module, which typically does not communicate bidirectionally with the inventory module.</p>
+            <p>The framework solves this with an elegant, compliant solution:</p>
+            <ul class='wp-list'>
+              <li>When a capitalized asset is designated for return, the system generates a <strong>"recovered" part number</strong> (often with a "-R" suffix) and a corresponding new serial number.</li>
+              <li>This new, recovered part is brought back into the inventory system at <strong>zero cost</strong>. This allows the physical asset to be tracked and moved without re-introducing a capitalized asset into an inventory sub-ledger.</li>
+              <li>Crucially, the system maintains an indelible link between the original capitalized asset and its new "recovered" identity, preserving the audit trail.</li>
+            </ul>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+        
+        <details class="section" id="sec-5">
+          <summary>
+            <div>
+              <div class="sec-title">5. Strategic Benefits of an Integrated Framework</div>
+              <div class="sec-kicker">Value Proposition</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>By shifting asset management from a reactive, manual discipline to a proactive and automated strategic function, this integrated framework unlocks four pillars of business value.</p>
+            <h3>Enhanced Data Integrity and Compliance</h3>
+            <p>The framework establishes a single, verifiable source of truth. Automated validation and timestamped audit logs create a powerful defense against data drift and error, essential for satisfying regulations like Sarbanes-Oxley (SOX).</p>
+            <h3>Increased Operational Efficiency</h3>
+            <p>Automating tasks such as status updates and reconciliation eliminates operational friction. Scan-based workflows reduce entry errors and free up personnel for strategic analysis.</p>
+            <h3>Complete Lifecycle Visibility</h3>
+            <p>End-to-end tracking provides unprecedented real-time visibility into every asset's location and condition, enabling superior demand planning and proactive maintenance.</p>
+            <h3>Cross-System Synchronization</h3>
+            <p>The framework ensures the ERP, WMS, and Fixed Assets modules are in constant alignment, eliminating discrepancies caused by data lags.</p>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+
+        <details class="section" id="sec-6">
+          <summary>
+            <div>
+              <div class="sec-title">6. Broader Applications: Enhancing National Sector Efficiency</div>
+              <div class="sec-kicker">Market Fit</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>The core principles of this framework—robust serialization, an auditable chain of custody, and seamless integration—have transformative applications beyond a single enterprise.</p>
+            <ul class='wp-list'>
+              <li><strong>National Infrastructure Projects:</strong> Tracking high-value components for energy grids and transportation networks to ensure project integrity and prevent counterfeits.</li>
+              <li><strong>Defense and Aerospace Logistics:</strong> Providing a secure, auditable chain of custody for mission-critical equipment across manufacturing, depots, and forward operating bases.</li>
+              <li><strong>Pharmaceutical and Medical Device Supply Chains:</strong> Tracking high-value medical devices or batches by serial number to enhance recall precision and ensure regulatory compliance.</li>
+            </ul>
+            <hr class='wp-hr' />
+          </div>
+        </details>
+
+        <details class="section" id="sec-7">
+          <summary>
+            <div>
+              <div class="sec-title">7. Conclusion: A Blueprint for the Future of Asset Management</div>
+              <div class="sec-kicker">Summary</div>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="sec-body">
+            <p>This whitepaper has outlined a framework built on three core tenets: a centralized custody architecture that integrates disparate enterprise systems, the foundational principle of serialization as the single source of truth, and a series of automated, event-driven workflows that cover the full asset lifecycle. By adhering to this model, an organization can achieve profound strategic outcomes, including enhanced data integrity, superior operational efficiency, and rigorous, auditable compliance.</p>
+          </div>
+        </details>
+
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sections = Array.from(document.querySelectorAll('details.section'));
+    const tocLinks = Array.from(document.querySelectorAll('.toc-link'));
+    const searchBox = document.getElementById('searchBox');
+    const clearBtn = document.getElementById('clearBtn');
+    const matchMeta = document.getElementById('matchMeta');
+    const openMeta = document.getElementById('openMeta');
+    const expandAll = document.getElementById('expandAll');
+    const collapseAll = document.getElementById('collapseAll');
+
+    function updateOpenMeta() {
+      const openCount = sections.filter(s => s.open).length;
+      openMeta.textContent = `${openCount} open`;
+    }
+
+    function setAll(open) {
+      sections.forEach(s => s.open = open);
+      updateOpenMeta();
+    }
+
+    function escapeRegExp(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function clearHighlights(root) {
+      const marks = root.querySelectorAll('mark');
+      marks.forEach(m => {
+        const parent = m.parentNode;
+        parent.replaceChild(document.createTextNode(m.textContent), m);
+        parent.normalize();
+      });
+    }
+
+    function highlightInElement(el, query) {
+      if (!query) return 0;
+      const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+        acceptNode: (node) => {
+          if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          if (node.parentElement && (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE')) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      const re = new RegExp(escapeRegExp(query), 'gi');
+      let matches = 0;
+      const nodes = [];
+      while (walk.nextNode()) nodes.push(walk.currentNode);
+
+      nodes.forEach(node => {
+        const text = node.nodeValue;
+        let lastIndex = 0;
+        let m;
+        re.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let found = false;
+
+        while ((m = re.exec(text)) !== null) {
+          found = true;
+          matches++;
+          const start = m.index;
+          const end = start + m[0].length;
+          if (start > lastIndex) frag.appendChild(document.createTextNode(text.slice(lastIndex, start)));
+          const mark = document.createElement('mark');
+          mark.textContent = text.slice(start, end);
+          frag.appendChild(mark);
+          lastIndex = end;
+        }
+
+        if (found) {
+          if (lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+          node.parentNode.replaceChild(frag, node);
+        }
+      });
+      return matches;
+    }
+
+    function runSearch() {
+      const q = searchBox.value.trim();
+      sections.forEach(s => clearHighlights(s));
+      if (!q) {
+        matchMeta.textContent = '0 matches';
+        return;
+      }
+      let total = 0;
+      sections.forEach(s => {
+        const found = highlightInElement(s, q);
+        total += found;
+        if (found > 0) s.open = true;
+      });
+      updateOpenMeta();
+      matchMeta.textContent = `${total} match${total===1?'':'es'}`;
+      const first = document.querySelector('mark');
+      if (first) first.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+
+    function syncActiveToc() {
+      const fromTop = window.scrollY + 120;
+      let currentId = null;
+      sections.forEach(s => {
+        const top = s.getBoundingClientRect().top + window.scrollY;
+        if (top <= fromTop) currentId = s.id;
+      });
+      tocLinks.forEach(a => a.classList.toggle('active', a.dataset.target === currentId));
+    }
+
+    searchBox.addEventListener('input', () => {
+      window.clearTimeout(window.__searchT);
+      window.__searchT = window.setTimeout(runSearch, 120);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchBox.value = '';
+      sections.forEach(s => clearHighlights(s));
+      matchMeta.textContent = '0 matches';
+    });
+
+    expandAll.addEventListener('click', () => setAll(true));
+    collapseAll.addEventListener('click', () => setAll(false));
+
+    sections.forEach(s => s.addEventListener('toggle', updateOpenMeta));
+    
+    // Fixed closing parenthesis below
+    tocLinks.forEach(a => a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = a.dataset.target;
+      const el = document.getElementById(id);
+      if (el) {
+        el.open = true;
+        updateOpenMeta();
+        el.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+    })); 
+
+    window.addEventListener('scroll', syncActiveToc, {passive: true});
+
+    updateOpenMeta();
+    syncActiveToc();
+  </script>
+  </div>
+  </main>
+</body>
+</html>
+
