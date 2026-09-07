@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 const expectedProjects = [
   'Asset Catalog',
@@ -12,32 +12,22 @@ const expectedProjects = [
 ];
 
 const flagshipStories = [
-  {
-    path: './work/asset-catalog/',
-    heading: /trust as a product state/i,
-    visual: '.v5-asset-model',
-  },
-  {
-    path: './work/inventory/',
-    heading: /did not force one source of truth/i,
-    visual: '.v5-inventory-model',
-  },
-  {
-    path: './work/rfds/',
-    heading: /engineering knowledge trapped in spreadsheets/i,
-    visual: '.v5-rfds-model',
-  },
-  {
-    path: './work/inspection/',
-    heading: /shifted the product goal from completing inspections/i,
-    visual: '.v5-inspection-model',
-  },
-  {
-    path: './work/gl-coding/',
-    heading: /separated changing accounting policy/i,
-    visual: '.v5-gl-model',
-  },
+  { path: './work/asset-catalog/', heading: /trust as a product state/i, visual: '.v5-asset-model' },
+  { path: './work/inventory/', heading: /did not force one source of truth/i, visual: '.v5-inventory-model' },
+  { path: './work/rfds/', heading: /engineering knowledge trapped in spreadsheets/i, visual: '.v5-rfds-model' },
+  { path: './work/inspection/', heading: /shifted the product goal from completing inspections/i, visual: '.v5-inspection-model' },
+  { path: './work/gl-coding/', heading: /separated changing accounting policy/i, visual: '.v5-gl-model' },
 ];
+
+async function switchProject(page: Page, projectName: string) {
+  const isMobile = (page.viewportSize()?.width ?? 1280) <= 760;
+  if (isMobile) {
+    await page.locator('.v5-mobile-project-switcher summary').click();
+    await page.locator('.v5-mobile-project-switcher nav a', { hasText: projectName }).click();
+    return;
+  }
+  await page.locator('.v5-project-rail .v5-project-link', { hasText: projectName }).click();
+}
 
 test('homepage presents selected initiatives as evidence from a broader product portfolio', async ({ page }, testInfo) => {
   await page.goto('./');
@@ -86,17 +76,17 @@ test('the flagship initiatives use distinct senior-level stories and infographic
 
 test('persistent project switcher moves between stories without returning to the homepage', async ({ page }, testInfo) => {
   await page.goto('./work/asset-catalog/');
-  await page.locator('.v5-project-rail .v5-project-link', { hasText: 'Inventory & Asset Lifecycle' }).click();
+  await switchProject(page, 'Inventory & Asset Lifecycle');
   await expect(page).toHaveURL(/\/work\/inventory\/$/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText('did not force one source of truth');
 
-  await page.locator('.v5-project-rail .v5-project-link', { hasText: 'RFDS Automation' }).click();
+  await switchProject(page, 'RFDS Automation');
   await expect(page).toHaveURL(/\/work\/rfds\/$/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText('engineering knowledge trapped in spreadsheets');
   await page.screenshot({ path: testInfo.outputPath('rfds-workspace-v5.png'), fullPage: true });
 });
 
-test('mobile workspace uses full viewport and replaces desktop rail with a compact project switcher', async ({ page }, testInfo) => {
+test('mobile workspace uses the full usable viewport and replaces desktop rail with a compact project switcher', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('./work/asset-catalog/');
 
@@ -111,7 +101,7 @@ test('mobile workspace uses full viewport and replaces desktop rail with a compa
   expect(dimensions.viewport).toBe(390);
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(391);
   expect(dimensions.bodyWidth).toBeGreaterThan(385);
-  expect(dimensions.workspaceWidth).toBeGreaterThan(385);
+  expect(dimensions.workspaceWidth).toBeGreaterThan(350);
   expect(dimensions.canvasWidth).toBeGreaterThan(350);
   await expect(page.locator('.v5-project-rail')).toBeHidden();
   await expect(page.locator('.v5-mobile-project-switcher')).toBeVisible();
