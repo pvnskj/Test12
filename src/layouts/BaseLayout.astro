@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import '../styles/portfolio-v3.css';
+import '../styles/portfolio-v4.css';
 
 interface Props {
   title?: string;
@@ -23,7 +24,7 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f8fafc" />
     <meta name="color-scheme" content="light" />
