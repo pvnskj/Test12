@@ -34,6 +34,7 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href={`${base}reveal-fix.css`} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -94,9 +95,7 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
               <span>Senior Technical Product Owner</span>
             </span>
           </div>
-          <p class="footer-note">
-            Complex systems, clear decisions, measurable evidence.
-          </p>
+          <p class="footer-note">Complex systems, clear decisions, measurable evidence.</p>
         </div>
         <div class="footer-links">
           <a href={`${base}#work`}>Work</a>
@@ -135,10 +134,24 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
         items.forEach((item) => observer.observe(item));
       };
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', reveal, { once: true });
-      } else {
+      const setupNavigation = () => {
+        document.querySelectorAll('.mobile-nav a').forEach((link) => {
+          link.addEventListener('click', () => {
+            const details = link.closest('details');
+            if (details) details.removeAttribute('open');
+          });
+        });
+      };
+
+      const setup = () => {
         reveal();
+        setupNavigation();
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setup, { once: true });
+      } else {
+        setup();
       }
     </script>
   </body>
