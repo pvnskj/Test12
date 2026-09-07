@@ -17,6 +17,7 @@ const { project } = Astro.props;
 <BaseLayout
   title={`${project.title} | Venkata Parimi`}
   description={`${project.question} ${project.productGoal}`}
+  bareMain
 >
   <ProjectWorkspace project={project} />
 </BaseLayout>
