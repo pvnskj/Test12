@@ -198,3 +198,5 @@ test('reduced motion keeps the interactive project story readable', async ({ pag
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.locator('.glc-flow-node').first()).toBeVisible();
 });
+
+// GL Coding is the intentional pilot for the compact dashboard information model.
