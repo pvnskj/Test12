@@ -16,7 +16,6 @@ const flagshipStories = [
   { path: './work/inventory/', heading: /did not force one source of truth/i, visual: '.v5-inventory-model' },
   { path: './work/rfds/', heading: /engineering knowledge trapped in spreadsheets/i, visual: '.v5-rfds-model' },
   { path: './work/inspection/', heading: /shifted the product goal from completing inspections/i, visual: '.v5-inspection-model' },
-  { path: './work/gl-coding/', heading: /separated changing accounting policy/i, visual: '.v5-gl-model' },
 ];
 
 async function switchProject(page: Page, projectName: string) {
@@ -65,13 +64,52 @@ test('project workspace defaults to a concise overview and reveals deeper stages
   await expect(page.getByText('Explore the deeper product reasoning')).toBeVisible();
 });
 
-test('the flagship initiatives use distinct senior-level stories and infographic models', async ({ page }) => {
+test('the existing flagship initiatives keep their distinct story models', async ({ page }) => {
   for (const story of flagshipStories) {
     await page.goto(story.path);
     await expect(page.getByRole('heading', { level: 1 })).toContainText(story.heading);
     await page.getByRole('tab', { name: /Product model/i }).click();
     await expect(page.locator(story.visual)).toBeVisible();
   }
+});
+
+test('GL Coding uses the compact dashboard pilot instead of the long story workspace', async ({ page }, testInfo) => {
+  await page.goto('./work/gl-coding/');
+
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Configurable policy. Auditable decisions.');
+  await expect(page.locator('.glc-dashboard')).toBeVisible();
+  await expect(page.locator('.v5-story-tabs')).toHaveCount(0);
+  await expect(page.locator('.glc-kpis article')).toHaveCount(4);
+  await expect(page.locator('.glc-flow-node')).toHaveCount(4);
+  await expect(page.locator('.glc-decision-row')).toHaveCount(3);
+  await expect(page.getByText('40%', { exact: true }).first()).toBeVisible();
+  await expect(page.locator('.glc-flow-node.is-policy strong')).toHaveText('Configurable policy');
+  await expect(page.locator('.glc-kpis strong', { hasText: 'Traceable' })).toBeVisible();
+  await expect(page.locator('.glc-depth')).not.toHaveAttribute('open', '');
+
+  const visibleText = await page.locator('.glc-dashboard').innerText();
+  expect(visibleText.length).toBeLessThan(3200);
+  await page.screenshot({ path: testInfo.outputPath('gl-coding-dashboard-pilot.png'), fullPage: true });
+});
+
+test('GL Coding dashboard is compact and full-width on a 390px phone', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./work/gl-coding/');
+
+  const dimensions = await page.evaluate(() => ({
+    viewport: window.innerWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+    bodyWidth: document.body.getBoundingClientRect().width,
+    dashboardWidth: document.querySelector('.glc-dashboard')?.getBoundingClientRect().width ?? 0,
+  }));
+
+  expect(dimensions.viewport).toBe(390);
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(391);
+  expect(dimensions.bodyWidth).toBeGreaterThan(385);
+  expect(dimensions.dashboardWidth).toBeGreaterThan(360);
+  await expect(page.locator('.glc-flow-node').first()).toBeVisible();
+  await expect(page.locator('.glc-switcher')).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('gl-coding-dashboard-mobile.png'), fullPage: true });
 });
 
 test('persistent project switcher moves between stories without returning to the homepage', async ({ page }, testInfo) => {
@@ -156,8 +194,9 @@ test('navigation works and legacy source artifacts remain available without bein
 
 test('reduced motion keeps the interactive project story readable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('./work/inspection/');
+  await page.goto('./work/gl-coding/');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await page.getByRole('tab', { name: /Product model/i }).click();
-  await expect(page.locator('.v5-inspection-model')).toBeVisible();
+  await expect(page.locator('.glc-flow-node').first()).toBeVisible();
 });
+
+// GL Coding is the intentional pilot for the compact dashboard information model.
