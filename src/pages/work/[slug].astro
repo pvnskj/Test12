@@ -125,10 +125,10 @@ const nextProject = projects[(projects.findIndex((item) => item.slug === project
         <p>
           This is intentionally an explanatory infographic rather than a low-level architecture
           specification. It shows the product states and handoffs that mattered to the decision-making
-          without asking a reader to reverse-engineer a whitepaper.
+          without asking a reader to reverse-engineer a long source document.
         </p>
 
-        <div class="v3-flow glass-card" role="group" aria-label={`${project.title} product flow`}>
+        <div class="v3-flow glass-card" role="group" tabindex="0" aria-label={`${project.title} product flow`}>
           {project.flow.map((step, index) => (
             <>
               <div class="v3-flow-node">
