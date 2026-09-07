@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ProjectStory from '../../components/ProjectStory.astro';
+import ProjectWorkspace from '../../components/ProjectWorkspace.astro';
 import { projects, type Project } from '../../data/projects';
 
 export function getStaticPaths() {
@@ -12,105 +12,11 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const base = import.meta.env.BASE_URL;
-const nextProject = projects[(projects.findIndex((item) => item.slug === project.slug) + 1) % projects.length]!;
-
-const navBySlug: Record<string, { id: string; label: string }[]> = {
-  'asset-catalog': [
-    { id: 'trust-gap', label: 'Trust gap' },
-    { id: 'governance-model', label: 'Governance' },
-    { id: 'trusted-lifecycle', label: 'Lifecycle' },
-    { id: 'delivery-sequence', label: 'Sequence' },
-    { id: 'asset-value', label: 'Value' },
-  ],
-  inventory: [
-    { id: 'fractured-truth', label: 'Fractured truth' },
-    { id: 'authority-model', label: 'Authority' },
-    { id: 'custody', label: 'Custody' },
-    { id: 'recovery', label: 'Recovery' },
-    { id: 'inventory-value', label: 'Value' },
-  ],
-  rfds: [
-    { id: 'spreadsheet-bottleneck', label: 'Bottleneck' },
-    { id: 'knowledge-model', label: 'Knowledge model' },
-    { id: 'automation-boundary', label: 'Automation boundary' },
-    { id: 'risk-sequence', label: 'Risk sequence' },
-    { id: 'rfds-value', label: 'Outcome' },
-  ],
-  inspection: [
-    { id: 'maintenance-maturity', label: 'Maturity' },
-    { id: 'decision-engine', label: 'Decision engine' },
-    { id: 'field-economics', label: 'Field economics' },
-    { id: 'feedback-loop', label: 'Feedback loop' },
-    { id: 'inspection-value', label: 'Value' },
-  ],
-  'gl-coding': [
-    { id: 'policy-pressure', label: 'Policy pressure' },
-    { id: 'code-anatomy', label: 'Code anatomy' },
-    { id: 'control-model', label: 'Controls' },
-    { id: 'policy-product', label: 'Ownership lens' },
-    { id: 'gl-value', label: 'Value' },
-  ],
-  'order-fulfillment': [
-    { id: 'promise-gap', label: 'Promise gap' },
-    { id: 'order-state', label: 'Order state' },
-    { id: 'exception-design', label: 'Exceptions' },
-    { id: 'promise-sequence', label: 'Sequence' },
-    { id: 'order-value', label: 'Operating value' },
-  ],
-  'financial-projections': [
-    { id: 'decision-quality', label: 'Decision quality' },
-    { id: 'service-model', label: 'Service model' },
-    { id: 'model-risk', label: 'Model risk' },
-    { id: 'economic-sequence', label: 'Sequence' },
-    { id: 'financial-value', label: 'Value' },
-  ],
-};
-
-const storyNav = navBySlug[project.slug] ?? [];
 ---
 
 <BaseLayout
   title={`${project.title} | Venkata Parimi`}
   description={`${project.question} ${project.productGoal}`}
 >
-  <article class="case-study v4-case">
-    <section class="case-hero shell v4-case-hero">
-      <a class="back-link" href={`${base}#work`}><span aria-hidden="true">←</span> Back to selected work</a>
-      <div class="case-counter">{project.index} / {String(projects.length).padStart(2, '0')}</div>
-
-      <div class="v4-case-hero-grid">
-        <div class="case-hero-copy" data-reveal>
-          <p class="eyebrow">{project.eyebrow}</p>
-          <p class="v4-case-question">{project.question}</p>
-          <h1>{project.headline}</h1>
-          <p class="case-summary">{project.summary}</p>
-        </div>
-
-        <aside class="v4-goal-card glass-card" data-reveal aria-label="Product Goal">
-          <span class="eyebrow">Product Goal</span>
-          <strong>{project.productGoal}</strong>
-          <div></div>
-          <small>Selected initiative · {project.category}</small>
-        </aside>
-      </div>
-    </section>
-
-    <nav class="case-subnav glass-bar v4-case-subnav" aria-label={`${project.title} story sections`}>
-      <div class="v4-case-subnav-inner">
-        {storyNav.map((item) => <a href={`#${item.id}`}>{item.label}</a>)}
-      </div>
-    </nav>
-
-    <ProjectStory project={project} />
-
-    <section class="next-project shell v4-next-project">
-      <div class="next-project-card glass-card" data-reveal>
-        <span class="eyebrow">Next selected initiative · {nextProject.index}</span>
-        <h2>{nextProject.title}</h2>
-        <p>{nextProject.question}</p>
-        <a class="button button-primary" href={`${base}work/${nextProject.slug}/`}>Continue to product story →</a>
-      </div>
-    </section>
-  </article>
+  <ProjectWorkspace project={project} />
 </BaseLayout>
