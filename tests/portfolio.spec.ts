@@ -111,7 +111,7 @@ test('mobile case study uses the full viewport and infographics reflow instead o
 test('order fulfillment remains honest about unvalidated quantitative evidence', async ({ page }) => {
   await page.goto('./work/order-fulfillment/');
   await expect(page.getByText('Quantitative claims remain withheld.')).toBeVisible();
-  await expect(page.getByText(/placeholder material/i)).toBeVisible();
+  await expect(page.locator('.v4-evidence-note').getByText(/placeholder material/i)).toBeVisible();
   await expect(page.locator('.v4-promise-hub')).toBeVisible();
   await expect(page.locator('.v4-exception-tree')).toBeVisible();
 });
