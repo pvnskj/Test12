@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ProjectWorkspace from '../../components/ProjectWorkspace.astro';
+import ProjectWorkspaceV5 from '../../components/ProjectWorkspaceV5.astro';
 import { projects, type Project } from '../../data/projects';
 
 export function getStaticPaths() {
@@ -19,5 +19,5 @@ const { project } = Astro.props;
   description={`${project.question} ${project.productGoal}`}
   bareMain
 >
-  <ProjectWorkspace project={project} />
+  <ProjectWorkspaceV5 project={project} />
 </BaseLayout>
