@@ -17,24 +17,23 @@ const base = import.meta.env.BASE_URL;
       <span class="project-index">{project.index}</span>
       <span class="eyebrow">{project.category}</span>
     </div>
-    <span class:list={['source-status', project.sourceStatus === 'review' && 'source-status--review']}>
-      {project.sourceStatus === 'review' ? 'Source review' : 'Source-backed'}
-    </span>
   </div>
 
   <div class="project-card-copy">
+    <p class="project-question">{project.question}</p>
     <h3>{project.title}</h3>
     <p>{project.headline}</p>
   </div>
 
   <SystemGlyph variant={project.visual} label={`${project.title} system graphic`} compact={!featured} />
 
-  <div class="project-tags" aria-label={`${project.title} themes`}>
-    {project.tags.slice(0, featured ? 4 : 3).map((tag) => <span>{tag}</span>)}
+  <div class="project-card-goal">
+    <span>Product goal</span>
+    <strong>{project.productGoal}</strong>
   </div>
 
   <a class="text-link" href={`${base}work/${project.slug}/`}>
-    View case study
+    Read the product story
     <span aria-hidden="true">→</span>
   </a>
 </article>
