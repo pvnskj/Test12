@@ -6,7 +6,7 @@ import { featuredProjects, projects } from '../data/projects';
 const expertise = [
   {
     title: 'Enterprise systems orchestration',
-    body: 'Products that sit between systems of record: defining ownership boundaries, data contracts, synchronization, reconciliation, and what happens when one system disagrees with another.',
+    body: 'Products that sit between systems of record: ownership boundaries, data contracts, synchronization, reconciliation, lifecycle state, and the failure paths that appear when systems disagree.',
     examples: 'ERP · MDM · WMS · TMS · Fixed Assets',
   },
   {
@@ -16,18 +16,18 @@ const expertise = [
   },
   {
     title: 'Data integrity & lifecycle design',
-    body: 'Making identity, state, source of truth, and lifecycle transitions explicit so the product remains trustworthy when data is incomplete, stale, duplicated, or contradictory.',
+    body: 'Making identity, authority, state, and lifecycle transitions explicit so products remain trustworthy when data is incomplete, stale, duplicated, or contradictory.',
     examples: 'Identity · State · Lineage · Reconciliation',
   },
   {
     title: 'Operational workflow platforms',
-    body: 'Converting multi-team operating processes into understandable state models: triggers, owners, handoffs, failure paths, escalation, and proof of completion.',
+    body: 'Converting multi-team operating processes into explicit product states: triggers, owners, handoffs, exceptions, escalation, and proof of completion.',
     examples: 'Approvals · Field work · Fulfillment · Exceptions',
   },
   {
     title: 'Technical product execution',
-    body: 'Connecting Product Goals to architecture dependencies, APIs, domain rules, edge cases, acceptance criteria, sequencing, release decisions, and measurable operating outcomes.',
-    examples: 'Product Goal · Backlog ordering · Increments · Evidence',
+    body: 'Connecting Product Goals to system constraints, APIs, domain rules, edge cases, backlog ordering, release decisions, and measurable operating outcomes.',
+    examples: 'Product Goal · Increments · Evidence · Adaptation',
   },
 ];
 
@@ -35,11 +35,11 @@ const approaches = [
   {
     situation: 'The problem is ambiguous',
     approach: 'Discovery & Product Goal framing',
-    why: 'Align on the user, constraint, desired outcome, and evidence of success before solutioning consumes delivery capacity.',
+    why: 'Align on the user, constraint, outcome, and evidence of success before solutioning consumes delivery capacity.',
     signal: 'Are we solving the right problem?',
   },
   {
-    situation: 'The process is the problem',
+    situation: 'The workflow is the problem',
     approach: 'Workflow & state modelling',
     why: 'Expose the happy path, rejection, retries, ownership changes, and exceptions before they become production surprises.',
     signal: 'What happens when the normal path breaks?',
@@ -59,19 +59,19 @@ const approaches = [
   {
     situation: 'The solution is uncertain',
     approach: 'Incremental validation',
-    why: 'Order work around the most important assumptions, dependencies, and risks; use a usable Increment to create evidence before committing to the next decision.',
+    why: 'Order work around the most important assumptions, dependencies, and risks; use a usable Increment to create evidence before the next decision.',
     signal: 'What is the smallest valuable thing that reduces uncertainty?',
   },
   {
     situation: 'Stakeholders optimize for different outcomes',
     approach: 'Value & trade-off alignment',
-    why: 'Make the Product Goal, expected value, risk, cost of delay, quality, and constraints visible so prioritization becomes a product decision rather than an escalation contest.',
+    why: 'Make the Product Goal, expected value, risk, cost of delay, quality, and constraints visible so prioritization becomes a product decision.',
     signal: 'What creates the most value now, and what are we choosing not to do?',
   },
   {
     situation: 'The product is operating',
     approach: 'Evidence, inspection & adaptation',
-    why: 'Shipping proves completion, not value. Inspect operational and customer signals, then adapt the Product Backlog when evidence contradicts the plan.',
+    why: 'Shipping proves completion, not value. Inspect customer and operational signals, then adapt the Product Backlog when evidence contradicts the plan.',
     signal: 'Did the Increment change the outcome we cared about?',
   },
 ];
@@ -83,10 +83,10 @@ const approaches = [
       <p class="eyebrow">Senior Technical Product Owner · Enterprise systems</p>
       <h1>Turning complex systems<br />into products people can trust.</h1>
       <p class="hero-lede v3-hero-lede">
-        Most of the products I have owned sit between systems rather than inside one screen. I work
-        where business rules, data ownership, APIs, operational workflows, risk, and delivery
-        dependencies collide—and make that complexity understandable enough to build, operate, and
-        improve.
+        I work on products where the difficult part sits beneath the interface: business rules, data
+        ownership, enterprise integrations, operational workflows, risk, and delivery dependencies. My
+        role is to make that complexity explicit enough to make better product decisions, ship usable
+        Increments, and improve the outcome with evidence.
       </p>
 
       <div class="v3-positioning-line" aria-label="Product ownership focus">
@@ -100,10 +100,7 @@ const approaches = [
     </div>
 
     <div class="hero-system glass-card v3-hero-system" role="group" aria-label="End-to-end product ownership illustration" data-reveal>
-      <div class="hero-system-label">
-        <span>The TPO surface</span>
-        <strong>End-to-end product decisions</strong>
-      </div>
+      <div class="hero-system-label"><span>The TPO surface</span><strong>End-to-end product decisions</strong></div>
       <div class="v3-system-stack" aria-hidden="true">
         <div class="v3-stack-row"><span>Business outcome</span><small>value · risk · timing</small></div>
         <div class="v3-stack-connector"></div>
@@ -120,22 +117,19 @@ const approaches = [
   </section>
 
   <section class="proof-strip shell glass-panel v3-proof" aria-label="Portfolio focus" data-reveal>
-    <div><strong>7</strong><span>Selected initiatives from a broader body of product work</span></div>
-    <div><strong>5</strong><span>Flagship stories covering distinct classes of complex product problems</span></div>
-    <div><strong>End-to-end</strong><span>Problem framing through system decisions, delivery, evidence, and adaptation</span></div>
-    <div><strong>Technical</strong><span>Enough architecture depth to make better product decisions—not architecture theatre</span></div>
+    <div><strong>Enterprise systems</strong><span>Products spanning data, workflow, operations, finance, and systems of record.</span></div>
+    <div><strong>End-to-end ownership</strong><span>Problem framing through Product Goal, decisions, delivery, evidence, and adaptation.</span></div>
+    <div><strong>Technical depth</strong><span>Enough architecture fluency to make product trade-offs explicit and testable.</span></div>
+    <div><strong>Outcome led</strong><span>Value, operating behavior, quality, risk, and learning over feature-volume theatre.</span></div>
   </section>
 
   <section id="expertise" class="section shell">
     <div class="section-heading" data-reveal>
-      <div>
-        <p class="eyebrow">Where I operate</p>
-        <h2>My expertise is in the seams between teams, rules, data, and systems.</h2>
-      </div>
+      <div><p class="eyebrow">Where I operate</p><h2>My expertise is in the seams between teams, rules, data, and systems.</h2></div>
       <p>
-        I do not define “technical” as knowing engineering vocabulary. I use technical depth to make
-        better product decisions: clarify ownership, expose constraints, challenge assumptions, reduce
-        risk, and order work around value and learning.
+        Technical Product Ownership is not about collecting engineering vocabulary. I go deep enough
+        into the domain and system behavior to clarify ownership, expose constraints, challenge
+        assumptions, reduce risk, and keep value visible when the implementation becomes complicated.
       </p>
     </div>
 
@@ -143,9 +137,7 @@ const approaches = [
       {expertise.map((item, index) => (
         <article class="glass-card v3-expertise-card" data-reveal>
           <span class="v3-number">{String(index + 1).padStart(2, '0')}</span>
-          <h3>{item.title}</h3>
-          <p>{item.body}</p>
-          <small>{item.examples}</small>
+          <h3>{item.title}</h3><p>{item.body}</p><small>{item.examples}</small>
         </article>
       ))}
     </div>
@@ -153,14 +145,11 @@ const approaches = [
 
   <section id="work" class="section shell">
     <div class="section-heading" data-reveal>
-      <div>
-        <p class="eyebrow">Selected product initiatives</p>
-        <h2>Five flagship stories. Five different kinds of product complexity.</h2>
-      </div>
+      <div><p class="eyebrow">Selected product initiatives</p><h2>Representative work from a broader product portfolio.</h2></div>
       <p>
-        These are representative initiatives chosen to show how I think and operate. They are not the
-        boundaries of my experience. Each story starts with the problem and Product Goal, then goes
-        into the decisions, system, Increment strategy, and business value.
+        These initiatives are selected because they expose different kinds of Product Ownership: master
+        data, system-of-systems lifecycle design, engineering automation, maintenance intelligence, and
+        configurable financial policy. They are examples of how I operate—not a count of everything I have owned.
       </p>
     </div>
 
@@ -173,40 +162,30 @@ const approaches = [
     <div class="v3-operating-model glass-card" data-reveal>
       <div class="v3-operating-copy">
         <p class="eyebrow">The product-ownership loop</p>
-        <h2>Complexity becomes useful only when it changes a product decision.</h2>
+        <h2>Complexity matters only when it changes a product decision.</h2>
         <p>
-          I connect business intent to a domain model, system boundaries, and delivery decisions. A
-          usable Increment creates evidence. Evidence changes what I order next. The loop is designed
-          to make uncertainty visible rather than hide it behind a roadmap.
+          Business intent becomes a Product Goal. The goal shapes the domain model, system boundaries,
+          and Product Backlog order. A usable Increment creates evidence; evidence changes what I order
+          next. The loop is designed to make uncertainty visible rather than hide it behind a roadmap.
         </p>
       </div>
-
       <div class="v3-loop" aria-label="Product ownership feedback loop">
-        <div class="v3-loop-node v3-loop-node-1"><span>01</span><strong>Problem</strong><small>user · business · constraint</small></div>
-        <div class="v3-loop-arrow">→</div>
-        <div class="v3-loop-node"><span>02</span><strong>Product Goal</strong><small>outcome · value · focus</small></div>
-        <div class="v3-loop-arrow">→</div>
-        <div class="v3-loop-node"><span>03</span><strong>Model</strong><small>states · data · rules · risk</small></div>
-        <div class="v3-loop-arrow">→</div>
-        <div class="v3-loop-node"><span>04</span><strong>Increment</strong><small>usable · testable · valuable</small></div>
-        <div class="v3-loop-arrow v3-loop-arrow-down">↓</div>
-        <div class="v3-loop-node v3-loop-node-evidence"><span>05</span><strong>Evidence</strong><small>outcome · operations · feedback</small></div>
-        <div class="v3-loop-return"><span>inspect</span><i>↶</i><span>adapt the Product Backlog</span></div>
+        <div class="v3-loop-node v3-loop-node-1"><span>01</span><strong>Problem</strong><small>user · business · constraint</small></div><div class="v3-loop-arrow">→</div>
+        <div class="v3-loop-node"><span>02</span><strong>Product Goal</strong><small>outcome · value · focus</small></div><div class="v3-loop-arrow">→</div>
+        <div class="v3-loop-node"><span>03</span><strong>Model</strong><small>states · data · rules · risk</small></div><div class="v3-loop-arrow v3-loop-arrow-down">↓</div>
+        <div class="v3-loop-node v3-loop-node-evidence"><span>04</span><strong>Increment</strong><small>usable · testable · valuable</small></div>
+        <div class="v3-loop-return"><span>inspect evidence</span><i>↶</i><span>adapt the Product Backlog</span></div>
       </div>
     </div>
   </section>
 
   <section id="approach" class="section shell">
     <div class="section-heading" data-reveal>
-      <div>
-        <p class="eyebrow">How I approach product problems</p>
-        <h2>I do not use one framework for every situation.</h2>
-      </div>
+      <div><p class="eyebrow">How I approach product problems</p><h2>I do not use one framework for every situation.</h2></div>
       <p>
         The approach depends on what is uncertain. A stakeholder-alignment problem needs a different
-        tool from a data-ownership problem. A policy problem needs a different product model from an
-        experimentation problem. The point of a framework is to improve a decision—not to demonstrate
-        that I know the framework.
+        tool from a data-ownership problem. The point of a framework is to improve the next decision,
+        not to demonstrate that I know the framework.
       </p>
     </div>
 
@@ -224,14 +203,9 @@ const approaches = [
 
   <section class="section shell" id="all-work">
     <div class="section-heading" data-reveal>
-      <div><p class="eyebrow">Additional selected systems</p><h2>The portfolio stays focused without pretending the other work did not exist.</h2></div>
-      <p>
-        Order & Fulfillment and Financial Projections remain as supporting stories. The public
-        portfolio is intentionally selective so every case earns attention and strengthens the
-        senior-TPO narrative.
-      </p>
+      <div><p class="eyebrow">More selected work</p><h2>The portfolio stays selective without pretending the selected stories are the whole career.</h2></div>
+      <p>Additional initiatives remain available for readers who want a wider view of the product surface.</p>
     </div>
-
     <div class="archive-list glass-card v3-archive" data-reveal>
       {projects.map((project) => (
         <a class="archive-row" href={`${import.meta.env.BASE_URL}work/${project.slug}/`}>
@@ -247,8 +221,7 @@ const approaches = [
   <section id="about" class="section shell">
     <div class="about-grid v3-about">
       <div class="about-copy" data-reveal>
-        <p class="eyebrow">About the portfolio</p>
-        <h2>Product Ownership beyond backlog administration.</h2>
+        <p class="eyebrow">About the portfolio</p><h2>Product Ownership beyond backlog administration.</h2>
         <p>
           I treat the Product Backlog as a decision system, not a queue of stakeholder requests. The
           Product Goal provides focus; ordering reflects value, risk, dependencies, quality, and what
@@ -261,7 +234,6 @@ const approaches = [
           product coherence, and adapting when evidence shows that the original plan is wrong.
         </p>
       </div>
-
       <div class="v3-stakeholder-graphic glass-card" data-reveal aria-label="Product Goal aligns competing stakeholder needs">
         <div class="v3-stakeholder-core"><span>Product Goal</span><strong>Shared outcome</strong></div>
         <div class="v3-stakeholder-item v3-stakeholder-a"><strong>Business</strong><small>value · speed · timing</small></div>
@@ -275,17 +247,8 @@ const approaches = [
 
   <section id="contact" class="section shell">
     <div class="contact-panel glass-card" data-reveal>
-      <div>
-        <p class="eyebrow">Contact</p><h2>Continue the conversation.</h2>
-        <p>
-          The repository still contains placeholder email and LinkedIn values, so I am not publishing
-          invented contact details. GitHub remains the verified public destination connected to this portfolio.
-        </p>
-      </div>
-      <div class="contact-actions">
-        <a class="button button-primary" href="https://github.com/pvnskj">GitHub profile →</a>
-        <span class="contact-pending">Email / LinkedIn pending confirmation</span>
-      </div>
+      <div><p class="eyebrow">Contact</p><h2>Continue the conversation.</h2><p>The repository still contains placeholder email and LinkedIn values, so I am not publishing invented contact details. GitHub remains the verified public destination connected to this portfolio.</p></div>
+      <div class="contact-actions"><a class="button button-primary" href="https://github.com/pvnskj">GitHub profile →</a><span class="contact-pending">Email / LinkedIn pending confirmation</span></div>
     </div>
   </section>
 </BaseLayout>

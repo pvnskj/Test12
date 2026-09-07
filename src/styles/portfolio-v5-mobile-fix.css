@@ -1,0 +1,11 @@
+@media (max-width: 760px) {
+  .v5-workspace.shell {
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+
+  .v5-infographic {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+}
