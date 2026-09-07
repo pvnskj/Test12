@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectStory from '../../components/ProjectStory.astro';
 import { projects, type Project } from '../../data/projects';
 
 export function getStaticPaths() {
@@ -13,192 +14,97 @@ interface Props {
 const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const nextProject = projects[(projects.findIndex((item) => item.slug === project.slug) + 1) % projects.length]!;
+
+const navBySlug: Record<string, { id: string; label: string }[]> = {
+  'asset-catalog': [
+    { id: 'trust-gap', label: 'Trust gap' },
+    { id: 'governance-model', label: 'Governance' },
+    { id: 'trusted-lifecycle', label: 'Lifecycle' },
+    { id: 'delivery-sequence', label: 'Sequence' },
+    { id: 'asset-value', label: 'Value' },
+  ],
+  inventory: [
+    { id: 'fractured-truth', label: 'Fractured truth' },
+    { id: 'authority-model', label: 'Authority' },
+    { id: 'custody', label: 'Custody' },
+    { id: 'recovery', label: 'Recovery' },
+    { id: 'inventory-value', label: 'Value' },
+  ],
+  rfds: [
+    { id: 'spreadsheet-bottleneck', label: 'Bottleneck' },
+    { id: 'knowledge-model', label: 'Knowledge model' },
+    { id: 'automation-boundary', label: 'Automation boundary' },
+    { id: 'risk-sequence', label: 'Risk sequence' },
+    { id: 'rfds-value', label: 'Outcome' },
+  ],
+  inspection: [
+    { id: 'maintenance-maturity', label: 'Maturity' },
+    { id: 'decision-engine', label: 'Decision engine' },
+    { id: 'field-economics', label: 'Field economics' },
+    { id: 'feedback-loop', label: 'Feedback loop' },
+    { id: 'inspection-value', label: 'Value' },
+  ],
+  'gl-coding': [
+    { id: 'policy-pressure', label: 'Policy pressure' },
+    { id: 'code-anatomy', label: 'Code anatomy' },
+    { id: 'control-model', label: 'Controls' },
+    { id: 'policy-product', label: 'Ownership lens' },
+    { id: 'gl-value', label: 'Value' },
+  ],
+  'order-fulfillment': [
+    { id: 'promise-gap', label: 'Promise gap' },
+    { id: 'order-state', label: 'Order state' },
+    { id: 'exception-design', label: 'Exceptions' },
+    { id: 'promise-sequence', label: 'Sequence' },
+    { id: 'order-value', label: 'Operating value' },
+  ],
+  'financial-projections': [
+    { id: 'decision-quality', label: 'Decision quality' },
+    { id: 'service-model', label: 'Service model' },
+    { id: 'model-risk', label: 'Model risk' },
+    { id: 'economic-sequence', label: 'Sequence' },
+    { id: 'financial-value', label: 'Value' },
+  ],
+};
+
+const storyNav = navBySlug[project.slug] ?? [];
 ---
 
 <BaseLayout
   title={`${project.title} | Venkata Parimi`}
   description={`${project.question} ${project.productGoal}`}
 >
-  <article class="case-study v3-case">
-    <section class="case-hero shell v3-case-hero">
+  <article class="case-study v4-case">
+    <section class="case-hero shell v4-case-hero">
       <a class="back-link" href={`${base}#work`}><span aria-hidden="true">←</span> Back to selected work</a>
       <div class="case-counter">{project.index} / {String(projects.length).padStart(2, '0')}</div>
 
-      <div class="v3-case-hero-grid">
+      <div class="v4-case-hero-grid">
         <div class="case-hero-copy" data-reveal>
           <p class="eyebrow">{project.eyebrow}</p>
-          <p class="v3-case-question">{project.question}</p>
+          <p class="v4-case-question">{project.question}</p>
           <h1>{project.headline}</h1>
           <p class="case-summary">{project.summary}</p>
         </div>
 
-        <aside class="v3-goal-card glass-card" data-reveal aria-label="Product Goal">
+        <aside class="v4-goal-card glass-card" data-reveal aria-label="Product Goal">
           <span class="eyebrow">Product Goal</span>
           <strong>{project.productGoal}</strong>
-          <div class="v3-goal-divider"></div>
+          <div></div>
           <small>Selected initiative · {project.category}</small>
         </aside>
       </div>
-
-      {project.metrics.length > 0 && (
-        <div class="case-metrics glass-panel v3-case-metrics" data-reveal>
-          {project.metrics.map((metric) => (
-            <div><strong>{metric.value}</strong><span>{metric.label}</span><small>{metric.detail}</small></div>
-          ))}
-        </div>
-      )}
     </section>
 
-    <nav class="case-subnav glass-bar" aria-label="Case study sections">
-      <div class="shell case-subnav-inner">
-        <a href="#problem">Problem</a>
-        <a href="#ownership">Ownership</a>
-        <a href="#decisions">Decisions</a>
-        <a href="#system">System</a>
-        <a href="#increments">Increments</a>
-        <a href="#value">Value</a>
+    <nav class="case-subnav glass-bar v4-case-subnav" aria-label={`${project.title} story sections`}>
+      <div class="v4-case-subnav-inner">
+        {storyNav.map((item) => <a href={`#${item.id}`}>{item.label}</a>)}
       </div>
     </nav>
 
-    <section id="problem" class="case-section shell">
-      <div class="case-section-label" data-reveal><span>01</span><p class="eyebrow">What was actually broken?</p></div>
-      <div class="case-section-content" data-reveal>
-        <h2>{project.question}</h2>
-        <p class="case-lede">{project.problem}</p>
+    <ProjectStory project={project} />
 
-        <div class="v3-complexity-panel glass-card">
-          <div class="v3-complexity-intro">
-            <span class="eyebrow">Why it was hard</span>
-            <strong>The visible workflow was only part of the product.</strong>
-          </div>
-          <div class="v3-complexity-list">
-            {project.complexity.map((item, index) => (
-              <div><span>{String(index + 1).padStart(2, '0')}</span><p>{item}</p></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="ownership" class="case-section shell">
-      <div class="case-section-label" data-reveal><span>02</span><p class="eyebrow">Product ownership focus</p></div>
-      <div class="case-section-content" data-reveal>
-        <h2>Own the outcome, then make the system and backlog serve it.</h2>
-        <p>
-          The Product Goal gave the work a decision boundary. From there, product ownership meant
-          making value, risk, system constraints, stakeholder needs, and learning visible enough to
-          order the work deliberately rather than treating the backlog as a list of requests.
-        </p>
-        <div class="v3-ownership-grid">
-          {project.ownership.map((item, index) => (
-            <article class="glass-card"><span>{String(index + 1).padStart(2, '0')}</span><p>{item}</p></article>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section id="decisions" class="case-section shell">
-      <div class="case-section-label" data-reveal><span>03</span><p class="eyebrow">Important product decisions</p></div>
-      <div class="case-section-content" data-reveal>
-        <h2>Seniority shows up in the choices, not the number of artifacts.</h2>
-        <p>
-          These are the decisions that shaped the product boundary or delivery strategy. The point is
-          not that one option was universally “right”; it is that the trade-off was made explicit and
-          tied back to the Product Goal.
-        </p>
-        <div class="v3-decision-grid">
-          {project.decisions.map((decision, index) => (
-            <article class="glass-card v3-decision-card">
-              <span class="v3-number">{String(index + 1).padStart(2, '0')}</span>
-              <h3>{decision.title}</h3>
-              <p>{decision.body}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section id="system" class="case-section shell">
-      <div class="case-section-label" data-reveal><span>04</span><p class="eyebrow">Make the complexity understandable</p></div>
-      <div class="case-section-content" data-reveal>
-        <h2>The system story in one scan.</h2>
-        <p>
-          This is intentionally an explanatory infographic rather than a low-level architecture
-          specification. It shows the product states and handoffs that mattered to the decision-making
-          without asking a reader to reverse-engineer a long source document.
-        </p>
-
-        <div class="v3-flow glass-card" role="group" tabindex="0" aria-label={`${project.title} product flow`}>
-          {project.flow.map((step, index) => (
-            <>
-              <div class="v3-flow-node">
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                <strong>{step}</strong>
-              </div>
-              {index < project.flow.length - 1 && <div class="v3-flow-arrow" aria-hidden="true">→</div>}
-            </>
-          ))}
-        </div>
-        <p class="diagram-note v3-diagram-note">{project.flowCaption}</p>
-      </div>
-    </section>
-
-    <section id="increments" class="case-section shell">
-      <div class="case-section-label" data-reveal><span>05</span><p class="eyebrow">Backlog ordering & Increments</p></div>
-      <div class="case-section-content" data-reveal>
-        <h2>Order work to create value and reduce uncertainty.</h2>
-        <p>
-          I do not equate backlog order with screen order. A useful sequence should protect the Product
-          Goal, respect dependencies and quality, and create an Increment that produces evidence for
-          the next decision.
-        </p>
-
-        <div class="v3-increment-map" aria-label={`${project.title} Increment strategy`}>
-          {project.increments.map((increment, index) => (
-            <article class="glass-card v3-increment-card">
-              <div class="v3-increment-head"><span>Increment {String(index + 1).padStart(2, '0')}</span><strong>{increment.title}</strong></div>
-              <p>{increment.focus}</p>
-              <div class="v3-learning"><small>Evidence / learning question</small><span>{increment.learning}</span></div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section id="value" class="case-section shell">
-      <div class="case-section-label" data-reveal><span>06</span><p class="eyebrow">Business value & evidence</p></div>
-      <div class="case-section-content" data-reveal>
-        <h2>Shipping is not the outcome.</h2>
-        <p class="case-lede">{project.valueNarrative}</p>
-
-        {project.metrics.length > 0 ? (
-          <div class="v3-value-grid">
-            {project.metrics.map((metric) => (
-              <article class="glass-card">
-                <strong>{metric.value}</strong>
-                <span>{metric.label}</span>
-                <small>{metric.detail}</small>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div class="glass-card v3-value-note">
-            <span class="eyebrow">Evidence discipline</span>
-            <strong>Draft metrics are intentionally not promoted.</strong>
-            <p>The current source material supports the system and workflow story, but not a final quantitative claim. The portfolio keeps the story honest instead of turning placeholder numbers into portfolio evidence.</p>
-          </div>
-        )}
-
-        <div class="v3-adaptation glass-card" aria-label="Evidence to adaptation loop">
-          <div><span>Increment</span><small>usable product capability</small></div><i>→</i>
-          <div><span>Observe</span><small>customer / operational evidence</small></div><i>→</i>
-          <div><span>Inspect</span><small>did the outcome move?</small></div><i>→</i>
-          <div><span>Adapt</span><small>re-order the Product Backlog</small></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="next-project shell">
+    <section class="next-project shell v4-next-project">
       <div class="next-project-card glass-card" data-reveal>
         <span class="eyebrow">Next selected initiative · {nextProject.index}</span>
         <h2>{nextProject.title}</h2>

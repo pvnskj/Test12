@@ -1,0 +1,2 @@
+/* Final v4 accessibility override: the GL control lane fits within the desktop content width, so it does not need to be a keyboard-scrollable region. */
+.v4-control-lane{overflow-x:visible}

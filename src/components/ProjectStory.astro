@@ -1,0 +1,297 @@
+---
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const metricLabel = project.metrics.length === 1 ? 'evidence point' : 'evidence points';
+---
+
+{project.slug === 'asset-catalog' && (
+  <div class="v4-story v4-story--asset">
+    <section id="trust-gap" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal>
+        <p class="eyebrow">The trust gap</p>
+        <h2>A submitted request was not the same thing as a trusted enterprise asset.</h2>
+        <p class="v4-story-lede">{project.problem}</p>
+      </div>
+      <div class="v4-friction-map glass-card" data-reveal role="group" aria-label="Asset creation friction before the governed lifecycle">
+        <div><span>Requester</span><small>“I supplied what I know.”</small></div>
+        <i>→</i><div><span>Governance</span><small>“Is the definition complete?”</small></div>
+        <i>→</i><div><span>MDM</span><small>“Is this the trusted identity?”</small></div>
+        <i>→</i><div><span>ERP</span><small>“Can I safely consume it?”</small></div>
+        <div class="v4-friction-break"><strong>The failure was in the handoffs.</strong><small>A form could be “done” while the enterprise lifecycle was still unresolved.</small></div>
+      </div>
+    </section>
+
+    <section id="governance-model" class="v4-chapter shell v4-chapter--split">
+      <div class="v4-chapter-copy" data-reveal>
+        <p class="eyebrow">The product decision</p>
+        <h2>I made trust and governance explicit product states.</h2>
+        <p>{project.decisions[0]?.body}</p>
+        <p>{project.decisions[1]?.body}</p>
+      </div>
+      <div class="v4-stakeholder-tension glass-card" data-reveal role="group" aria-label="Stakeholder trade-offs around the Asset Catalog Product Goal">
+        <div class="v4-tension-core"><span>Product Goal</span><strong>Trusted asset lifecycle</strong></div>
+        <div class="v4-tension-item"><strong>Requester</strong><small>speed · clarity</small></div>
+        <div class="v4-tension-item"><strong>Governance</strong><small>completeness · control</small></div>
+        <div class="v4-tension-item"><strong>MDM</strong><small>identity · quality</small></div>
+        <div class="v4-tension-item"><strong>ERP</strong><small>stable downstream state</small></div>
+        <p>My job was not to satisfy every request independently. It was to preserve the shared outcome while making trade-offs visible.</p>
+      </div>
+    </section>
+
+    <section id="trusted-lifecycle" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal>
+        <p class="eyebrow">Infographic · trust lifecycle</p>
+        <h2>Approval is a checkpoint. Reconciliation is what completes the product lifecycle.</h2>
+        <p>{project.flowCaption}</p>
+      </div>
+      <div class="v4-lifecycle-lane glass-card" data-reveal role="group" aria-label="Governed asset lifecycle">
+        {project.flow.map((step, index) => (
+          <div class="v4-lifecycle-step"><span>{String(index + 1).padStart(2, '0')}</span><strong>{step}</strong>{index < project.flow.length - 1 && <i aria-hidden="true">→</i>}</div>
+        ))}
+      </div>
+      <div class="v4-decision-notes" data-reveal>
+        <article class="glass-card"><span>Fail safe</span><strong>Mismatch becomes a state—not a silent overwrite.</strong><p>{project.decisions[2]?.body}</p></article>
+        <article class="glass-card"><span>Configurable policy</span><strong>Change governance without turning every policy update into a release.</strong><p>{project.decisions[1]?.body}</p></article>
+      </div>
+    </section>
+
+    <section id="delivery-sequence" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal>
+        <p class="eyebrow">Backlog ordering</p>
+        <h2>I sequenced the work around what had to become trustworthy first.</h2>
+        <p>The Product Backlog was not ordered by screen flow. Each Increment reduced a different uncertainty while protecting the same Product Goal.</p>
+      </div>
+      <div class="v4-sequence-ladder" data-reveal aria-label="Asset Catalog Increment strategy">
+        {project.increments.map((increment, index) => (
+          <article class="glass-card"><span>0{index + 1}</span><strong>{increment.title}</strong><p>{increment.focus}</p><small>{increment.learning}</small></article>
+        ))}
+      </div>
+    </section>
+
+    <section id="asset-value" class="v4-chapter shell v4-value-chapter">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Business value</p><h2>The outcome was a governed backbone, not a better form.</h2><p class="v4-story-lede">{project.valueNarrative}</p></div>
+      <div class="v4-evidence-band glass-card" data-reveal aria-label={`${project.metrics.length} ${metricLabel}`}>
+        {project.metrics.map((metric) => <div><strong>{metric.value}</strong><span>{metric.label}</span><small>{metric.detail}</small></div>)}
+      </div>
+    </section>
+  </div>
+)}
+
+{project.slug === 'inventory' && (
+  <div class="v4-story v4-story--inventory">
+    <section id="fractured-truth" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">The fractured truth</p><h2>Five systems could each be correct and still fail to answer where an asset actually was.</h2><p class="v4-story-lede">{project.problem}</p></div>
+      <div class="v4-truth-orbit glass-card" data-reveal role="group" aria-label="Enterprise systems each holding part of the asset lifecycle truth">
+        <div class="v4-orbit-core"><span>Persistent identity</span><strong>Serialized asset</strong></div>
+        <div class="v4-orbit-system"><strong>ERP</strong><small>procurement · financial state</small></div>
+        <div class="v4-orbit-system"><strong>WMS</strong><small>warehouse movement</small></div>
+        <div class="v4-orbit-system"><strong>Fixed Assets</strong><small>capitalization</small></div>
+        <div class="v4-orbit-system"><strong>Planning</strong><small>demand · usage</small></div>
+        <div class="v4-orbit-system"><strong>Receiving</strong><small>physical arrival</small></div>
+        <p>No universal source of truth. Authority changes with the lifecycle state.</p>
+      </div>
+    </section>
+
+    <section id="authority-model" class="v4-chapter shell v4-chapter--split">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">The ownership model</p><h2>I defined authority by state instead of declaring one system the winner.</h2><p>{project.decisions[0]?.body}</p><p>{project.decisions[1]?.body}</p></div>
+      <div class="v4-authority-grid" data-reveal>
+        {project.ownership.slice(0, 4).map((item, index) => <article class="glass-card"><span>0{index + 1}</span><p>{item}</p></article>)}
+      </div>
+    </section>
+
+    <section id="custody" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Infographic · chain of custody</p><h2>The product preserves identity while responsibility moves between physical and financial systems.</h2><p>{project.flowCaption}</p></div>
+      <div class="v4-custody-track glass-card" data-reveal role="group" aria-label="Inventory and asset custody lifecycle">
+        {project.flow.map((step, index) => <div><span>{String(index + 1).padStart(2, '0')}</span><strong>{step}</strong>{index < project.flow.length - 1 && <i aria-hidden="true"></i>}</div>)}
+      </div>
+    </section>
+
+    <section id="recovery" class="v4-chapter shell v4-chapter--split">
+      <div class="v4-recovery-loop glass-card" data-reveal role="group" aria-label="Recovered asset reverse logistics model">
+        <div><span>Capitalized asset</span></div><i>↓</i><div><span>Return event</span></div><i>↓</i><div class="is-accent"><span>Recovered identity</span><small>zero-cost inventory record</small></div><i>↓</i><div><span>Physical tracking resumes</span></div><i>↺</i><div><span>Original financial identity stays linked</span></div>
+      </div>
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">The hard edge case</p><h2>Reverse logistics had to preserve operational movement without corrupting financial history.</h2><p>{project.decisions[2]?.body}</p><p>This is where lifecycle thinking mattered more than a feature list: the return path had different accounting and custody rules from the forward path.</p></div>
+    </section>
+
+    <section id="inventory-value" class="v4-chapter shell v4-value-chapter">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Business value</p><h2>Traceability improves operations and changes how capital can be managed.</h2><p class="v4-story-lede">{project.valueNarrative}</p></div>
+      <div class="v4-evidence-band glass-card" data-reveal>{project.metrics.map((metric) => <div><strong>{metric.value}</strong><span>{metric.label}</span><small>{metric.detail}</small></div>)}</div>
+    </section>
+  </div>
+)}
+
+{project.slug === 'rfds' && (
+  <div class="v4-story v4-story--rfds">
+    <section id="spreadsheet-bottleneck" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">The bottleneck</p><h2>The spreadsheet was visible. The real problem was engineering knowledge scattered across data, files, and people.</h2><p class="v4-story-lede">{project.problem}</p></div>
+      <div class="v4-before-after glass-card" data-reveal role="group" aria-label="RFDS workflow before and after productization">
+        <div class="v4-before"><span>Before</span><strong>Spreadsheet + macros</strong><small>manual mapping · version drift · embedded judgment</small></div>
+        <i>→</i>
+        <div class="v4-after"><span>Product direction</span><strong>Trusted data + explicit rules</strong><small>repeatable decisions · validation · traceability</small></div>
+      </div>
+    </section>
+
+    <section id="knowledge-model" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Infographic · knowledge to product</p><h2>I separated source data, domain rules, and generated output so each could be trusted independently.</h2><p>{project.decisions[0]?.body}</p></div>
+      <div class="v4-knowledge-pipeline glass-card" data-reveal role="group" aria-label="RFDS data and rules pipeline">
+        <div class="v4-source-pair"><div><strong>RF planning</strong><small>site · sector · frequency</small></div><div><strong>Procurement catalog</strong><small>approved equipment · attributes</small></div></div>
+        <i>↓</i><div class="v4-pipeline-stage"><span>Site model</span><small>normalized, synchronized context</small></div>
+        <i>↓</i><div class="v4-rules-stage"><strong>Rules engine</strong><div><span>sector mapping</span><span>placement</span><span>frequency</span><span>cable logic</span></div></div>
+        <i>↓</i><div class="v4-pipeline-stage is-output"><span>RFDS + diagrams</span><small>field-ready, traceable output</small></div>
+      </div>
+    </section>
+
+    <section id="automation-boundary" class="v4-chapter shell v4-chapter--split">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Where automation stops</p><h2>Automate repeatable engineering decisions; preserve human judgment where exceptions carry risk.</h2><p>{project.decisions[1]?.body}</p><p>{project.decisions[2]?.body}</p></div>
+      <div class="v4-automation-boundary glass-card" data-reveal>
+        <div><span>Automate</span><strong>Known rules</strong><small>mapping · calculations · validation</small></div>
+        <div class="v4-boundary-line"><span>decision boundary</span></div>
+        <div><span>Review</span><strong>Exceptions</strong><small>urgent path · unusual site context · specialist judgment</small></div>
+      </div>
+    </section>
+
+    <section id="risk-sequence" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">How I reduced delivery risk</p><h2>Generate the document last. Establish the truth and decision model first.</h2></div>
+      <div class="v4-risk-rail" data-reveal>{project.increments.map((increment, index) => <article class="glass-card"><span>0{index + 1}</span><strong>{increment.title}</strong><p>{increment.focus}</p><small>{increment.learning}</small></article>)}</div>
+    </section>
+
+    <section id="rfds-value" class="v4-chapter shell v4-value-chapter">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Outcome</p><h2>The document became the output of a dependable decision pipeline.</h2><p class="v4-story-lede">{project.valueNarrative}</p></div>
+      <div class="v4-evidence-band glass-card" data-reveal>{project.metrics.map((metric) => <div><strong>{metric.value}</strong><span>{metric.label}</span><small>{metric.detail}</small></div>)}</div>
+    </section>
+  </div>
+)}
+
+{project.slug === 'inspection' && (
+  <div class="v4-story v4-story--inspection">
+    <section id="maintenance-maturity" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">The product evolution</p><h2>The goal was not more inspections. It was better intervention decisions.</h2><p class="v4-story-lede">{project.problem}</p></div>
+      <div class="v4-maturity-rail glass-card" data-reveal role="group" aria-label="Maintenance maturity from planned to predictive">
+        <div><span>01</span><strong>Planned</strong><small>scheduled requirements</small></div><i>→</i><div><span>02</span><strong>Proactive</strong><small>repeat faults · historical patterns</small></div><i>→</i><div class="is-accent"><span>03</span><strong>Predictive</strong><small>forecasted failure windows</small></div>
+        <p>Each stage adds evidence; none removes the need for operational judgment.</p>
+      </div>
+    </section>
+
+    <section id="decision-engine" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Infographic · decision engine</p><h2>Three classes of evidence feed one operational decision.</h2><p>{project.summary}</p></div>
+      <div class="v4-decision-engine glass-card" data-reveal role="group" aria-label="Inspection decision engine inputs and outputs">
+        <div class="v4-engine-inputs"><div><strong>Asset requirements</strong><small>what should be checked</small></div><div><strong>Usage & faults</strong><small>what is happening</small></div><div><strong>Lifecycle context</strong><small>what is still in service</small></div></div>
+        <i>→</i><div class="v4-engine-core"><span>Inspection engine</span><strong>risk + timing + rules</strong><small>planned · proactive · predictive</small></div>
+        <i>→</i><div class="v4-engine-output"><strong>Operational action</strong><small>work order · approval · field task</small></div>
+      </div>
+    </section>
+
+    <section id="field-economics" class="v4-chapter shell v4-chapter--split">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Field economics</p><h2>Intelligence only creates value if it changes the work that gets dispatched.</h2><p>{project.decisions[1]?.body}</p><p>{project.decisions[2]?.body}</p></div>
+      <div class="v4-workorder-merge glass-card" data-reveal role="group" aria-label="Inspection work order consolidation">
+        <div><span>Maintenance event A</span></div><div><span>Maintenance event B</span></div><div><span>Inspection event</span></div><i>↓</i><div class="is-accent"><strong>Configurable time window</strong><small>combine when operationally safe</small></div><i>↓</i><div><strong>One coordinated work order</strong><small>less redundant field activity</small></div>
+      </div>
+    </section>
+
+    <section id="feedback-loop" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Empirical loop</p><h2>Field outcomes become evidence for the next maintenance decision.</h2></div>
+      <div class="v4-field-loop glass-card" data-reveal><div><strong>Signal</strong><small>risk or schedule</small></div><i>→</i><div><strong>Work order</strong><small>optimized tasks</small></div><i>→</i><div><strong>Field result</strong><small>fault report</small></div><i>→</i><div><strong>Inspect evidence</strong><small>patterns · false positives · outcomes</small></div><i>↺</i></div>
+    </section>
+
+    <section id="inspection-value" class="v4-chapter shell v4-value-chapter">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Business value</p><h2>Reliability, field efficiency, and risk reduction move together.</h2><p class="v4-story-lede">{project.valueNarrative}</p></div>
+      <div class="v4-evidence-band glass-card" data-reveal>{project.metrics.map((metric) => <div><strong>{metric.value}</strong><span>{metric.label}</span><small>{metric.detail}</small></div>)}</div>
+    </section>
+  </div>
+)}
+
+{project.slug === 'gl-coding' && (
+  <div class="v4-story v4-story--gl">
+    <section id="policy-pressure" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">The policy pressure</p><h2>Business policy was evolving faster than hard-coded financial logic could safely follow.</h2><p class="v4-story-lede">{project.problem}</p></div>
+      <div class="v4-policy-split glass-card" data-reveal><div><span>Hard-coded model</span><strong>Policy change → code change → release dependency</strong><small>slower adaptation · higher regression risk</small></div><i>→</i><div class="is-accent"><span>Product direction</span><strong>Policy → configuration → validated output</strong><small>controlled change without rewriting the application</small></div></div>
+    </section>
+
+    <section id="code-anatomy" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Infographic · GL code anatomy</p><h2>I decomposed one opaque string into business-owned decision components.</h2><p>{project.decisions[0]?.body}</p></div>
+      <div class="v4-code-anatomy glass-card" data-reveal role="group" aria-label="Dynamic GL code assembled from configurable business context">
+        <div class="v4-code-inputs"><span>Project type</span><span>Entity</span><span>Activity</span><span>Spend category</span><span>Asset context</span></div><i>↓</i><div class="v4-code-rules"><strong>Configurable lookup rules</strong><small>policy · mappings · exceptions</small></div><i>↓</i><div class="v4-code-output"><span>Validated GL code</span></div>
+      </div>
+    </section>
+
+    <section id="control-model" class="v4-chapter shell v4-chapter--split">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">The control model</p><h2>Configurability only helps if the product still protects financial integrity.</h2><p>{project.decisions[1]?.body}</p><p>{project.decisions[2]?.body}</p></div>
+      <div class="v4-control-lane glass-card" data-reveal><div><span>Change rule</span></div><i>→</i><div><span>Simulate</span></div><i>→</i><div><span>Validate</span></div><i>→</i><div><span>Publish</span></div><i>→</i><div><span>Audit evidence</span></div></div>
+    </section>
+
+    <section id="policy-product" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Product ownership lens</p><h2>The important decision was where policy should live—not how many fields the UI needed.</h2></div>
+      <div class="v4-decision-notes" data-reveal>{project.ownership.slice(0, 4).map((item, index) => <article class="glass-card"><span>0{index + 1}</span><p>{item}</p></article>)}</div>
+    </section>
+
+    <section id="gl-value" class="v4-chapter shell v4-value-chapter">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Business value</p><h2>Faster change, stronger evidence, less friction at close.</h2><p class="v4-story-lede">{project.valueNarrative}</p></div>
+      <div class="v4-evidence-band glass-card" data-reveal>{project.metrics.map((metric) => <div><strong>{metric.value}</strong><span>{metric.label}</span><small>{metric.detail}</small></div>)}</div>
+    </section>
+  </div>
+)}
+
+{project.slug === 'order-fulfillment' && (
+  <div class="v4-story v4-story--order">
+    <section id="promise-gap" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">The customer promise gap</p><h2>Every execution system knew its job. None of them knew the whole customer promise.</h2><p class="v4-story-lede">{project.problem}</p></div>
+      <div class="v4-promise-hub glass-card" data-reveal role="group" aria-label="Order platform coordinating specialized fulfillment systems">
+        <div class="v4-promise-core"><span>Order platform</span><strong>shared lifecycle</strong></div><div><strong>Planning</strong><small>demand · backlog</small></div><div><strong>WMS</strong><small>pick · ship</small></div><div><strong>TMS</strong><small>transit · delivery</small></div><div><strong>ERP</strong><small>financial transfer</small></div><p>One system of engagement; specialized systems keep their execution responsibility.</p>
+      </div>
+    </section>
+
+    <section id="order-state" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Infographic · promise as state</p><h2>A status label is not enough when the next decision depends on several systems.</h2><p>{project.decisions[1]?.body}</p></div>
+      <div class="v4-order-state glass-card" data-reveal>{project.flow.map((step, index) => <div><span>{String(index + 1).padStart(2, '0')}</span><strong>{step}</strong>{index < project.flow.length - 1 && <i aria-hidden="true">→</i>}</div>)}</div>
+    </section>
+
+    <section id="exception-design" class="v4-chapter shell v4-chapter--split">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Designing for failure</p><h2>Backlog and exceptions were first-class product states—not spreadsheet cleanup.</h2><p>{project.decisions[2]?.body}</p></div>
+      <div class="v4-exception-tree glass-card" data-reveal><div><strong>Can fulfill?</strong></div><div class="is-good"><span>Yes</span><small>allocate → execute → deliver</small></div><div class="is-warn"><span>No</span><small>backlog · notify · re-evaluate</small></div><div class="is-warn"><span>Handoff failed</span><small>owner · alert · next action</small></div></div>
+    </section>
+
+    <section id="promise-sequence" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Delivery sequence</p><h2>I ordered integration work around the promise, not around whichever system was easiest to connect first.</h2></div>
+      <div class="v4-risk-rail" data-reveal>{project.increments.map((increment, index) => <article class="glass-card"><span>0{index + 1}</span><strong>{increment.title}</strong><p>{increment.focus}</p><small>{increment.learning}</small></article>)}</div>
+    </section>
+
+    <section id="order-value" class="v4-chapter shell v4-value-chapter">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Operating value</p><h2>End-to-end visibility is valuable even when the source does not support a final ROI claim.</h2><p class="v4-story-lede">{project.valueNarrative}</p></div>
+      <div class="v4-evidence-note glass-card" data-reveal><strong>Quantitative claims remain withheld.</strong><p>The current impact source is explicitly placeholder material. The portfolio keeps the architecture, product decisions, and operating value without presenting draft numbers as evidence.</p></div>
+    </section>
+  </div>
+)}
+
+{project.slug === 'financial-projections' && (
+  <div class="v4-story v4-story--financial">
+    <section id="decision-quality" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">The product constraint</p><h2>A projection is only useful if model quality, response time, security, and cost can coexist.</h2><p class="v4-story-lede">{project.problem}</p></div>
+      <div class="v4-tradeoff-balance glass-card" data-reveal role="group" aria-label="Financial projection product trade-offs"><div><strong>Model fidelity</strong><small>decision quality</small></div><div><strong>Latency & scale</strong><small>usable experience</small></div><div><strong>Security</strong><small>trust & control</small></div><div><strong>Cloud cost</strong><small>economic viability</small></div><span>Product decision</span></div>
+    </section>
+
+    <section id="service-model" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Infographic · service model</p><h2>I treated computational architecture as part of the product economics.</h2><p>{project.summary}</p></div>
+      <div class="v4-projection-stack glass-card" data-reveal role="group" aria-label="Financial projection service architecture"><div><span>Client / institution</span></div><i>↓</i><div><strong>API gateway</strong><small>routing · auth · rate limits</small></div><i>↓</i><div class="v4-service-row"><span>Data aggregation</span><span>Projection engine</span><span>Recommendation engine</span></div><i>↓</i><div><strong>Security & governance</strong><small>identity · encryption · audit</small></div><div class="v4-finops-strip"><span>FinOps across the stack</span><small>cost · scaling · workload control</small></div></div>
+    </section>
+
+    <section id="model-risk" class="v4-chapter shell v4-chapter--split">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Model risk & product risk</p><h2>Independent services let uncertainty change without destabilizing the whole platform.</h2><p>{project.decisions[0]?.body}</p><p>{project.decisions[1]?.body}</p></div>
+      <div class="v4-model-risk glass-card" data-reveal><div><span>Model assumption changes</span></div><i>→</i><div class="is-accent"><strong>Projection service</strong><small>isolated evolution</small></div><i>→</i><div><span>Recommendation output</span></div><p>Change the uncertain model without forcing a platform-wide release.</p></div>
+    </section>
+
+    <section id="economic-sequence" class="v4-chapter shell">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Product sequencing</p><h2>Each Increment had to prove usefulness without ignoring scale and cost.</h2></div>
+      <div class="v4-sequence-ladder" data-reveal>{project.increments.map((increment, index) => <article class="glass-card"><span>0{index + 1}</span><strong>{increment.title}</strong><p>{increment.focus}</p><small>{increment.learning}</small></article>)}</div>
+    </section>
+
+    <section id="financial-value" class="v4-chapter shell v4-value-chapter">
+      <div class="v4-chapter-copy" data-reveal><p class="eyebrow">Business value</p><h2>Better decisions are the outcome; computation is the means.</h2><p class="v4-story-lede">{project.valueNarrative}</p></div>
+      <div class="v4-evidence-band glass-card" data-reveal>{project.metrics.map((metric) => <div><strong>{metric.value}</strong><span>{metric.label}</span><small>{metric.detail}</small></div>)}</div>
+    </section>
+  </div>
+)}
