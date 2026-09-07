@@ -30,8 +30,9 @@ test('featured work opens a complete RFDS case study', async ({ page }, testInfo
   await page.locator('.project-card', { hasText: 'RFDS' }).getByRole('link', { name: /View case study/i }).click();
   await expect(page).toHaveURL(/\/work\/rfds\/$/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText('RFDS');
-  await expect(page.getByText('72%')).toBeVisible();
-  await expect(page.getByText('Faster approval cycles')).toBeVisible();
+  const heroMetrics = page.locator('.case-metrics');
+  await expect(heroMetrics.getByText('72%')).toBeVisible();
+  await expect(heroMetrics.getByText('Faster approval cycles')).toBeVisible();
   await expect(page.getByRole('link', { name: /Open impact source/i })).toBeVisible();
   await expect(page.getByRole('link', { name: /Open whitepaper/i })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('rfds-case-study.png'), fullPage: true });
