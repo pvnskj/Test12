@@ -83,8 +83,8 @@ test('GL Coding uses the compact dashboard pilot instead of the long story works
   await expect(page.locator('.glc-flow-node')).toHaveCount(4);
   await expect(page.locator('.glc-decision-row')).toHaveCount(3);
   await expect(page.getByText('40%', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText(/Configurable policy/i).first()).toBeVisible();
-  await expect(page.getByText(/Traceable/i).first()).toBeVisible();
+  await expect(page.locator('.glc-flow-node.is-policy strong')).toHaveText('Configurable policy');
+  await expect(page.locator('.glc-kpis strong', { hasText: 'Traceable' })).toBeVisible();
   await expect(page.locator('.glc-depth')).not.toHaveAttribute('open', '');
 
   const visibleText = await page.locator('.glc-dashboard').innerText();
