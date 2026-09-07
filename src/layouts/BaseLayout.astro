@@ -1,8 +1,10 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import '../styles/portfolio-v3.css';
 import '../styles/portfolio-v4.css';
 import '../styles/portfolio-v4-fix.css';
+import '../styles/portfolio-v5.css';
 
 interface Props {
   title?: string;
@@ -45,6 +47,7 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
     {ogImage && <meta property="og:image" content={ogImage} />}
     <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
     <title>{title}</title>
+    <ClientRouter />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
@@ -142,6 +145,8 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
 
       const setupNavigation = () => {
         document.querySelectorAll('.mobile-nav a').forEach((link) => {
+          if (link.dataset.navBound === 'true') return;
+          link.dataset.navBound = 'true';
           link.addEventListener('click', () => {
             const details = link.closest('details');
             if (details) details.removeAttribute('open');
@@ -154,11 +159,8 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
         setupNavigation();
       };
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setup, { once: true });
-      } else {
-        setup();
-      }
+      document.addEventListener('astro:page-load', setup);
+      if (document.readyState !== 'loading') setup();
     </script>
   </body>
 </html>
