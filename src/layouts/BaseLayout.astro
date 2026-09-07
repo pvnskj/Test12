@@ -1,0 +1,158 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = 'Venkata Parimi | Senior Technical Product Owner',
+  description = 'Senior Technical Product Owner focused on distributed systems, event-driven architecture, scalable product systems, and measurable outcomes.',
+  image,
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefined;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f8fafc" />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href={`${base}reveal-fix.css`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+    <div class="ambient-grid" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="shell header-inner glass-bar">
+        <a class="brand" href={base} aria-label="Venkata Parimi home">
+          <span class="brand-mark" aria-hidden="true">VP</span>
+          <span class="brand-copy">
+            <strong>Venkata Parimi</strong>
+            <span>Senior Technical Product Owner</span>
+          </span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <a href={`${base}#work`}>Work</a>
+          <a href={`${base}#approach`}>Approach</a>
+          <a href={`${base}#about`}>About</a>
+          <a href={`${base}#contact`}>Contact</a>
+        </nav>
+
+        <details class="mobile-nav">
+          <summary aria-label="Open navigation">
+            <span></span><span></span><span></span>
+          </summary>
+          <nav aria-label="Mobile navigation">
+            <a href={`${base}#work`}>Work</a>
+            <a href={`${base}#approach`}>Approach</a>
+            <a href={`${base}#about`}>About</a>
+            <a href={`${base}#contact`}>Contact</a>
+          </nav>
+        </details>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div>
+          <div class="brand footer-brand">
+            <span class="brand-mark" aria-hidden="true">VP</span>
+            <span class="brand-copy">
+              <strong>Venkata Parimi</strong>
+              <span>Senior Technical Product Owner</span>
+            </span>
+          </div>
+          <p class="footer-note">Complex systems, clear decisions, measurable evidence.</p>
+        </div>
+        <div class="footer-links">
+          <a href={`${base}#work`}>Work</a>
+          <a href={`${base}#approach`}>Approach</a>
+          <a href="https://github.com/pvnskj" rel="me">GitHub</a>
+        </div>
+        <div class="footer-status">
+          <span class="eyebrow">Contact</span>
+          <p>Email and LinkedIn are intentionally withheld until the source details are confirmed.</p>
+        </div>
+      </div>
+      <div class="shell footer-bottom">
+        <span>Built as a static, accessible Astro portfolio.</span>
+        <span>© {new Date().getFullYear()} Venkata Parimi</span>
+      </div>
+    </footer>
+
+    <script is:inline>
+      const reveal = () => {
+        const items = document.querySelectorAll('[data-reveal]');
+        if (!('IntersectionObserver' in window)) {
+          items.forEach((item) => item.setAttribute('data-visible', 'true'));
+          return;
+        }
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.setAttribute('data-visible', 'true');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+        items.forEach((item) => observer.observe(item));
+      };
+
+      const setupNavigation = () => {
+        document.querySelectorAll('.mobile-nav a').forEach((link) => {
+          link.addEventListener('click', () => {
+            const details = link.closest('details');
+            if (details) details.removeAttribute('open');
+          });
+        });
+      };
+
+      const setup = () => {
+        reveal();
+        setupNavigation();
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setup, { once: true });
+      } else {
+        setup();
+      }
+    </script>
+  </body>
+</html>

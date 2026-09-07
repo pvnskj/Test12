@@ -1,0 +1,22 @@
+/* Progressive enhancement: content is readable even when JavaScript is unavailable. */
+[data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal][data-visible='true'] {
+    animation: reveal-in 560ms cubic-bezier(.2,.75,.25,1) both;
+  }
+
+  @keyframes reveal-in {
+    from {
+      opacity: .45;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

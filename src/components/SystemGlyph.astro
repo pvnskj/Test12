@@ -1,0 +1,192 @@
+---
+interface Props {
+  variant:
+    | 'catalog'
+    | 'network'
+    | 'inspection'
+    | 'ledger'
+    | 'inventory'
+    | 'portfolio'
+    | 'forecast'
+    | 'payments'
+    | 'fulfillment';
+  label?: string;
+  compact?: boolean;
+}
+
+const { variant, label, compact = false } = Astro.props;
+---
+
+<div class:list={['system-glyph', compact && 'system-glyph--compact']} aria-hidden="true">
+  {
+    variant === 'catalog' && (
+      <svg viewBox="0 0 280 200" role="presentation">
+        <g class="glass-shape">
+          <path d="M57 144 140 96l83 48-83 48z" />
+          <path d="M57 108 140 60l83 48-83 48z" />
+          <path d="M57 72 140 24l83 48-83 48z" />
+        </g>
+        <g class="signal-lines">
+          <path d="M140 24v168" />
+          <path d="M57 72v72" />
+          <path d="M223 72v72" />
+        </g>
+        <circle cx="140" cy="24" r="5" class="signal-dot" />
+        <circle cx="57" cy="108" r="5" class="signal-dot" />
+        <circle cx="223" cy="108" r="5" class="signal-dot" />
+      </svg>
+    )
+  }
+
+  {
+    variant === 'network' && (
+      <svg viewBox="0 0 280 200" role="presentation">
+        <g class="signal-lines">
+          <path d="M49 126 104 70l66 22 61-50" />
+          <path d="m104 70 10 77 56-55 44 67" />
+          <path d="m49 126 65 21 100 12" />
+        </g>
+        <g class="node-cubes">
+          <rect x="28" y="106" width="42" height="42" rx="9" />
+          <rect x="84" y="49" width="42" height="42" rx="9" />
+          <rect x="149" y="72" width="42" height="42" rx="9" />
+          <rect x="210" y="22" width="42" height="42" rx="9" />
+          <rect x="93" y="126" width="42" height="42" rx="9" />
+          <rect x="193" y="138" width="42" height="42" rx="9" />
+        </g>
+        <g class="signal-dots">
+          <circle cx="49" cy="127" r="5" />
+          <circle cx="105" cy="70" r="5" />
+          <circle cx="170" cy="93" r="5" />
+          <circle cx="231" cy="43" r="5" />
+          <circle cx="114" cy="147" r="5" />
+          <circle cx="214" cy="159" r="5" />
+        </g>
+      </svg>
+    )
+  }
+
+  {
+    variant === 'inspection' && (
+      <svg viewBox="0 0 280 200" role="presentation">
+        <g class="glass-shape">
+          <path d="M69 142 140 102l71 40-71 40z" />
+          <path d="M69 106 140 66l71 40-71 40z" />
+          <path d="M69 70 140 30l71 40-71 40z" />
+        </g>
+        <path class="signal-lines" d="m115 100 18 18 39-46" />
+        <circle cx="140" cy="106" r="43" class="soft-ring" />
+      </svg>
+    )
+  }
+
+  {
+    variant === 'ledger' && (
+      <svg viewBox="0 0 280 200" role="presentation">
+        <g class="ledger-stack">
+          <rect x="48" y="122" width="87" height="52" rx="12" />
+          <rect x="75" y="94" width="87" height="52" rx="12" />
+          <rect x="102" y="66" width="87" height="52" rx="12" />
+        </g>
+        <rect x="174" y="34" width="62" height="92" rx="13" class="glass-sheet" />
+        <g class="signal-lines">
+          <path d="M190 57h31M190 73h23M190 89h28" />
+          <path d="M145 135 174 105" />
+        </g>
+        <circle cx="145" cy="135" r="5" class="signal-dot" />
+      </svg>
+    )
+  }
+
+  {
+    variant === 'inventory' && (
+      <svg viewBox="0 0 280 200" role="presentation">
+        <g class="node-cubes">
+          <rect x="42" y="72" width="56" height="56" rx="12" />
+          <rect x="112" y="37" width="56" height="56" rx="12" />
+          <rect x="182" y="72" width="56" height="56" rx="12" />
+          <rect x="112" y="107" width="56" height="56" rx="12" />
+        </g>
+        <g class="signal-lines">
+          <path d="m98 100 14-21M168 65l14 21M140 93v14M98 100h84" />
+        </g>
+        <circle cx="140" cy="100" r="17" class="soft-ring" />
+      </svg>
+    )
+  }
+
+  {
+    variant === 'portfolio' && (
+      <svg viewBox="0 0 280 200" role="presentation">
+        <circle cx="140" cy="100" r="66" class="soft-ring" />
+        <circle cx="140" cy="100" r="39" class="soft-ring" />
+        <g class="signal-lines">
+          <path d="M140 34v27M140 139v27M74 100h27M179 100h27" />
+          <path d="m94 54 19 19M167 127l19 19M186 54l-19 19M113 127l-19 19" />
+        </g>
+        <g class="signal-dots">
+          <circle cx="140" cy="34" r="6" />
+          <circle cx="140" cy="166" r="6" />
+          <circle cx="74" cy="100" r="6" />
+          <circle cx="206" cy="100" r="6" />
+          <circle cx="94" cy="54" r="6" />
+          <circle cx="186" cy="54" r="6" />
+          <circle cx="94" cy="146" r="6" />
+          <circle cx="186" cy="146" r="6" />
+        </g>
+      </svg>
+    )
+  }
+
+  {
+    variant === 'forecast' && (
+      <svg viewBox="0 0 280 200" role="presentation">
+        <rect x="42" y="35" width="196" height="130" rx="16" class="glass-sheet" />
+        <g class="signal-lines">
+          <path d="M67 139h148M67 139V60" />
+          <path d="m76 124 34-26 29 8 36-43 32 16" class="signal-line-strong" />
+          <path d="m76 132 34-15 29 6 36-27 32-5" class="signal-line-faint" />
+        </g>
+        <g class="signal-dots">
+          <circle cx="110" cy="98" r="5" />
+          <circle cx="175" cy="63" r="5" />
+          <circle cx="207" cy="79" r="5" />
+        </g>
+      </svg>
+    )
+  }
+
+  {
+    variant === 'payments' && (
+      <svg viewBox="0 0 280 200" role="presentation">
+        <circle cx="85" cy="100" r="44" class="soft-ring" />
+        <circle cx="195" cy="100" r="44" class="soft-ring" />
+        <path class="signal-lines signal-line-strong" d="M112 82h56l-12-12m12 12-12 12" />
+        <path class="signal-lines" d="M168 118h-56l12 12m-12-12 12-12" />
+        <circle cx="85" cy="100" r="11" class="signal-dot" />
+        <circle cx="195" cy="100" r="11" class="signal-dot" />
+      </svg>
+    )
+  }
+
+  {
+    variant === 'fulfillment' && (
+      <svg viewBox="0 0 280 200" role="presentation">
+        <g class="signal-lines">
+          <path d="M44 100h45M111 100h45M178 100h58" />
+          <path d="m82 93 7 7-7 7M149 93l7 7-7 7M229 93l7 7-7 7" />
+        </g>
+        <g class="node-cubes">
+          <rect x="24" y="80" width="40" height="40" rx="9" />
+          <rect x="91" y="80" width="40" height="40" rx="9" />
+          <rect x="158" y="80" width="40" height="40" rx="9" />
+          <rect x="218" y="80" width="40" height="40" rx="9" />
+        </g>
+        <path class="signal-lines" d="M111 80V54h67v26" />
+        <circle cx="144" cy="54" r="5" class="signal-dot" />
+      </svg>
+    )
+  }
+
+  {label && <span class="sr-only">{label}</span>}
+</div>

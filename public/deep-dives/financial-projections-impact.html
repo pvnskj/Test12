@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Financial Projections Webservice – Impact</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 0.75rem; margin-top: 0.6rem; }
+  </style>
+</head>
+<body>
+  <div class="nav-shell">
+    <nav class="top-nav">
+      <div class="brand">
+        <div class="orb"></div>
+        <h1>Systems & Lifecycle Frameworks</h1>
+      </div>
+      <div class="nav-links">
+        <a class="btn ghost" href="index.html">Home</a>
+        <a class="btn primary" href="financial-projections-whitepaper.html">Whitepaper</a>
+      </div>
+    </nav>
+  </div>
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-left">
+        <div class="pill">Impact deck</div>
+        <h1>Projections webservice <span>as a reliability anchor</span></h1>
+        <p>Communicates how SLO-backed forecasts reduce surprise variances and keep decision makers aligned.</p>
+        <div class="tags">
+          <div class="tag">Variance alerts</div>
+          <div class="tag">Scenario confidence</div>
+          <div class="tag">Data quality</div>
+        </div>
+        <div class="cta-row">
+          <a class="btn primary" href="financial-projections-whitepaper.html">Read whitepaper</a>
+          <a class="btn ghost" href="index.html#impact">Impact reel</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <canvas class="scene" aria-hidden="true"></canvas>
+        <div class="parallax"><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div></div>
+        <div class="hero-legend">
+          <div class="legend-item">Sense <span>Data quality gates</span></div>
+          <div class="legend-item">Decide <span>Scenario scorecards</span></div>
+          <div class="legend-item">Act <span>Alerts + playbooks</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-title">Impact signals</div>
+    <div class="grid">
+      <div class="card">
+        <div class="stat">-15%</div>
+        <h3>Forecast variance</h3>
+        <p>Automated reconciliation and drift alerts cut the delta between planned and actuals.</p>
+      </div>
+      <div class="card">
+        <div class="stat">+25%</div>
+        <h3>Scenario coverage</h3>
+        <p>Reusable playbooks run more what-if tests before executive reviews.</p>
+      </div>
+      <div class="card">
+        <div class="stat">Real time</div>
+        <h3>Delta notifications</h3>
+        <p>Slack/Teams signals flag driver swings with context for finance partners.</p>
+      </div>
+    </div>
+
+    <div class="section-title">SLO ladder</div>
+    <div class="metrics">
+      <div class="card"><strong>Data freshness</strong><p>Feeds monitored with freshness, volume, and schema stability.</p></div>
+      <div class="card"><strong>Forecast quality</strong><p>MAPE, WAPE, and directional accuracy tracked per scenario.</p></div>
+      <div class="card"><strong>Actionability</strong><p>Escalations include predefined rollbacks and owner assignments.</p></div>
+    </div>
+  </main>
+</body>
+</html>
+
