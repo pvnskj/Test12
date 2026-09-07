@@ -1,26 +1,47 @@
 # Venkata Parimi — Systems Portfolio
 
-This branch contains the second-generation portfolio redesign for Venkata Parimi. It treats the existing `Test12` repository as the canonical source and preserves its project artifacts while replacing the dark Three.js landing experience with a static-first, white editorial glass interface built around systems storytelling.
+A static-first Astro portfolio for Venkata Parimi, focused on senior Technical Product Ownership across enterprise systems, workflow platforms, data integrity, rules-driven products, and measurable operating value.
 
 ## Design direction
 
 - One type family throughout the product: Inter.
 - White/off-white editorial canvas with restrained blue information accents.
-- Glass surfaces are used for hierarchy, not as decoration.
-- System diagrams and infographics are built primarily with semantic HTML, CSS, and SVG.
-- Motion is progressive enhancement and respects `prefers-reduced-motion`.
+- Glass surfaces are used for hierarchy and information layering rather than decoration.
+- Product infographics and system models are built primarily with semantic HTML, CSS, and SVG.
+- Motion explains state and relationships and respects `prefers-reduced-motion`.
 - The core site does not depend on Three.js.
 
-## Projects retained
+## Public portfolio model
 
-All nine project families currently present in `Test12` remain accessible: Asset Catalog, RFDS, Inspection, GL Coding, Inventory, Asset & Portfolio Management, Financial Projections, Peer-to-Peer Transactions, and Order Fulfillment. Existing impact pages and whitepapers are preserved under `public/deep-dives/` as source artifacts.
+The public portfolio currently presents seven representative initiatives from a broader body of work:
 
-Two source-quality guardrails are intentionally visible in the redesign:
+- Asset Catalog
+- Inventory & Asset Lifecycle
+- RFDS Automation
+- Inspection & Predictive Maintenance
+- Dynamic GL Coding
+- Order & Fulfillment Management
+- Financial Projection Platform
 
-1. The Asset & Portfolio Management whitepaper in the current repository contains Financial Projections content, so it is archived for review but not promoted as supporting evidence.
-2. The Order Fulfillment impact page explicitly calls itself a placeholder deck, so its quantitative impact claims are withheld from the redesigned case study pending validation.
+The first five are the primary representative stories. They are intentionally presented as examples of different classes of Product Ownership rather than as a count of all work completed.
 
-The current repository also contains placeholder contact links (`me@example.com` and `#` for LinkedIn). The redesign does not publish them. GitHub is the only contact destination shown until real contact details are confirmed.
+Peer-to-Peer Transactions and Asset & Portfolio Management are not exposed as public portfolio routes. Their historical repository material remains in Git history/source artifacts where applicable.
+
+## Interactive project experience
+
+Project stories use a compact workspace rather than long-form case-study pages:
+
+- Persistent desktop project rail and compact mobile project switcher.
+- Four progressive story views: Overview, Product model, Decisions, and Value.
+- One primary infographic per initiative.
+- Deeper Product Backlog ordering, dependencies, uncertainty, and complexity are progressively disclosed.
+- Astro client-side view transitions make project-to-project navigation feel continuous.
+
+## Content integrity
+
+- The Asset & Portfolio Management whitepaper in the source repository contains Financial Projections content, so it is not promoted as supporting evidence.
+- The Order Fulfillment impact page explicitly labels itself as placeholder material, so quantitative impact claims are withheld until validated.
+- Placeholder contact values (`me@example.com` and `#` for LinkedIn) are not published. GitHub remains the verified contact destination until real details are confirmed.
 
 ## Stack
 
@@ -53,4 +74,4 @@ npm run test:e2e
 
 ## Deployment
 
-Production deployment is deliberately disabled in this redesign branch. The previous automatic Jekyll Pages workflow has been replaced with a deployment guard. No production deployment should be added or run until explicitly approved.
+GitHub Pages deployment is enabled from `main` through the Astro Pages workflow. Production changes are merged only after the quality workflow passes and deployment is explicitly intended.
