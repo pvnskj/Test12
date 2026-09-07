@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import '../styles/portfolio-v3.css';
 
 interface Props {
   title?: string;
@@ -9,7 +10,7 @@ interface Props {
 
 const {
   title = 'Venkata Parimi | Senior Technical Product Owner',
-  description = 'Senior Technical Product Owner focused on distributed systems, event-driven architecture, scalable product systems, and measurable outcomes.',
+  description = 'Senior Technical Product Owner focused on enterprise systems, workflow platforms, data integrity, technical product decisions, and measurable value.',
   image,
 } = Astro.props;
 
@@ -61,6 +62,7 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
         </a>
 
         <nav class="desktop-nav" aria-label="Primary navigation">
+          <a href={`${base}#expertise`}>Expertise</a>
           <a href={`${base}#work`}>Work</a>
           <a href={`${base}#approach`}>Approach</a>
           <a href={`${base}#about`}>About</a>
@@ -72,6 +74,7 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
             <span></span><span></span><span></span>
           </summary>
           <nav aria-label="Mobile navigation">
+            <a href={`${base}#expertise`}>Expertise</a>
             <a href={`${base}#work`}>Work</a>
             <a href={`${base}#approach`}>Approach</a>
             <a href={`${base}#about`}>About</a>
@@ -95,10 +98,11 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
               <span>Senior Technical Product Owner</span>
             </span>
           </div>
-          <p class="footer-note">Complex systems, clear decisions, measurable evidence.</p>
+          <p class="footer-note">Complex product problems made understandable, buildable, and measurable.</p>
         </div>
         <div class="footer-links">
-          <a href={`${base}#work`}>Work</a>
+          <a href={`${base}#expertise`}>Expertise</a>
+          <a href={`${base}#work`}>Selected work</a>
           <a href={`${base}#approach`}>Approach</a>
           <a href="https://github.com/pvnskj" rel="me">GitHub</a>
         </div>
@@ -108,7 +112,7 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
         </div>
       </div>
       <div class="shell footer-bottom">
-        <span>Built as a static, accessible Astro portfolio.</span>
+        <span>Selected product initiatives from a broader body of work.</span>
         <span>© {new Date().getFullYear()} Venkata Parimi</span>
       </div>
     </footer>
