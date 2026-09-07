@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import GlCodingDashboard from '../../components/GlCodingDashboard.astro';
 import ProjectWorkspaceV5 from '../../components/ProjectWorkspaceV5.astro';
 import { projects, type Project } from '../../data/projects';
 
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const { project } = Astro.props;
+const isGlCodingPilot = project.slug === 'gl-coding';
 ---
 
 <BaseLayout
@@ -19,5 +21,5 @@ const { project } = Astro.props;
   description={`${project.question} ${project.productGoal}`}
   bareMain
 >
-  <ProjectWorkspaceV5 project={project} />
+  {isGlCodingPilot ? <GlCodingDashboard project={project} /> : <ProjectWorkspaceV5 project={project} />}
 </BaseLayout>
