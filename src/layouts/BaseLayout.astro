@@ -6,6 +6,7 @@ import '../styles/portfolio-v4.css';
 import '../styles/portfolio-v4-fix.css';
 import '../styles/portfolio-v5.css';
 import '../styles/portfolio-v5-mobile-fix.css';
+import '../styles/portfolio-v6.css';
 
 interface Props {
   title?: string;
@@ -38,10 +39,7 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href={`${base}reveal-fix.css`} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
@@ -54,7 +52,6 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
-
     <div class="ambient ambient-one" aria-hidden="true"></div>
     <div class="ambient ambient-two" aria-hidden="true"></div>
     <div class="ambient-grid" aria-hidden="true"></div>
@@ -63,107 +60,41 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
       <div class="shell header-inner glass-bar">
         <a class="brand" href={base} aria-label="Venkata Parimi home">
           <span class="brand-mark" aria-hidden="true">VP</span>
-          <span class="brand-copy">
-            <strong>Venkata Parimi</strong>
-            <span>Senior Technical Product Owner</span>
-          </span>
+          <span class="brand-copy"><strong>Venkata Parimi</strong><span>Senior Technical Product Owner</span></span>
         </a>
-
         <nav class="desktop-nav" aria-label="Primary navigation">
-          <a href={`${base}#expertise`}>Expertise</a>
-          <a href={`${base}#work`}>Work</a>
-          <a href={`${base}#approach`}>Approach</a>
-          <a href={`${base}#about`}>About</a>
-          <a href={`${base}#contact`}>Contact</a>
+          <a href={`${base}#expertise`}>Expertise</a><a href={`${base}#work`}>Work</a><a href={`${base}#approach`}>Approach</a><a href={`${base}#about`}>About</a><a href={`${base}#contact`}>Contact</a>
         </nav>
-
         <details class="mobile-nav">
-          <summary aria-label="Open navigation">
-            <span></span><span></span><span></span>
-          </summary>
-          <nav aria-label="Mobile navigation">
-            <a href={`${base}#expertise`}>Expertise</a>
-            <a href={`${base}#work`}>Work</a>
-            <a href={`${base}#approach`}>Approach</a>
-            <a href={`${base}#about`}>About</a>
-            <a href={`${base}#contact`}>Contact</a>
-          </nav>
+          <summary aria-label="Open navigation"><span></span><span></span><span></span></summary>
+          <nav aria-label="Mobile navigation"><a href={`${base}#expertise`}>Expertise</a><a href={`${base}#work`}>Work</a><a href={`${base}#approach`}>Approach</a><a href={`${base}#about`}>About</a><a href={`${base}#contact`}>Contact</a></nav>
         </details>
       </div>
     </header>
 
-    {bareMain ? (
-      <div id="main-content"><slot /></div>
-    ) : (
-      <main id="main-content"><slot /></main>
-    )}
+    {bareMain ? <div id="main-content"><slot /></div> : <main id="main-content"><slot /></main>}
 
     <footer class="site-footer">
       <div class="shell footer-grid">
         <div>
-          <div class="brand footer-brand">
-            <span class="brand-mark" aria-hidden="true">VP</span>
-            <span class="brand-copy">
-              <strong>Venkata Parimi</strong>
-              <span>Senior Technical Product Owner</span>
-            </span>
-          </div>
+          <div class="brand footer-brand"><span class="brand-mark" aria-hidden="true">VP</span><span class="brand-copy"><strong>Venkata Parimi</strong><span>Senior Technical Product Owner</span></span></div>
           <p class="footer-note">Complex product problems made understandable, buildable, and measurable.</p>
         </div>
-        <div class="footer-links">
-          <a href={`${base}#expertise`}>Expertise</a>
-          <a href={`${base}#work`}>Selected work</a>
-          <a href={`${base}#approach`}>Approach</a>
-          <a href="https://github.com/pvnskj" rel="me">GitHub</a>
-        </div>
-        <div class="footer-status">
-          <span class="eyebrow">Contact</span>
-          <p>Email and LinkedIn are intentionally withheld until the source details are confirmed.</p>
-        </div>
+        <div class="footer-links"><a href={`${base}#expertise`}>Expertise</a><a href={`${base}#work`}>Selected work</a><a href={`${base}#approach`}>Approach</a><a href="https://github.com/pvnskj" rel="me">GitHub</a></div>
+        <div class="footer-status"><span class="eyebrow">Contact</span><p>Email and LinkedIn are intentionally withheld until the source details are confirmed.</p></div>
       </div>
-      <div class="shell footer-bottom">
-        <span>Selected product initiatives from a broader body of work.</span>
-        <span>© {new Date().getFullYear()} Venkata Parimi</span>
-      </div>
+      <div class="shell footer-bottom"><span>Selected product initiatives from a broader body of work.</span><span>© {new Date().getFullYear()} Venkata Parimi</span></div>
     </footer>
 
     <script is:inline>
       const reveal = () => {
         const items = document.querySelectorAll('[data-reveal]');
-        if (!('IntersectionObserver' in window)) {
-          items.forEach((item) => item.setAttribute('data-visible', 'true'));
-          return;
-        }
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.setAttribute('data-visible', 'true');
-                observer.unobserve(entry.target);
-              }
-            });
-          },
-          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
-        );
+        if (!('IntersectionObserver' in window)) { items.forEach((item) => item.setAttribute('data-visible', 'true')); return; }
+        const observer = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.setAttribute('data-visible', 'true'); observer.unobserve(entry.target); } }), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
         items.forEach((item) => observer.observe(item));
       };
-
-      const setupNavigation = () => {
-        document.querySelectorAll('.mobile-nav a').forEach((link) => {
-          if (link.dataset.navBound === 'true') return;
-          link.dataset.navBound = 'true';
-          link.addEventListener('click', () => {
-            const details = link.closest('details');
-            if (details) details.removeAttribute('open');
-          });
-        });
-      };
-
-      const setup = () => {
-        reveal();
-        setupNavigation();
-      };
-
+      const setupNavigation = () => document.querySelectorAll('.mobile-nav a').forEach((link) => { if (link.dataset.navBound === 'true') return; link.dataset.navBound = 'true'; link.addEventListener('click', () => link.closest('details')?.removeAttribute('open')); });
+      const setup = () => { reveal(); setupNavigation(); };
       document.addEventListener('astro:page-load', setup);
       if (document.readyState !== 'loading') setup();
     </script>
