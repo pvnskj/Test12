@@ -1,0 +1,238 @@
+---
+import { projects, type Project } from '../data/projects';
+
+interface Props { project: Project; }
+
+type Brief = {
+  tagline: string;
+  goal: string;
+  decisions: string[];
+  sequence: string[];
+  proof: { value: string; label: string }[];
+  depth: string[];
+};
+
+const { project } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const currentIndex = projects.findIndex((item) => item.slug === project.slug);
+const previousProject = projects[(currentIndex - 1 + projects.length) % projects.length]!;
+const nextProject = projects[(currentIndex + 1) % projects.length]!;
+
+const briefs: Record<string, Brief> = {
+  'asset-catalog': {
+    tagline: 'Govern asset creation from request to trusted enterprise data.',
+    goal: 'Stop incomplete or conflicting asset data before it propagates downstream.',
+    decisions: ['Lifecycle over form', 'Configurable governance', 'Reconcile before publish'],
+    sequence: ['Identity', 'Governance', 'Integration', 'Reconciliation'],
+    proof: [
+      { value: '312%', label: 'Projected 3-year ROI' },
+      { value: '$307K', label: 'Projected net benefit' },
+      { value: '$452K', label: 'Projected value' },
+    ],
+    depth: ['Dynamic taxonomy and required attributes by asset type', 'Context-aware approvals and separation of duties', 'MDM → ERP orchestration with explicit hold and mismatch states'],
+  },
+  inventory: {
+    tagline: 'Create one auditable asset lifecycle across physical and financial systems.',
+    goal: 'Know where an asset is, what state it is in, and how it got there.',
+    decisions: ['Authority by lifecycle state', 'Serialization as identity', 'Physical truth at receipt'],
+    sequence: ['Receive', 'Identify', 'Custody', 'Finance', 'Recover'],
+    proof: [
+      { value: '285%', label: 'Projected 3-year ROI' },
+      { value: '$630K', label: 'Projected net value' },
+      { value: '$850K', label: 'Capital released' },
+    ],
+    depth: ['ERP, WMS, Fixed Assets, planning, and receiving retain specialized ownership', 'Parent-child/BOM validation supports controlled kitting', 'Recovered assets preserve financial history while re-entering operational tracking'],
+  },
+  rfds: {
+    tagline: 'Turn engineering knowledge in spreadsheets into repeatable product behavior.',
+    goal: 'Move faster from approved RF planning data to a trusted field-ready design.',
+    decisions: ['Trust source data first', 'Encode repeatable rules', 'Escalate true exceptions'],
+    sequence: ['Sources', 'Site model', 'Rules', 'Validation', 'Output'],
+    proof: [
+      { value: '72%', label: 'Faster approvals' },
+      { value: 'Live', label: 'Source lineage' },
+      { value: 'Human', label: 'Exception review' },
+    ],
+    depth: ['Planning and procurement data are normalized before document generation', 'Sector, frequency, structure, placement, and cable rules become explicit', 'Specialist review remains where engineering judgment protects quality'],
+  },
+  inspection: {
+    tagline: 'Shift maintenance from calendar activity to evidence-driven intervention.',
+    goal: 'Improve reliability while reducing unnecessary field work.',
+    decisions: ['Maturity before prediction', 'Prediction ≠ orchestration', 'Optimize work, not alerts'],
+    sequence: ['Planned', 'Proactive', 'Predictive', 'Field feedback'],
+    proof: [
+      { value: '345%', label: 'Projected 3-year ROI' },
+      { value: '$620K', label: 'Projected net value' },
+      { value: '$800K', label: 'Risk avoidance' },
+    ],
+    depth: ['Asset requirements, usage/faults, and lifecycle context drive different decisions', 'Predictive intelligence can remain specialized while workflow stays product-owned', 'Work-order consolidation reduces redundant field visits'],
+  },
+  'gl-coding': {
+    tagline: 'Separate changing accounting policy from application code.',
+    goal: 'Generate accurate, auditable financial coding across changing project types.',
+    decisions: ['Policy outside code', 'Review before posting', 'Design for the next project type'],
+    sequence: ['Components', 'Policy', 'Controls', 'Posting'],
+    proof: [
+      { value: '40%', label: 'Faster month-end close' },
+      { value: 'Traceable', label: 'Mapping evidence' },
+      { value: 'Configurable', label: 'Policy changes' },
+    ],
+    depth: ['CapEx / OpEx treatment varies by project context', 'Metadata-driven lookup rules replace monolithic hard-coded logic', 'Simulation, review, reason codes, and lineage preserve financial control'],
+  },
+  'order-fulfillment': {
+    tagline: 'Coordinate one customer promise across specialized enterprise systems.',
+    goal: 'Make order state coherent across planning, warehouse, transport, and finance.',
+    decisions: ['Hub-and-spoke orchestration', 'Promise as state', 'Exceptions are first-class'],
+    sequence: ['Order', 'Inventory', 'Warehouse', 'Transport', 'Finance'],
+    proof: [
+      { value: '1', label: 'Unified order lifecycle' },
+      { value: '4+', label: 'Systems coordinated' },
+      { value: 'Held', label: 'Unvalidated metrics' },
+    ],
+    depth: ['The order platform orchestrates without replacing WMS, TMS, ERP, or planning', 'Backlog and exception states are modeled explicitly', 'Quantitative impact remains withheld because the current impact artifact is labeled placeholder'],
+  },
+  'financial-projections': {
+    tagline: 'Treat model quality, scale, security, and cloud cost as product constraints.',
+    goal: 'Deliver dependable scenarios without coupling every model change to the whole platform.',
+    decisions: ['Bound services by change', 'Secure the API edge', 'Measure cost with value'],
+    sequence: ['Data', 'Scenario', 'Projection', 'Recommendation', 'Evidence'],
+    proof: [
+      { value: '-15%', label: 'Forecast variance' },
+      { value: '+25%', label: 'Scenario coverage' },
+      { value: 'Live', label: 'Delta notifications' },
+    ],
+    depth: ['API gateway centralizes authentication and rate limiting', 'Projection and recommendation capabilities can evolve independently', 'FinOps signals keep workload scale connected to product economics'],
+  },
+};
+
+const brief = briefs[project.slug]!;
+---
+
+<main class="v6-project shell" data-v6-project={project.slug}>
+  <div class="v6-projectbar glass-bar">
+    <a href={`${base}#work`} class="v6-project-home">← Work</a>
+    <details class="v6-project-switcher">
+      <summary><span>{project.index}</span><strong>{project.title}</strong><i aria-hidden="true">⌄</i></summary>
+      <nav aria-label="Switch project">
+        {projects.map((item) => (
+          <a href={`${base}work/${item.slug}/`} aria-current={item.slug === project.slug ? 'page' : undefined}>
+            <span>{item.index}</span><strong>{item.title}</strong>
+          </a>
+        ))}
+      </nav>
+    </details>
+    <div class="v6-project-arrows" aria-label="Project navigation">
+      <a href={`${base}work/${previousProject.slug}/`} aria-label={`Previous project: ${previousProject.title}`}>←</a>
+      <a href={`${base}work/${nextProject.slug}/`} aria-label={`Next project: ${nextProject.title}`}>→</a>
+    </div>
+  </div>
+
+  <header class="v6-project-intro">
+    <div>
+      <p class="eyebrow">{project.eyebrow}</p>
+      <h1>{project.title}</h1>
+      <p>{brief.tagline}</p>
+    </div>
+    <aside class="v6-goal glass-card">
+      <span>Product Goal</span>
+      <strong>{brief.goal}</strong>
+    </aside>
+  </header>
+
+  <section class="v6-dashboard-grid" aria-label={`${project.title} project story`}>
+    <article class="v6-visual glass-card">
+      <div class="v6-panel-head"><span>Product model</span><small>one scan</small></div>
+
+      {project.slug === 'asset-catalog' && (
+        <div class="v6-flow-map v6-asset" role="img" aria-label="Asset request flows through validation, approval, MDM, ERP, and reconciliation before publication">
+          <div class="v6-input-stack"><span>Request</span><span>Taxonomy</span><span>Validation</span></div>
+          <i>→</i><div class="v6-node is-accent"><small>GOVERN</small><strong>Approval policy</strong></div>
+          <i>→</i><div class="v6-node"><strong>MDM</strong><small>canonical identity</small></div>
+          <i>→</i><div class="v6-node"><strong>ERP</strong><small>enterprise state</small></div>
+          <i>→</i><div class="v6-node is-result"><strong>Reconcile</strong><small>publish / hold</small></div>
+        </div>
+      )}
+
+      {project.slug === 'inventory' && (
+        <div class="v6-orbit-map" role="img" aria-label="Serialized asset at the center of ERP, WMS, Fixed Assets, Planning, and Receiving">
+          <div class="v6-orbit-core"><small>PERSISTENT ID</small><strong>Serialized asset</strong></div>
+          <div class="v6-orbit-node n1"><strong>ERP</strong><small>procurement</small></div>
+          <div class="v6-orbit-node n2"><strong>WMS</strong><small>custody</small></div>
+          <div class="v6-orbit-node n3"><strong>Fixed Assets</strong><small>capitalization</small></div>
+          <div class="v6-orbit-node n4"><strong>Planning</strong><small>demand</small></div>
+          <div class="v6-orbit-node n5"><strong>Receiving</strong><small>physical truth</small></div>
+          <div class="v6-orbit-track"><span>receive</span><i>→</i><span>move</span><i>→</i><span>deploy</span><i>→</i><span>recover</span></div>
+        </div>
+      )}
+
+      {project.slug === 'rfds' && (
+        <div class="v6-rfds-map" role="img" aria-label="RF planning and procurement data become a site model, rules, validation, and RFDS output">
+          <div class="v6-source-pair"><span>RF planning</span><span>Procurement</span></div><i>↓</i>
+          <div class="v6-node is-wide"><strong>Normalized site model</strong><small>site · sector · frequency · equipment</small></div><i>↓</i>
+          <div class="v6-rule-cloud"><strong>Rules</strong><span>sector</span><span>placement</span><span>frequency</span><span>cable</span></div><i>↓</i>
+          <div class="v6-branch"><div><strong>Known</strong><small>automate</small></div><div><strong>Exception</strong><small>specialist</small></div></div><i>↓</i>
+          <div class="v6-node is-result is-wide"><strong>RFDS + diagrams</strong><small>field-ready · traceable</small></div>
+        </div>
+      )}
+
+      {project.slug === 'inspection' && (
+        <div class="v6-inspection-map" role="img" aria-label="Maintenance progresses from planned to proactive to predictive and feeds field evidence back into decisions">
+          <div class="v6-maturity"><div><span>01</span><strong>Planned</strong></div><i>→</i><div><span>02</span><strong>Proactive</strong></div><i>→</i><div class="is-accent"><span>03</span><strong>Predictive</strong></div></div>
+          <div class="v6-signal-row"><span>asset requirements</span><span>usage + faults</span><span>lifecycle</span></div>
+          <i>↓</i><div class="v6-node is-result is-wide"><strong>Intervention decision</strong><small>risk · urgency · work window</small></div>
+          <div class="v6-feedback"><span>work order</span><i>→</i><span>field result</span><i>→</i><span>evidence</span><i>↺</i></div>
+        </div>
+      )}
+
+      {project.slug === 'gl-coding' && (
+        <div class="v6-gl-map" role="img" aria-label="Business context flows through configurable accounting policy, review, validation, posting, and evidence">
+          <div class="v6-signal-row"><span>project type</span><span>entity</span><span>activity</span><span>spend</span></div><i>↓</i>
+          <div class="v6-node is-accent is-wide"><strong>Configurable policy</strong><small>lookup tables · mappings · exceptions</small></div><i>↓</i>
+          <div class="v6-control-track"><span>simulate</span><i>→</i><span>review</span><i>→</i><span>validate</span></div><i>↓</i>
+          <div class="v6-branch"><div><strong>GL code</strong><small>consistent treatment</small></div><div><strong>Evidence</strong><small>reason · approver · lineage</small></div></div>
+        </div>
+      )}
+
+      {project.slug === 'order-fulfillment' && (
+        <div class="v6-order-map" role="img" aria-label="Order control tower coordinates planning, WMS, TMS, and ERP into one customer promise">
+          <div class="v6-order-core"><small>SYSTEM OF ENGAGEMENT</small><strong>Order lifecycle</strong><span>one customer promise</span></div>
+          <div class="v6-order-node o1"><strong>Planning</strong><small>demand</small></div>
+          <div class="v6-order-node o2"><strong>WMS</strong><small>pick / ship</small></div>
+          <div class="v6-order-node o3"><strong>TMS</strong><small>transit</small></div>
+          <div class="v6-order-node o4"><strong>ERP</strong><small>financial</small></div>
+          <div class="v6-order-status"><span>available</span><span>backlog</span><span>exception</span><span>delivered</span></div>
+        </div>
+      )}
+
+      {project.slug === 'financial-projections' && (
+        <div class="v6-forecast-map" role="img" aria-label="API gateway connects data aggregation, projection, scenario, recommendation, security, and FinOps concerns">
+          <div class="v6-forecast-core"><small>API EDGE</small><strong>Gateway</strong><span>auth · rate limit</span></div>
+          <div class="v6-forecast-node f1"><strong>Data</strong><small>aggregation</small></div>
+          <div class="v6-forecast-node f2"><strong>Projection</strong><small>models</small></div>
+          <div class="v6-forecast-node f3"><strong>Scenario</strong><small>variance</small></div>
+          <div class="v6-forecast-node f4"><strong>Recommend</strong><small>decision</small></div>
+          <div class="v6-forecast-ring"><span>security</span><span>scale</span><span>FinOps</span></div>
+        </div>
+      )}
+    </article>
+
+    <aside class="v6-decision-panel glass-card">
+      <div class="v6-panel-head"><span>Product decisions</span><small>why this worked</small></div>
+      <div class="v6-decision-list">
+        {brief.decisions.map((decision, index) => <div><span>{String(index + 1).padStart(2, '0')}</span><strong>{decision}</strong></div>)}
+      </div>
+      <div class="v6-sequence">
+        <small>Backlog / delivery sequence</small>
+        <div>{brief.sequence.map((step, index) => <><span>{step}</span>{index < brief.sequence.length - 1 && <i>→</i>}</>)}</div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="v6-proof-row" aria-label="Business value and evidence">
+    {brief.proof.map((item) => <article class="glass-card"><strong>{item.value}</strong><span>{item.label}</span></article>)}
+    <details class="v6-depth glass-card">
+      <summary><span>Deeper reasoning</span><strong>+</strong></summary>
+      <ul>{brief.depth.map((item) => <li>{item}</li>)}</ul>
+    </details>
+  </section>
+</main>
