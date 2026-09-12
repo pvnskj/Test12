@@ -24,7 +24,7 @@ test('homepage is visual, selective, and not text-heavy', async ({ page }, testI
 
   const text = await page.locator('.v6-home').innerText();
   expect(text.length).toBeLessThan(5000);
-  await page.screenshot({ path: testInfo.outputPath('homepage-v6.png'), fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('homepage-v7.png'), fullPage: true });
 });
 
 test('every selected initiative uses the compact dashboard with a distinct infographic', async ({ page }) => {
@@ -44,18 +44,50 @@ test('every selected initiative uses the compact dashboard with a distinct infog
   }
 });
 
+test('motion system stages the visual story and evidence without hiding content', async ({ page }) => {
+  await page.goto('./work/asset-catalog/');
+  await expect(page.locator('body')).toHaveClass(/motion-ready/);
+
+  const visual = page.locator('.v6-visual');
+  await expect(visual).toHaveAttribute('data-motion-scene', '');
+  await expect(visual).toHaveClass(/motion-visible/);
+  expect(await visual.locator('[data-motion-part]').count()).toBeGreaterThan(6);
+
+  const firstPart = visual.locator('[data-motion-part]').first();
+  const animationName = await firstPart.evaluate((element) => getComputedStyle(element).animationName);
+  expect(animationName).toContain('v7PartIn');
+
+  const firstMetric = page.locator('.v6-proof-row article strong').first();
+  await firstMetric.scrollIntoViewIfNeeded();
+  await expect(firstMetric).toHaveAttribute('data-counted', 'true');
+  await expect(firstMetric).toHaveText('312%', { timeout: 2000 });
+});
+
+test('glass depth is enabled only when the device exposes a fine hover pointer', async ({ page }) => {
+  await page.goto('./');
+  const supportsFineHover = await page.evaluate(() => matchMedia('(hover:hover) and (pointer:fine)').matches);
+  if (supportsFineHover) {
+    await expect(page.locator('.v6-hero-board')).toHaveClass(/motion-tilt/);
+    await expect(page.locator('.v6-work-card').first()).toHaveClass(/motion-tilt/);
+  } else {
+    await expect(page.locator('.v6-hero-board')).not.toHaveClass(/motion-tilt/);
+    await expect(page.locator('.v6-work-card').first()).not.toHaveClass(/motion-tilt/);
+  }
+});
+
 test('project switcher moves directly between initiatives', async ({ page }) => {
   await page.goto('./work/asset-catalog/');
   await page.locator('.v6-project-switcher summary').click();
   await page.locator('.v6-project-switcher nav a', { hasText: 'RFDS Automation' }).click();
   await expect(page).toHaveURL(/\/work\/rfds\/$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('RFDS Automation');
+  await expect(page.locator('.v6-rfds-map')).toBeVisible();
 });
 
-test('mobile project dashboards use the full viewport without horizontal overflow', async ({ page }, testInfo) => {
+test('all mobile project dashboards use the full viewport without horizontal overflow', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
 
-  for (const project of [projects[0]!, projects[3]!, projects[4]!]) {
+  for (const project of projects) {
     await page.goto(project.path);
     const dims = await page.evaluate(() => ({
       viewport: window.innerWidth,
@@ -70,7 +102,7 @@ test('mobile project dashboards use the full viewport without horizontal overflo
   }
 
   await page.goto('./work/gl-coding/');
-  await page.screenshot({ path: testInfo.outputPath('gl-coding-mobile-v6.png'), fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('gl-coding-mobile-v7.png'), fullPage: true });
 });
 
 test('order fulfillment does not publish placeholder quantitative impact', async ({ page }) => {
@@ -97,11 +129,21 @@ test('homepage and every project pass automated accessibility scans', async ({ p
   }
 });
 
-test('reduced motion preserves the visual story', async ({ page }) => {
+test('reduced motion preserves the complete visual story without staged movement', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('./work/rfds/');
   await expect(page.locator('.v6-rfds-map')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('RFDS Automation');
+  await expect(page.locator('body')).toHaveClass(/motion-ready/);
+
+  const part = page.locator('.v6-visual [data-motion-part]').first();
+  await expect(part).toBeVisible();
+  const state = await part.evaluate((element) => ({
+    opacity: getComputedStyle(element).opacity,
+    duration: getComputedStyle(element).animationDuration,
+  }));
+  expect(state.opacity).toBe('1');
+  expect(['0s', '0.000001s', '1e-06s']).toContain(state.duration);
 });
 
 test('legacy source artifacts remain available without public deep-dive CTAs', async ({ page, request }) => {
