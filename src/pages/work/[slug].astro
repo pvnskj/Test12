@@ -1,19 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import GlCodingDashboard from '../../components/GlCodingDashboard.astro';
-import ProjectWorkspaceV5 from '../../components/ProjectWorkspaceV5.astro';
+import ProjectDashboardV6 from '../../components/ProjectDashboardV6.astro';
 import { projects, type Project } from '../../data/projects';
 
 export function getStaticPaths() {
   return projects.map((project) => ({ params: { slug: project.slug }, props: { project } }));
 }
 
-interface Props {
-  project: Project;
-}
-
+interface Props { project: Project; }
 const { project } = Astro.props;
-const isGlCodingPilot = project.slug === 'gl-coding';
 ---
 
 <BaseLayout
@@ -21,5 +16,5 @@ const isGlCodingPilot = project.slug === 'gl-coding';
   description={`${project.question} ${project.productGoal}`}
   bareMain
 >
-  {isGlCodingPilot ? <GlCodingDashboard project={project} /> : <ProjectWorkspaceV5 project={project} />}
+  <ProjectDashboardV6 project={project} />
 </BaseLayout>
