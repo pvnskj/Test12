@@ -1,180 +1,93 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-const expectedProjects = [
-  'Asset Catalog',
-  'Inventory & Asset Lifecycle',
-  'RFDS Automation',
-  'Inspection & Predictive Maintenance',
-  'Dynamic GL Coding',
-  'Order & Fulfillment Management',
-  'Financial Projection Platform',
+const projects = [
+  { path: './work/asset-catalog/', title: 'Asset Catalog', visual: '.v6-asset' },
+  { path: './work/inventory/', title: 'Inventory & Asset Lifecycle', visual: '.v6-orbit-map' },
+  { path: './work/rfds/', title: 'RFDS Automation', visual: '.v6-rfds-map' },
+  { path: './work/inspection/', title: 'Inspection & Predictive Maintenance', visual: '.v6-inspection-map' },
+  { path: './work/gl-coding/', title: 'Dynamic GL Coding', visual: '.v6-gl-map' },
+  { path: './work/order-fulfillment/', title: 'Order & Fulfillment Management', visual: '.v6-order-map' },
+  { path: './work/financial-projections/', title: 'Financial Projection Platform', visual: '.v6-forecast-map' },
 ];
 
-const flagshipStories = [
-  { path: './work/asset-catalog/', heading: /trust as a product state/i, visual: '.v5-asset-model' },
-  { path: './work/inventory/', heading: /did not force one source of truth/i, visual: '.v5-inventory-model' },
-  { path: './work/rfds/', heading: /engineering knowledge trapped in spreadsheets/i, visual: '.v5-rfds-model' },
-  { path: './work/inspection/', heading: /shifted the product goal from completing inspections/i, visual: '.v5-inspection-model' },
-];
-
-async function switchProject(page: Page, projectName: string) {
-  const isMobile = (page.viewportSize()?.width ?? 1280) <= 760;
-  if (isMobile) {
-    await page.locator('.v5-mobile-project-switcher summary').click();
-    await page.locator('.v5-mobile-project-switcher nav a', { hasText: projectName }).click();
-    return;
-  }
-  await page.locator('.v5-project-rail .v5-project-link', { hasText: projectName }).click();
-}
-
-test('homepage presents selected initiatives as evidence from a broader product portfolio', async ({ page }, testInfo) => {
+test('homepage is visual, selective, and not text-heavy', async ({ page }, testInfo) => {
   await page.goto('./');
   await expect(page).toHaveTitle(/Venkata Parimi/);
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('complex systems');
-  await expect(page.getByRole('heading', { name: /Representative work from a broader product portfolio/i })).toBeVisible();
-  await expect(page.getByText(/They are examples of how I operate—not a count of everything I have owned/i)).toBeVisible();
-  await expect(page.getByText(/Five flagship stories/i)).toHaveCount(0);
-  await expect(page.locator('.archive-row')).toHaveCount(expectedProjects.length);
-
-  for (const project of expectedProjects) {
-    await expect(page.locator('.archive-row', { hasText: project })).toBeVisible();
-  }
-
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Make complex products easy to understand.');
+  await expect(page.locator('.v6-control-map')).toBeVisible();
+  await expect(page.locator('.v6-expertise article')).toHaveCount(4);
+  await expect(page.locator('.v6-work-card')).toHaveCount(projects.length);
+  await expect(page.locator('.v6-approach-grid article')).toHaveCount(6);
   await expect(page.getByText('Peer-to-Peer Transactions')).toHaveCount(0);
   await expect(page.getByText('Asset & Portfolio Management')).toHaveCount(0);
-  await page.screenshot({ path: testInfo.outputPath('homepage-v5.png'), fullPage: true });
+
+  const text = await page.locator('.v6-home').innerText();
+  expect(text.length).toBeLessThan(5000);
+  await page.screenshot({ path: testInfo.outputPath('homepage-v6.png'), fullPage: true });
 });
 
-test('project workspace defaults to a concise overview and reveals deeper stages on demand', async ({ page }) => {
-  await page.goto('./work/asset-catalog/');
+test('every selected initiative uses the compact dashboard with a distinct infographic', async ({ page }) => {
+  for (const project of projects) {
+    await page.goto(project.path);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title);
+    await expect(page.locator('.v6-dashboard-grid')).toBeVisible();
+    await expect(page.locator(project.visual)).toBeVisible();
+    await expect(page.locator('.v6-decision-list > div')).toHaveCount(3);
+    await expect(page.locator('.v6-proof-row > article')).toHaveCount(3);
+    await expect(page.locator('.v6-depth')).not.toHaveAttribute('open', '');
+    await expect(page.locator('.v5-story-tabs')).toHaveCount(0);
+    await expect(page.locator('.glc-dashboard')).toHaveCount(0);
 
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('trust as a product state');
-  await expect(page.locator('.v5-project-rail .v5-project-link')).toHaveCount(expectedProjects.length);
-  await expect(page.locator('[data-story-panel="overview"]')).toBeVisible();
-  await expect(page.locator('[data-story-panel="model"]')).toBeHidden();
-  await expect(page.locator('.v5-asset-model')).toBeHidden();
-
-  await page.getByRole('tab', { name: /Product model/i }).click();
-  await expect(page.locator('[data-story-panel="model"]')).toBeVisible();
-  await expect(page.locator('.v5-asset-model')).toBeVisible();
-
-  await page.getByRole('tab', { name: /Decisions/i }).click();
-  await expect(page.getByRole('heading', { name: 'The decisions are the story.' })).toBeVisible();
-  await expect(page.getByText('Explore the deeper product reasoning')).toBeVisible();
-});
-
-test('the existing flagship initiatives keep their distinct story models', async ({ page }) => {
-  for (const story of flagshipStories) {
-    await page.goto(story.path);
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(story.heading);
-    await page.getByRole('tab', { name: /Product model/i }).click();
-    await expect(page.locator(story.visual)).toBeVisible();
+    const visibleText = await page.locator('.v6-project').innerText();
+    expect(visibleText.length, `${project.title} visible text budget`).toBeLessThan(2600);
   }
 });
 
-test('GL Coding uses the compact dashboard pilot instead of the long story workspace', async ({ page }, testInfo) => {
-  await page.goto('./work/gl-coding/');
-
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Configurable policy. Auditable decisions.');
-  await expect(page.locator('.glc-dashboard')).toBeVisible();
-  await expect(page.locator('.v5-story-tabs')).toHaveCount(0);
-  await expect(page.locator('.glc-kpis article')).toHaveCount(4);
-  await expect(page.locator('.glc-flow-node')).toHaveCount(4);
-  await expect(page.locator('.glc-decision-row')).toHaveCount(3);
-  await expect(page.getByText('40%', { exact: true }).first()).toBeVisible();
-  await expect(page.locator('.glc-flow-node.is-policy strong')).toHaveText('Configurable policy');
-  await expect(page.locator('.glc-kpis strong', { hasText: 'Traceable' })).toBeVisible();
-  await expect(page.locator('.glc-depth')).not.toHaveAttribute('open', '');
-
-  const visibleText = await page.locator('.glc-dashboard').innerText();
-  expect(visibleText.length).toBeLessThan(3200);
-  await page.screenshot({ path: testInfo.outputPath('gl-coding-dashboard-pilot.png'), fullPage: true });
-});
-
-test('GL Coding dashboard is compact and full-width on a 390px phone', async ({ page }, testInfo) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('./work/gl-coding/');
-
-  const dimensions = await page.evaluate(() => ({
-    viewport: window.innerWidth,
-    scrollWidth: document.documentElement.scrollWidth,
-    bodyWidth: document.body.getBoundingClientRect().width,
-    dashboardWidth: document.querySelector('.glc-dashboard')?.getBoundingClientRect().width ?? 0,
-  }));
-
-  expect(dimensions.viewport).toBe(390);
-  expect(dimensions.scrollWidth).toBeLessThanOrEqual(391);
-  expect(dimensions.bodyWidth).toBeGreaterThan(385);
-  expect(dimensions.dashboardWidth).toBeGreaterThan(360);
-  await expect(page.locator('.glc-flow-node').first()).toBeVisible();
-  await expect(page.locator('.glc-switcher')).toBeVisible();
-  await page.screenshot({ path: testInfo.outputPath('gl-coding-dashboard-mobile.png'), fullPage: true });
-});
-
-test('persistent project switcher moves between stories without returning to the homepage', async ({ page }, testInfo) => {
+test('project switcher moves directly between initiatives', async ({ page }) => {
   await page.goto('./work/asset-catalog/');
-  await switchProject(page, 'Inventory & Asset Lifecycle');
-  await expect(page).toHaveURL(/\/work\/inventory\/$/);
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('did not force one source of truth');
-
-  await switchProject(page, 'RFDS Automation');
+  await page.locator('.v6-project-switcher summary').click();
+  await page.locator('.v6-project-switcher nav a', { hasText: 'RFDS Automation' }).click();
   await expect(page).toHaveURL(/\/work\/rfds\/$/);
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('engineering knowledge trapped in spreadsheets');
-  await page.screenshot({ path: testInfo.outputPath('rfds-workspace-v5.png'), fullPage: true });
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('RFDS Automation');
 });
 
-test('mobile workspace uses the full usable viewport and replaces desktop rail with a compact project switcher', async ({ page }, testInfo) => {
+test('mobile project dashboards use the full viewport without horizontal overflow', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('./work/asset-catalog/');
 
-  const dimensions = await page.evaluate(() => ({
-    viewport: window.innerWidth,
-    scrollWidth: document.documentElement.scrollWidth,
-    bodyWidth: document.body.getBoundingClientRect().width,
-    workspaceWidth: document.querySelector('.v5-workspace')?.getBoundingClientRect().width ?? 0,
-    canvasWidth: document.querySelector('.v5-project-canvas')?.getBoundingClientRect().width ?? 0,
-  }));
+  for (const project of [projects[0]!, projects[3]!, projects[4]!]) {
+    await page.goto(project.path);
+    const dims = await page.evaluate(() => ({
+      viewport: window.innerWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      bodyWidth: document.body.getBoundingClientRect().width,
+      projectWidth: document.querySelector('.v6-project')?.getBoundingClientRect().width ?? 0,
+    }));
+    expect(dims.viewport).toBe(390);
+    expect(dims.scrollWidth).toBeLessThanOrEqual(391);
+    expect(dims.bodyWidth).toBeGreaterThan(385);
+    expect(dims.projectWidth).toBeGreaterThan(360);
+  }
 
-  expect(dimensions.viewport).toBe(390);
-  expect(dimensions.scrollWidth).toBeLessThanOrEqual(391);
-  expect(dimensions.bodyWidth).toBeGreaterThan(385);
-  expect(dimensions.workspaceWidth).toBeGreaterThan(350);
-  expect(dimensions.canvasWidth).toBeGreaterThan(350);
-  await expect(page.locator('.v5-project-rail')).toBeHidden();
-  await expect(page.locator('.v5-mobile-project-switcher')).toBeVisible();
-
-  await page.getByRole('tab', { name: /Product model/i }).click();
-  await expect(page.locator('.v5-asset-model')).toBeVisible();
-  await page.screenshot({ path: testInfo.outputPath('asset-catalog-mobile-v5.png'), fullPage: true });
+  await page.goto('./work/gl-coding/');
+  await page.screenshot({ path: testInfo.outputPath('gl-coding-mobile-v6.png'), fullPage: true });
 });
 
-test('order fulfillment keeps unvalidated quantitative evidence out of the public claim set', async ({ page }) => {
+test('order fulfillment does not publish placeholder quantitative impact', async ({ page }) => {
   await page.goto('./work/order-fulfillment/');
-  await page.getByRole('tab', { name: /Value/i }).click();
-  await expect(page.getByText(/Quantitative claims are intentionally withheld/i)).toBeVisible();
-  await expect(page.locator('.v5-order-model')).toBeHidden();
+  await expect(page.getByText('Held', { exact: true })).toBeVisible();
+  await expect(page.getByText('Unvalidated metrics', { exact: true })).toBeVisible();
+  await page.locator('.v6-depth summary').click();
+  await expect(page.getByText(/Quantitative impact remains withheld/i)).toBeVisible();
 });
 
-test('removed public initiatives no longer generate portfolio routes', async ({ request }) => {
-  const p2p = await request.get('./work/peer-to-peer-transactions/');
-  const assetPortfolio = await request.get('./work/asset-portfolio-management/');
-  expect(p2p.status()).toBe(404);
-  expect(assetPortfolio.status()).toBe(404);
+test('removed initiatives do not have public portfolio routes', async ({ request }) => {
+  expect((await request.get('./work/peer-to-peer-transactions/')).status()).toBe(404);
+  expect((await request.get('./work/asset-portfolio-management/')).status()).toBe(404);
 });
 
-test('homepage and all selected project stories pass automated accessibility scans', async ({ page }) => {
-  const paths = [
-    './',
-    './work/asset-catalog/',
-    './work/inventory/',
-    './work/rfds/',
-    './work/inspection/',
-    './work/gl-coding/',
-    './work/order-fulfillment/',
-    './work/financial-projections/',
-  ];
-
+test('homepage and every project pass automated accessibility scans', async ({ page }) => {
+  const paths = ['./', ...projects.map((project) => project.path)];
   for (const path of paths) {
     await page.goto(path);
     const results = await new AxeBuilder({ page })
@@ -184,19 +97,16 @@ test('homepage and all selected project stories pass automated accessibility sca
   }
 });
 
-test('navigation works and legacy source artifacts remain available without being public CTAs', async ({ page, request }) => {
-  await page.goto('./');
-  await page.getByRole('link', { name: 'Approach' }).first().click();
-  await expect(page.locator('#approach')).toBeVisible();
-  expect((await request.get('./deep-dives/RFDS-impact.html')).ok()).toBeTruthy();
-  expect((await request.get('./deep-dives/RFDS.html')).ok()).toBeTruthy();
-});
-
-test('reduced motion keeps the interactive project story readable', async ({ page }) => {
+test('reduced motion preserves the visual story', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('./work/gl-coding/');
-  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(page.locator('.glc-flow-node').first()).toBeVisible();
+  await page.goto('./work/rfds/');
+  await expect(page.locator('.v6-rfds-map')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('RFDS Automation');
 });
 
-// GL Coding is the intentional pilot for the compact dashboard information model.
+test('legacy source artifacts remain available without public deep-dive CTAs', async ({ page, request }) => {
+  await page.goto('./');
+  await expect(page.getByRole('link', { name: /whitepaper/i })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /impact/i })).toHaveCount(0);
+  expect((await request.get('./deep-dives/RFDS-impact.html')).ok()).toBeTruthy();
+});
