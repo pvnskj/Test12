@@ -63,10 +63,16 @@ test('motion system stages the visual story and evidence without hiding content'
   await expect(firstMetric).toHaveText('312%', { timeout: 2000 });
 });
 
-test('desktop glass surfaces receive subtle pointer-depth behavior', async ({ page }) => {
+test('glass depth is enabled only when the device exposes a fine hover pointer', async ({ page }) => {
   await page.goto('./');
-  await expect(page.locator('.v6-hero-board')).toHaveClass(/motion-tilt/);
-  await expect(page.locator('.v6-work-card').first()).toHaveClass(/motion-tilt/);
+  const supportsFineHover = await page.evaluate(() => matchMedia('(hover:hover) and (pointer:fine)').matches);
+  if (supportsFineHover) {
+    await expect(page.locator('.v6-hero-board')).toHaveClass(/motion-tilt/);
+    await expect(page.locator('.v6-work-card').first()).toHaveClass(/motion-tilt/);
+  } else {
+    await expect(page.locator('.v6-hero-board')).not.toHaveClass(/motion-tilt/);
+    await expect(page.locator('.v6-work-card').first()).not.toHaveClass(/motion-tilt/);
+  }
 });
 
 test('project switcher moves directly between initiatives', async ({ page }) => {
@@ -137,7 +143,7 @@ test('reduced motion preserves the complete visual story without staged movement
     duration: getComputedStyle(element).animationDuration,
   }));
   expect(state.opacity).toBe('1');
-  expect(['0s', '0.000001s']).toContain(state.duration);
+  expect(['0s', '0.000001s', '1e-06s']).toContain(state.duration);
 });
 
 test('legacy source artifacts remain available without public deep-dive CTAs', async ({ page, request }) => {
