@@ -1,0 +1,10 @@
+@media(max-width:760px){
+  .site-footer{padding:34px 0 20px}
+  .footer-grid{grid-template-columns:1fr;gap:16px}
+  .footer-note,.footer-status{display:none}
+  .footer-links{display:flex;flex-wrap:wrap;gap:8px 14px}
+  .footer-links a{font-size:.72rem}
+  .footer-bottom{display:flex;justify-content:space-between;gap:12px;padding-top:14px}
+  .footer-bottom span:first-child{display:none}
+  .footer-bottom span{font-size:.6rem}
+}
