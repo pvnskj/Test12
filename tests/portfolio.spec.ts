@@ -2,13 +2,12 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 const projects = [
-  { path: './work/asset-catalog/', title: 'Asset Catalog', visual: '.v6-asset' },
-  { path: './work/inventory/', title: 'Inventory & Asset Lifecycle', visual: '.v6-orbit-map' },
+  { path: './work/enterprise-order-management/', title: 'Enterprise Order Management', visual: '.v6-order-map' },
+  { path: './work/rag-analysis-agent/', title: 'Enterprise RAG Analysis Agent', visual: '.v6-forecast-map' },
+  { path: './work/build-plus/', title: 'Build Plus', visual: '.v6-orbit-map' },
   { path: './work/rfds/', title: 'RFDS Automation', visual: '.v6-rfds-map' },
-  { path: './work/inspection/', title: 'Inspection & Predictive Maintenance', visual: '.v6-inspection-map' },
   { path: './work/gl-coding/', title: 'Dynamic GL Coding', visual: '.v6-gl-map' },
-  { path: './work/order-fulfillment/', title: 'Order & Fulfillment Management', visual: '.v6-order-map' },
-  { path: './work/financial-projections/', title: 'Financial Projection Platform', visual: '.v6-forecast-map' },
+  { path: './work/lease-vendor-management/', title: 'Lease & Vendor Management', visual: '.v6-asset' },
 ];
 
 test('homepage is visual, selective, and not text-heavy', async ({ page }, testInfo) => {
@@ -33,19 +32,19 @@ test('every selected initiative uses the compact dashboard with a distinct infog
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title);
     await expect(page.locator('.v6-dashboard-grid')).toBeVisible();
     await expect(page.locator(project.visual)).toBeVisible();
-    await expect(page.locator('.v6-decision-list > div')).toHaveCount(3);
+    await expect(page.locator('.v6-decision-list > div')).toHaveCount(4);
     await expect(page.locator('.v6-proof-row > article')).toHaveCount(3);
     await expect(page.locator('.v6-depth')).not.toHaveAttribute('open', '');
     await expect(page.locator('.v5-story-tabs')).toHaveCount(0);
     await expect(page.locator('.glc-dashboard')).toHaveCount(0);
 
     const visibleText = await page.locator('.v6-project').innerText();
-    expect(visibleText.length, `${project.title} visible text budget`).toBeLessThan(2600);
+    expect(visibleText.length, `${project.title} visible text budget`).toBeLessThan(2800);
   }
 });
 
 test('motion system stages the visual story and evidence without hiding content', async ({ page }) => {
-  await page.goto('./work/asset-catalog/');
+  await page.goto('./work/enterprise-order-management/');
   await expect(page.locator('body')).toHaveClass(/motion-ready/);
 
   const visual = page.locator('.v6-visual');
@@ -60,7 +59,7 @@ test('motion system stages the visual story and evidence without hiding content'
   const firstMetric = page.locator('.v6-proof-row article strong').first();
   await firstMetric.scrollIntoViewIfNeeded();
   await expect(firstMetric).toHaveAttribute('data-counted', 'true');
-  await expect(firstMetric).toHaveText('312%', { timeout: 2000 });
+  await expect(firstMetric).toHaveText('20%', { timeout: 2000 });
 });
 
 test('glass depth is enabled only when the device exposes a fine hover pointer', async ({ page }) => {
@@ -76,12 +75,12 @@ test('glass depth is enabled only when the device exposes a fine hover pointer',
 });
 
 test('project switcher moves directly between initiatives', async ({ page }) => {
-  await page.goto('./work/asset-catalog/');
+  await page.goto('./work/enterprise-order-management/');
   await page.locator('.v6-project-switcher summary').click();
-  await page.locator('.v6-project-switcher nav a', { hasText: 'RFDS Automation' }).click();
-  await expect(page).toHaveURL(/\/work\/rfds\/$/);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('RFDS Automation');
-  await expect(page.locator('.v6-rfds-map')).toBeVisible();
+  await page.locator('.v6-project-switcher nav a', { hasText: 'Enterprise RAG Analysis Agent' }).click();
+  await expect(page).toHaveURL(/\/work\/rag-analysis-agent\/$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Enterprise RAG Analysis Agent');
+  await expect(page.locator('.v6-forecast-map')).toBeVisible();
 });
 
 test('all mobile project dashboards use the full viewport without horizontal overflow', async ({ page }, testInfo) => {
@@ -105,17 +104,25 @@ test('all mobile project dashboards use the full viewport without horizontal ove
   await page.screenshot({ path: testInfo.outputPath('gl-coding-mobile-v7.png'), fullPage: true });
 });
 
-test('order fulfillment does not publish placeholder quantitative impact', async ({ page }) => {
-  await page.goto('./work/order-fulfillment/');
-  await expect(page.getByText('Held', { exact: true })).toBeVisible();
-  await expect(page.getByText('Unvalidated metrics', { exact: true })).toBeVisible();
-  await page.locator('.v6-depth summary').click();
-  await expect(page.getByText(/Quantitative impact remains withheld/i)).toBeVisible();
+test('projected and estimated outcomes remain visibly qualified', async ({ page }) => {
+  await page.goto('./work/enterprise-order-management/');
+  await expect(page.getByText('Projected order capacity', { exact: true })).toBeVisible();
+
+  await page.goto('./work/lease-vendor-management/');
+  await expect(page.getByText('Estimated ROI', { exact: true })).toBeVisible();
 });
 
 test('removed initiatives do not have public portfolio routes', async ({ request }) => {
-  expect((await request.get('./work/peer-to-peer-transactions/')).status()).toBe(404);
-  expect((await request.get('./work/asset-portfolio-management/')).status()).toBe(404);
+  const removed = [
+    './work/asset-catalog/',
+    './work/inventory/',
+    './work/inspection/',
+    './work/order-fulfillment/',
+    './work/financial-projections/',
+    './work/peer-to-peer-transactions/',
+    './work/asset-portfolio-management/',
+  ];
+  for (const path of removed) expect((await request.get(path)).status(), path).toBe(404);
 });
 
 test('homepage and every project pass automated accessibility scans', async ({ page }) => {
