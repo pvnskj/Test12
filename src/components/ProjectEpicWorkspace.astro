@@ -1,0 +1,260 @@
+---
+import { projects, type Project, type ProjectMetric } from '../data/projects';
+
+interface Props { project: Project; }
+const { project } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const currentIndex = projects.findIndex((item) => item.slug === project.slug);
+const nextProject = projects[(currentIndex + 1) % projects.length]!;
+
+const approachTags: Record<string, string[]> = {
+  'rag-analysis-agent': ['Grounded', 'Permission-aware', 'Evaluation-gated', 'Traceable'],
+  'build-plus': ['Data-first', 'Lifecycle', 'Validate-first', 'Traceable'],
+  rfds: ['Rules-first', 'Governed data', 'Validate-first', 'Operational'],
+  'gl-coding': ['Policy-led', 'Configurable', 'Validate-first', 'Audit-ready'],
+  'lease-vendor-management': ['Control-first', 'Eligibility-gated', 'Lifecycle', 'Traceable'],
+};
+
+const publicText = (text: string) => text
+  .replace(/Hansen/gi, 'catalog configuration')
+  .replace(/Camunda/gi, 'legacy workflow engine')
+  .replace(/Change Bucket/gi, 'service-change')
+  .replace(/VendorOne/gi, 'vendor-management platform')
+  .replace(/NexsysOne/gi, 'operations platform')
+  .replace(/GitLab/gi, 'engineering repositories')
+  .replace(/Jira/gi, 'work management')
+  .replace(/Confluence/gi, 'knowledge base')
+  .replace(/Claude via Bedrock/gi, 'private LLM runtime')
+  .replace(/AWS Bedrock/gi, 'private model runtime')
+  .replace(/Bedrock/gi, 'private model runtime')
+  .replace(/Oracle Finance/gi, 'ERP finance')
+  .replace(/Oracle IDs/gi, 'ERP identifiers')
+  .replace(/Oracle/gi, 'ERP')
+  .replace(/\bN1\b/g, 'operations platform')
+  .replace(/\bQDS\b/g, 'engineering system')
+  .replace(/\bMCP\b/g, 'live connectors')
+  .replace(/FastAPI/gi, 'service API')
+  .replace(/\bOMS\b/g, 'order-management platform')
+  .replace(/\bWMS\b/g, 'warehouse platform')
+  .replace(/\bFSLs\b/g, 'field stocking locations')
+  .replace(/\bIHS\b/g, 'in-house service teams')
+  .replace(/\bGCs\b/g, 'field partners')
+  .replace(/\bHubs\b/g, 'distribution hubs');
+
+const metricType = (metric: ProjectMetric) => {
+  const text = `${metric.label} ${metric.detail}`.toLowerCase();
+  if (text.includes('projected') || text.includes('modeled target')) return 'Projected';
+  if (text.includes('estimated') || text.includes('estimate')) return 'Estimated';
+  if (text.includes('measured')) return 'Measured';
+  if (text.includes('actual') || text.includes('observed') || text.includes('implemented')) return 'Actual';
+  return 'Evidence';
+};
+
+const partition = <T,>(items: T[], groups: number, index: number): T[] => {
+  if (!items.length) return [];
+  const start = Math.floor(index * items.length / groups);
+  const end = Math.floor((index + 1) * items.length / groups);
+  return items.slice(start, Math.max(start + 1, end));
+};
+
+const focusAreas = project.increments.map((increment, index) => ({
+  code: `FOCUS-${String(index + 1).padStart(2, '0')}`,
+  title: publicText(increment.title),
+  purpose: publicText(increment.focus),
+  learning: publicText(increment.learning),
+  capabilities: increment.focus.split(',').map((item) => publicText(item.trim())).filter(Boolean),
+  challenges: partition(project.complexity, project.increments.length, index).map(publicText),
+  ownership: partition(project.ownership, project.increments.length, index).map(publicText),
+  decisions: [project.decisions[index] ?? project.decisions[project.decisions.length - 1]!].map((item) => ({
+    title: publicText(item.title),
+    body: publicText(item.body),
+  })),
+  flow: partition(project.flow, project.increments.length, index).map(publicText),
+  evidence: project.metrics[index] ?? project.metrics[project.metrics.length - 1]!,
+}));
+
+const facts = [project.metrics[1], project.metrics[2]].filter(Boolean) as ProjectMetric[];
+---
+
+<main class="product-workspace shell" data-project={project.slug}>
+  <nav class="workspace-bar glass-bar" aria-label="Project navigation">
+    <a href={`${base}#work`}>← Back to portfolio</a>
+    <div class="workspace-key"><span>EPIC-{project.index}</span><b>Epic overview</b></div>
+    <a href={`${base}work/${nextProject.slug}/`}>Next project →</a>
+  </nav>
+
+  <section class="epic-header glass-card" aria-labelledby="project-title">
+    <div class="epic-main">
+      <span class="category-pill">{publicText(project.category)}</span>
+      <h1 id="project-title">{project.title}</h1>
+      <p>{publicText(project.headline)}</p>
+      <div class="approach-tags" aria-label="Product approach">
+        {(approachTags[project.slug] ?? ['Outcome-first', 'Evidence-led', 'Governed', 'Scalable']).map((tag) => <span>{tag}</span>)}
+      </div>
+    </div>
+
+    <aside class="epic-facts" aria-label="Epic facts">
+      {facts.map((metric) => <div><small>{publicText(metric.label)}</small><strong>{metric.value}</strong><span>{metricType(metric)}</span></div>)}
+      <div><small>Focus areas</small><strong>{project.increments.length}</strong><span>capability areas</span></div>
+    </aside>
+  </section>
+
+  <section class="evidence-strip" aria-label="Key evidence">
+    {project.metrics.map((metric) => (
+      <article class="glass-card">
+        <div><span>{metricType(metric)}</span><strong>{metric.value}</strong></div>
+        <p>{publicText(metric.label)}</p>
+      </article>
+    ))}
+  </section>
+
+  <section class="overview-section" aria-labelledby="overview-title">
+    <div class="section-label"><span>The big picture</span><h2 id="overview-title">Why this product had to change</h2></div>
+    <p class="overview-copy">{publicText(project.summary)}</p>
+
+    <div class="story-grid">
+      <article class="glass-card">
+        <span>Problem</span>
+        <h3>{publicText(project.question)}</h3>
+        <p>{publicText(project.problem)}</p>
+      </article>
+      <article class="glass-card">
+        <span>Product decision</span>
+        <h3>{publicText(project.decisions[0]?.title ?? 'Change the operating model')}</h3>
+        <p>{publicText(project.productGoal)}</p>
+      </article>
+      <article class="glass-card outcome-card">
+        <span>Outcome</span>
+        <h3>What changed in practice</h3>
+        <p>{publicText(project.valueNarrative)}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="decision-section" aria-labelledby="decisions-title">
+    <div class="section-label"><span>Key product decisions</span><h2 id="decisions-title">Why the product moved this way</h2></div>
+    <div class="decision-table glass-card">
+      {project.decisions.map((decision, index) => (
+        <article>
+          <b>{String(index + 1).padStart(2, '0')}</b>
+          <h3>{publicText(decision.title)}</h3>
+          <p>{publicText(decision.body)}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="focus-section" aria-labelledby="focus-title">
+    <div class="focus-heading">
+      <div class="section-label"><span>Focus areas</span><h2 id="focus-title">Open a capability to see the detailed case study</h2></div>
+      <p>One Epic, one page. The supporting detail is distributed into the focus areas so the full story stays available without turning the page into a wall of text.</p>
+    </div>
+
+    <div class="feature-list" data-feature-list>
+      {focusAreas.map((area, index) => {
+        const evidence = area.evidence;
+        return (
+          <details class="feature-item glass-card" data-feature>
+            <summary>
+              <div class="feature-key"><span>{area.code}</span><b>{String(index + 1).padStart(2, '0')}</b></div>
+              <div class="feature-summary-copy">
+                <h3>{area.title}</h3>
+                <p>{area.purpose}</p>
+              </div>
+              <div class="feature-signal"><strong>{evidence.value}</strong><span>{metricType(evidence)}</span></div>
+              <span class="feature-toggle" aria-hidden="true">＋</span>
+            </summary>
+
+            <div class="feature-detail">
+              <nav class="detail-tabs" aria-label={`${area.title} detail sections`}>
+                <span>Overview</span><span>Ownership</span><span>Decisions</span><span>Evidence</span>
+              </nav>
+
+              <div class="detail-intro">
+                <article>
+                  <small>Why this matters</small>
+                  <h4>The question this focus area had to resolve</h4>
+                  <p>{area.learning}</p>
+                </article>
+                <article>
+                  <small>Product lens</small>
+                  <h4>{area.title}</h4>
+                  <p>{area.purpose}</p>
+                </article>
+              </div>
+
+              <div class="detail-pair">
+                <article class="detail-card">
+                  <small>Capabilities delivered</small>
+                  <ul>{area.capabilities.map((item) => <li>{item}</li>)}</ul>
+                </article>
+                <article class="detail-card">
+                  <small>Challenges & trade-offs</small>
+                  <ul>{area.challenges.map((item) => <li>{item}</li>)}</ul>
+                </article>
+              </div>
+
+              <section class="ownership-panel">
+                <div><small>What I owned</small><h4>The product calls and sequencing I was accountable for.</h4></div>
+                <ul>{area.ownership.map((item) => <li>{item}</li>)}</ul>
+              </section>
+
+              <div class="decision-flow-grid">
+                <section class="focus-decisions">
+                  <small>Product decisions</small>
+                  {area.decisions.map((decision, decisionIndex) => (
+                    <article><b>{String(decisionIndex + 1).padStart(2, '0')}</b><div><h4>{decision.title}</h4><p>{decision.body}</p></div></article>
+                  ))}
+                </section>
+
+                <section class="system-flow">
+                  <small>System flow · simplified</small>
+                  <div class="flow-steps">
+                    {area.flow.map((step, flowIndex) => <div class="flow-step"><b>{String(flowIndex + 1).padStart(2, '0')}</b><span>{step}</span></div>)}
+                  </div>
+                </section>
+              </div>
+
+              <section class="feature-evidence">
+                <div><small>What the number means</small><strong>{evidence.value}</strong><h4>{publicText(evidence.label)}</h4><span>{metricType(evidence)}</span></div>
+                <p>{publicText(evidence.detail)}</p>
+              </section>
+            </div>
+          </details>
+        );
+      })}
+    </div>
+  </section>
+
+  <section class="evidence-note glass-card" aria-labelledby="evidence-note-title">
+    <div><span>Evidence discipline</span><h2 id="evidence-note-title">The number is only useful when the reader knows what it proves.</h2></div>
+    <p>Measured, actual, estimated, and projected outcomes remain visibly qualified instead of being flattened into the same kind of claim.</p>
+  </section>
+
+  <a class="next-epic glass-card" href={`${base}work/${nextProject.slug}/`}><span>Next epic</span><strong>{nextProject.title}</strong><b aria-hidden="true">→</b></a>
+</main>
+
+<script>
+  const featureItems = Array.from(document.querySelectorAll('[data-feature]'));
+  featureItems.forEach((item) => {
+    item.addEventListener('toggle', () => {
+      if (!(item instanceof HTMLDetailsElement) || !item.open) return;
+      featureItems.forEach((other) => {
+        if (other !== item && other instanceof HTMLDetailsElement) other.open = false;
+      });
+    });
+  });
+</script>
+
+<style>
+  .product-workspace{padding:18px 0 68px;color:#102f50}.workspace-bar{position:sticky;top:92px;z-index:40;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;min-height:52px;margin-bottom:16px;padding:7px 11px}.workspace-bar>a{padding:8px 10px;font-size:.68rem;font-weight:760;color:#5c7690}.workspace-bar>a:last-child{justify-self:end}.workspace-key{display:flex;align-items:center;gap:8px}.workspace-key span{font-size:.61rem;font-weight:850;letter-spacing:.08em;color:#3266ad}.workspace-key b{font-size:.62rem;color:#7890a6}
+  .epic-header{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.55fr);gap:24px;padding:28px}.category-pill{display:inline-flex;padding:6px 9px;border-radius:999px;background:rgba(234,240,255,.9);font-size:.56rem;font-weight:850;letter-spacing:.055em;color:#4a67b0}.epic-main h1{margin:12px 0 9px;font-size:clamp(2.25rem,4.2vw,3.65rem);line-height:1;letter-spacing:-.045em;color:#123455}.epic-main>p{max-width:780px;margin:0;color:#617991;font-size:.87rem;line-height:1.58}.approach-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:17px}.approach-tags span{padding:5px 8px;border:1px solid rgba(48,99,176,.1);border-radius:999px;background:rgba(248,251,255,.76);font-size:.54rem;font-weight:780;color:#59738e}.epic-facts{display:grid;grid-template-columns:repeat(3,1fr);align-self:stretch;border-left:1px solid rgba(18,52,85,.08)}.epic-facts div{display:flex;flex-direction:column;justify-content:center;padding:12px 13px;border-right:1px solid rgba(18,52,85,.07)}.epic-facts div:last-child{border-right:0}.epic-facts small{font-size:.48rem;font-weight:820;text-transform:uppercase;letter-spacing:.07em;color:#8497aa}.epic-facts strong{margin:5px 0 2px;font-size:1rem;color:#245d9d}.epic-facts span{font-size:.54rem;line-height:1.35;color:#6f859a}
+  .evidence-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:10px}.evidence-strip article{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 17px}.evidence-strip article>div{display:grid}.evidence-strip span{font-size:.49rem;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:#8296a8}.evidence-strip strong{font-size:1.18rem;color:#1f62bf}.evidence-strip p{max-width:135px;margin:0;text-align:right;font-size:.59rem;line-height:1.35;color:#647d94}
+  .overview-section,.decision-section,.focus-section{padding-top:40px}.section-label{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}.section-label>span,.evidence-note span{font-size:.55rem;font-weight:850;text-transform:uppercase;letter-spacing:.09em;color:#7890a7}.section-label h2{margin:0;font-size:1.45rem;letter-spacing:-.025em;color:#173a5a}.overview-copy{max-width:1120px;margin:0 0 16px;color:#627b91;font-size:.79rem;line-height:1.65}.story-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.story-grid article{padding:19px;min-height:175px}.story-grid article>span{font-size:.52rem;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:#7890a7}.story-grid h3{margin:10px 0 7px;font-size:.9rem;line-height:1.25;color:#173a5b}.story-grid p{margin:0;color:#687f94;font-size:.68rem;line-height:1.55}.outcome-card{background:linear-gradient(145deg,rgba(244,250,255,.9),rgba(255,255,255,.77))}
+  .decision-table{overflow:hidden;padding:0}.decision-table article{display:grid;grid-template-columns:38px minmax(200px,.42fr) minmax(0,1fr);gap:14px;align-items:center;padding:15px 18px;border-bottom:1px solid rgba(18,52,85,.07)}.decision-table article:last-child{border-bottom:0}.decision-table b{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:rgba(230,239,255,.92);font-size:.55rem;color:#3266b5}.decision-table h3{margin:0;font-size:.76rem;color:#183b5b}.decision-table p{margin:0;color:#697f94;font-size:.66rem;line-height:1.47}
+  .focus-heading{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.65fr);gap:30px;align-items:end;margin-bottom:14px}.focus-heading .section-label{margin:0}.focus-heading>p{margin:0;color:#6b8297;font-size:.68rem;line-height:1.5}.feature-list{display:grid;gap:8px}.feature-item{overflow:hidden;padding:0}.feature-item summary{display:grid;grid-template-columns:92px minmax(0,1fr) 120px 28px;gap:14px;align-items:center;padding:16px 18px;cursor:pointer;list-style:none}.feature-item summary::-webkit-details-marker{display:none}.feature-item[open]{border-color:rgba(46,100,185,.22);box-shadow:0 22px 55px rgba(40,72,115,.10)}.feature-key{display:flex;align-items:center;gap:9px}.feature-key span{font-size:.54rem;font-weight:850;color:#3264ad}.feature-key b{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:rgba(232,240,255,.92);font-size:.53rem;color:#4d72ad}.feature-summary-copy h3{margin:0 0 3px;font-size:.83rem;color:#163858}.feature-summary-copy p{margin:0;color:#6d8397;font-size:.63rem;line-height:1.4}.feature-signal{text-align:right}.feature-signal strong{display:block;font-size:.84rem;color:#2162bd}.feature-signal span{font-size:.48rem;text-transform:uppercase;letter-spacing:.07em;color:#8295a7}.feature-toggle{display:grid;place-items:center;font-size:1rem;color:#64809a;transition:transform .2s ease}.feature-item[open] .feature-toggle{transform:rotate(45deg)}
+  .feature-detail{padding:0 18px 20px;border-top:1px solid rgba(18,52,85,.07);background:linear-gradient(180deg,rgba(247,250,255,.45),rgba(255,255,255,.15))}.detail-tabs{display:flex;gap:6px;padding:12px 0}.detail-tabs span{padding:5px 9px;border-radius:999px;background:rgba(238,244,255,.8);font-size:.49rem;font-weight:780;color:#607a94}.detail-intro,.detail-pair,.decision-flow-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.detail-intro article,.detail-card,.ownership-panel,.focus-decisions,.system-flow,.feature-evidence{padding:16px;border:1px solid rgba(18,52,85,.075);border-radius:14px;background:rgba(255,255,255,.55)}.feature-detail small{font-size:.5rem;font-weight:850;text-transform:uppercase;letter-spacing:.08em;color:#7e93a7}.feature-detail h4{margin:7px 0 6px;font-size:.76rem;color:#173a5a}.feature-detail p,.feature-detail li{font-size:.63rem;line-height:1.5;color:#687f94}.feature-detail p{margin:0}.detail-card ul,.ownership-panel ul{display:grid;gap:6px;margin:10px 0 0;padding-left:16px}.ownership-panel{display:grid;grid-template-columns:minmax(220px,.6fr) minmax(0,1.4fr);gap:18px;margin-top:9px}.ownership-panel ul{grid-template-columns:repeat(2,minmax(0,1fr));margin:0}.decision-flow-grid{margin-top:9px}.focus-decisions article{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;margin-top:10px}.focus-decisions article>b{display:grid;place-items:center;width:22px;height:22px;border-radius:6px;background:rgba(232,240,255,.9);font-size:.48rem;color:#3d68a7}.focus-decisions h4{margin:0 0 4px}.flow-steps{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.flow-step{display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:9px;background:rgba(244,248,255,.8)}.flow-step b{font-size:.46rem;color:#3e6bab}.flow-step span{font-size:.55rem;color:#58718a}.feature-evidence{display:grid;grid-template-columns:minmax(180px,.55fr) minmax(0,1.45fr);gap:18px;align-items:center;margin-top:9px}.feature-evidence strong{display:block;margin-top:5px;font-size:1.25rem;color:#2162bd}.feature-evidence h4{margin:2px 0}.feature-evidence span{font-size:.48rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#7e92a5}
+  .evidence-note{display:grid;grid-template-columns:minmax(280px,.8fr) minmax(0,1.2fr);gap:30px;align-items:center;margin-top:40px;padding:20px}.evidence-note h2{margin:7px 0 0;font-size:1.05rem;color:#173a5a}.evidence-note p{margin:0;color:#6a8196;font-size:.66rem;line-height:1.5}.next-epic{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;margin-top:10px;padding:16px 19px}.next-epic span{font-size:.52rem;text-transform:uppercase;letter-spacing:.08em;color:#8397a8}.next-epic strong{font-size:.72rem;color:#244e75}.next-epic b{color:#3269b4}
+  @media(max-width:980px){.epic-header,.focus-heading,.evidence-note{grid-template-columns:1fr}.epic-facts{border-left:0;border-top:1px solid rgba(18,52,85,.08)}.story-grid{grid-template-columns:1fr}.decision-table article{grid-template-columns:34px 1fr}.decision-table p{grid-column:2}.detail-intro,.detail-pair,.decision-flow-grid{grid-template-columns:1fr}.ownership-panel{grid-template-columns:1fr}.ownership-panel ul{grid-template-columns:1fr}}
+  @media(max-width:700px){.product-workspace{padding-top:10px}.workspace-bar{top:70px;grid-template-columns:1fr auto}.workspace-bar>a:last-child{display:none}.workspace-key{justify-self:end}.epic-header{padding:20px}.epic-facts{grid-template-columns:1fr}.epic-facts div{border-right:0;border-bottom:1px solid rgba(18,52,85,.07)}.epic-facts div:last-child{border-bottom:0}.evidence-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.evidence-strip article{display:grid}.evidence-strip p{text-align:left}.section-label{display:block}.section-label h2{margin-top:5px}.feature-item summary{grid-template-columns:68px minmax(0,1fr) 26px}.feature-signal{grid-column:2;text-align:left}.feature-toggle{grid-column:3;grid-row:1/3}.feature-detail{padding:0 12px 14px}.detail-tabs{overflow-x:auto}.feature-evidence{grid-template-columns:1fr}.next-epic{grid-template-columns:1fr auto}.next-epic span{display:none}}
+</style>
