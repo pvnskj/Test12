@@ -1,15 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
-import '../styles/portfolio-v3.css';
-import '../styles/portfolio-v4.css';
-import '../styles/portfolio-v4-fix.css';
-import '../styles/portfolio-v5.css';
-import '../styles/portfolio-v5-mobile-fix.css';
-import '../styles/portfolio-v6.css';
-import '../styles/portfolio-v6-a11y.css';
-import '../styles/portfolio-v6-polish.css';
-import '../styles/motion-v7.css';
 
 interface Props {
   title?: string;
@@ -43,7 +34,6 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href={`${base}reveal-fix.css`} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -63,14 +53,27 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
       <div class="shell header-inner glass-bar">
         <a class="brand" href={base} aria-label="Venkata Parimi home">
           <span class="brand-mark" aria-hidden="true">VP</span>
-          <span class="brand-copy"><strong>Venkata Parimi</strong><span>Senior Technical Product Owner</span></span>
+          <span class="brand-copy">
+            <strong>Venkata Parimi</strong>
+            <span>Senior Technical Product Owner</span>
+          </span>
         </a>
         <nav class="desktop-nav" aria-label="Primary navigation">
-          <a href={`${base}#expertise`}>Expertise</a><a href={`${base}#work`}>Work</a><a href={`${base}#approach`}>Approach</a><a href={`${base}#about`}>About</a><a href={`${base}#contact`}>Contact</a>
+          <a href={`${base}#expertise`}>Expertise</a>
+          <a href={`${base}#work`}>Work</a>
+          <a href={`${base}#approach`}>Approach</a>
+          <a href={`${base}#about`}>About</a>
+          <a href={`${base}#contact`}>Contact</a>
         </nav>
         <details class="mobile-nav">
           <summary aria-label="Open navigation"><span></span><span></span><span></span></summary>
-          <nav aria-label="Mobile navigation"><a href={`${base}#expertise`}>Expertise</a><a href={`${base}#work`}>Work</a><a href={`${base}#approach`}>Approach</a><a href={`${base}#about`}>About</a><a href={`${base}#contact`}>Contact</a></nav>
+          <nav aria-label="Mobile navigation">
+            <a href={`${base}#expertise`}>Expertise</a>
+            <a href={`${base}#work`}>Work</a>
+            <a href={`${base}#approach`}>Approach</a>
+            <a href={`${base}#about`}>About</a>
+            <a href={`${base}#contact`}>Contact</a>
+          </nav>
         </details>
       </div>
     </header>
@@ -80,167 +83,43 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin) : undefin
     <footer class="site-footer">
       <div class="shell footer-grid">
         <div>
-          <div class="brand footer-brand"><span class="brand-mark" aria-hidden="true">VP</span><span class="brand-copy"><strong>Venkata Parimi</strong><span>Senior Technical Product Owner</span></span></div>
+          <div class="brand footer-brand">
+            <span class="brand-mark" aria-hidden="true">VP</span>
+            <span class="brand-copy">
+              <strong>Venkata Parimi</strong>
+              <span>Senior Technical Product Owner</span>
+            </span>
+          </div>
           <p class="footer-note">Complex product problems made understandable, buildable, and measurable.</p>
         </div>
-        <div class="footer-links"><a href={`${base}#expertise`}>Expertise</a><a href={`${base}#work`}>Selected work</a><a href={`${base}#approach`}>Approach</a><a href="https://github.com/pvnskj" rel="me">GitHub</a></div>
-        <div class="footer-status"><span class="eyebrow">Contact</span><p>Email and LinkedIn are intentionally withheld until the source details are confirmed.</p></div>
+        <div class="footer-links">
+          <a href={`${base}#expertise`}>Expertise</a>
+          <a href={`${base}#work`}>Selected work</a>
+          <a href={`${base}#approach`}>Approach</a>
+          <a href="https://github.com/pvnskj" rel="me">GitHub</a>
+        </div>
+        <div class="footer-status">
+          <span class="eyebrow">Contact</span>
+          <p>Email and LinkedIn are intentionally withheld until the source details are confirmed.</p>
+        </div>
       </div>
-      <div class="shell footer-bottom"><span>Selected product initiatives from a broader body of work.</span><span>© {new Date().getFullYear()} Venkata Parimi</span></div>
+      <div class="shell footer-bottom">
+        <span>Selected product initiatives from a broader body of work.</span>
+        <span>© {new Date().getFullYear()} Venkata Parimi</span>
+      </div>
     </footer>
 
     <script is:inline>
-      const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      const reveal = () => {
-        const items = [...document.querySelectorAll('[data-reveal]')];
-        if (!('IntersectionObserver' in window) || reducedMotion()) {
-          items.forEach((item) => item.setAttribute('data-visible', 'true'));
-          return;
-        }
-        const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.setAttribute('data-visible', 'true');
-            observer.unobserve(entry.target);
-          }
-        }), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
-        items.forEach((item) => {
-          const rect = item.getBoundingClientRect();
-          if (rect.top < window.innerHeight * .92 && rect.bottom > 0) item.setAttribute('data-visible', 'true');
-          else observer.observe(item);
+      const bindMobileNavigation = () => {
+        document.querySelectorAll('.mobile-nav a').forEach((link) => {
+          if (link.dataset.navBound === 'true') return;
+          link.dataset.navBound = 'true';
+          link.addEventListener('click', () => link.closest('details')?.removeAttribute('open'));
         });
       };
 
-      const setupNavigation = () => document.querySelectorAll('.mobile-nav a').forEach((link) => {
-        if (link.dataset.navBound === 'true') return;
-        link.dataset.navBound = 'true';
-        link.addEventListener('click', () => link.closest('details')?.removeAttribute('open'));
-      });
-
-      const motionPartSelector = [
-        '.v6-control-node','.v6-control-core','.v6-input-stack > span','.v6-flow-map > i','.v6-node',
-        '.v6-orbit-core','.v6-orbit-node','.v6-orbit-track > *','.v6-source-pair > span','.v6-rfds-map > i',
-        '.v6-rule-cloud > *','.v6-branch > div','.v6-maturity > *','.v6-signal-row > span','.v6-inspection-map > i',
-        '.v6-feedback > *','.v6-gl-map > i','.v6-control-track > *','.v6-order-core','.v6-order-node',
-        '.v6-order-status > span','.v6-forecast-core','.v6-forecast-node','.v6-forecast-ring > span'
-      ].join(',');
-
-      const setupMotionScenes = () => {
-        const scenes = [...document.querySelectorAll('.v6-control-map,.v6-visual')];
-        if (!scenes.length) return;
-        scenes.forEach((scene) => {
-          scene.setAttribute('data-motion-scene', '');
-          const parts = [...new Set(scene.querySelectorAll(motionPartSelector))];
-          parts.forEach((part, index) => {
-            part.setAttribute('data-motion-part', '');
-            part.style.setProperty('--motion-order', String(index));
-            if (part.tagName === 'I') part.classList.add('motion-arrow');
-          });
-        });
-        if (!('IntersectionObserver' in window) || reducedMotion()) {
-          scenes.forEach((scene) => scene.classList.add('motion-visible'));
-          return;
-        }
-        const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('motion-visible');
-            observer.unobserve(entry.target);
-          }
-        }), { rootMargin: '0px 0px -10% 0px', threshold: 0.16 });
-        scenes.forEach((scene) => {
-          const rect = scene.getBoundingClientRect();
-          if (rect.top < window.innerHeight * .9 && rect.bottom > 0) scene.classList.add('motion-visible');
-          else observer.observe(scene);
-        });
-      };
-
-      const setupCounters = () => {
-        const counters = [...document.querySelectorAll('.v6-proof-row article strong')];
-        const parse = (value) => value.trim().match(/^([^0-9]*)(\d+(?:\.\d+)?)(.*)$/);
-        const animate = (el) => {
-          if (el.dataset.counted === 'true') return;
-          const original = el.textContent ?? '';
-          const match = parse(original);
-          if (!match) return;
-          el.dataset.counted = 'true';
-          if (reducedMotion()) return;
-          const [, prefix, rawNumber, suffix] = match;
-          const target = Number(rawNumber);
-          if (!Number.isFinite(target)) return;
-          const decimals = rawNumber.includes('.') ? rawNumber.split('.')[1].length : 0;
-          const duration = 820;
-          const start = performance.now();
-          el.dataset.counting = 'true';
-          const frame = (now) => {
-            const progress = Math.min(1, (now - start) / duration);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            const current = target * eased;
-            el.textContent = `${prefix}${decimals ? current.toFixed(decimals) : Math.round(current)}${suffix}`;
-            if (progress < 1) requestAnimationFrame(frame);
-            else {
-              el.textContent = original;
-              delete el.dataset.counting;
-            }
-          };
-          requestAnimationFrame(frame);
-        };
-        if (!('IntersectionObserver' in window) || reducedMotion()) {
-          counters.forEach(animate);
-          return;
-        }
-        const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            animate(entry.target);
-            observer.unobserve(entry.target);
-          }
-        }), { threshold: .35 });
-        counters.forEach((counter) => {
-          counter.closest('article')?.classList.add('motion-evidence');
-          observer.observe(counter);
-        });
-      };
-
-      const setupTilt = () => {
-        if (reducedMotion() || !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
-        document.querySelectorAll('.v6-hero-board,.v6-work-card').forEach((card) => {
-          if (card.dataset.tiltBound === 'true') return;
-          card.dataset.tiltBound = 'true';
-          card.classList.add('motion-tilt');
-          let raf = 0;
-          const reset = () => {
-            card.style.setProperty('--tilt-x', '0deg');
-            card.style.setProperty('--tilt-y', '0deg');
-            card.style.setProperty('--glow-x', '50%');
-            card.style.setProperty('--glow-y', '50%');
-          };
-          card.addEventListener('pointermove', (event) => {
-            cancelAnimationFrame(raf);
-            raf = requestAnimationFrame(() => {
-              const rect = card.getBoundingClientRect();
-              const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-              const ny = ((event.clientY - rect.top) / rect.height) * 2 - 1;
-              card.style.setProperty('--tilt-x', `${(-ny * 1.25).toFixed(2)}deg`);
-              card.style.setProperty('--tilt-y', `${(nx * 1.25).toFixed(2)}deg`);
-              card.style.setProperty('--glow-x', `${((nx + 1) * 50).toFixed(1)}%`);
-              card.style.setProperty('--glow-y', `${((ny + 1) * 50).toFixed(1)}%`);
-            });
-          });
-          card.addEventListener('pointerleave', reset);
-          card.addEventListener('blur', reset, true);
-        });
-      };
-
-      const setup = () => {
-        reveal();
-        setupNavigation();
-        setupMotionScenes();
-        setupCounters();
-        setupTilt();
-        document.body.classList.add('motion-ready');
-      };
-
-      document.addEventListener('astro:page-load', setup);
-      if (document.readyState !== 'loading') setup();
+      bindMobileNavigation();
+      document.addEventListener('astro:page-load', bindMobileNavigation);
     </script>
   </body>
 </html>
