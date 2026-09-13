@@ -9,7 +9,7 @@ const routes = [
   './work/lease-vendor-management/',
 ];
 
-test('all project workspaces fit a 390px mobile viewport', async ({ page }) => {
+test('all Jira-style project workspaces fit a 390px mobile viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   for (const route of routes) {
     await page.goto(route);
