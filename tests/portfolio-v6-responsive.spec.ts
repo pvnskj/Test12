@@ -1,13 +1,12 @@
 import { expect, test } from '@playwright/test';
 
 const routes = [
-  './work/asset-catalog/',
-  './work/inventory/',
+  './work/enterprise-order-management/',
+  './work/rag-analysis-agent/',
+  './work/build-plus/',
   './work/rfds/',
-  './work/inspection/',
   './work/gl-coding/',
-  './work/order-fulfillment/',
-  './work/financial-projections/',
+  './work/lease-vendor-management/',
 ];
 
 test('all project dashboards fit a 390px mobile viewport', async ({ page }) => {
