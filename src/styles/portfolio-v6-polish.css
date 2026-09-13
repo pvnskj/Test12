@@ -1,3 +1,112 @@
+/* Project-card visuals: each flagship gets its own visual grammar. */
+.v6-mini-map{
+  min-height:176px;
+  isolation:isolate;
+  background:linear-gradient(145deg,rgba(242,247,253,.96),rgba(226,238,251,.7));
+  border:1px solid rgba(37,99,235,.08);
+}
+.v6-mini-map:before,.v6-mini-map:after{display:none}
+.v6-mini-map strong{
+  position:absolute;
+  z-index:3;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:2px;
+  width:72px;
+  height:72px;
+  padding:8px;
+  border-radius:20px;
+  background:#123c5d;
+  color:#fff;
+  font-size:.66rem;
+  line-height:1.05;
+  text-align:center;
+  box-shadow:0 18px 36px rgba(18,60,93,.16);
+}
+.v6-mini-map strong small{
+  display:block;
+  margin-top:3px;
+  color:#cfe2f5;
+  font-size:.45rem;
+  font-weight:700;
+  letter-spacing:.08em;
+}
+.v6-mini-map b{
+  position:absolute;
+  z-index:2;
+  display:grid;
+  min-width:46px;
+  min-height:30px;
+  place-items:center;
+  padding:5px 7px;
+  border:1px solid rgba(37,99,235,.1);
+  border-radius:9px;
+  background:rgba(255,255,255,.9);
+  color:#58748d;
+  box-shadow:0 9px 20px rgba(37,99,235,.06);
+  font-size:.48rem;
+  font-weight:750;
+  line-height:1.05;
+  text-align:center;
+}
+
+/* Order orchestration: dependency graph around a DAG. */
+.v6-mini-enterprise-order-management strong{left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%}
+.v6-mini-enterprise-order-management b:nth-of-type(1){left:10%;top:12%}
+.v6-mini-enterprise-order-management b:nth-of-type(2){right:8%;top:12%}
+.v6-mini-enterprise-order-management b:nth-of-type(3){left:9%;bottom:12%}
+.v6-mini-enterprise-order-management b:nth-of-type(4){right:8%;bottom:12%}
+.v6-mini-enterprise-order-management:before,.v6-mini-enterprise-order-management:after{content:'';display:block;position:absolute;left:50%;top:50%;z-index:1;background:rgba(37,99,235,.18);transform:translate(-50%,-50%)}
+.v6-mini-enterprise-order-management:before{width:76%;height:1px}
+.v6-mini-enterprise-order-management:after{width:1px;height:76%}
+
+/* RAG: a left-to-right evidence pipeline ending at a grounding gate. */
+.v6-mini-rag-analysis-agent{background:linear-gradient(135deg,rgba(244,249,255,.98),rgba(226,242,246,.78))}
+.v6-mini-rag-analysis-agent strong{right:8%;top:50%;transform:translateY(-50%);width:76px;height:92px;border-radius:18px;background:#174c58}
+.v6-mini-rag-analysis-agent b{left:9%;width:72px}
+.v6-mini-rag-analysis-agent b:nth-of-type(1){top:10%}
+.v6-mini-rag-analysis-agent b:nth-of-type(2){top:32%}
+.v6-mini-rag-analysis-agent b:nth-of-type(3){top:54%}
+.v6-mini-rag-analysis-agent b:nth-of-type(4){top:76%}
+.v6-mini-rag-analysis-agent:before{content:'';display:block;position:absolute;left:24%;top:18%;bottom:17%;width:2px;background:linear-gradient(180deg,rgba(20,184,166,.12),rgba(20,184,166,.5),rgba(20,184,166,.12))}
+
+/* Build Plus: lifecycle orbit around the common asset identity. */
+.v6-mini-build-plus strong{left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:#31516e}
+.v6-mini-build-plus b:nth-of-type(1){left:8%;top:10%}
+.v6-mini-build-plus b:nth-of-type(2){right:7%;top:10%}
+.v6-mini-build-plus b:nth-of-type(3){left:5%;bottom:13%}
+.v6-mini-build-plus b:nth-of-type(4){right:5%;bottom:13%}
+.v6-mini-build-plus b:nth-of-type(5){left:50%;bottom:4%;transform:translateX(-50%)}
+.v6-mini-build-plus:before{content:'';display:block;position:absolute;inset:18% 17%;border:1px dashed rgba(49,81,110,.2);border-radius:50%}
+
+/* RFDS: source data descends through rules and validation into an RFDS output. */
+.v6-mini-rfds{background:linear-gradient(180deg,rgba(241,247,255,.98),rgba(232,240,253,.74))}
+.v6-mini-rfds strong{left:50%;bottom:8%;transform:translateX(-50%);width:96px;height:48px;border-radius:12px;background:#285c8d}
+.v6-mini-rfds b:nth-of-type(1){left:10%;top:9%}
+.v6-mini-rfds b:nth-of-type(2){right:10%;top:9%}
+.v6-mini-rfds b:nth-of-type(3){left:50%;top:38%;transform:translateX(-50%);width:86px}
+.v6-mini-rfds b:nth-of-type(4){left:50%;top:61%;transform:translateX(-50%);width:86px}
+.v6-mini-rfds:before{content:'';display:block;position:absolute;left:50%;top:20%;bottom:26%;width:1px;background:rgba(37,99,235,.24)}
+
+/* GL: policy rows converge into a governed financial result. */
+.v6-mini-gl-coding{background:linear-gradient(135deg,rgba(246,249,253,.98),rgba(239,244,250,.88))}
+.v6-mini-gl-coding strong{right:8%;top:50%;transform:translateY(-50%);width:68px;height:98px;border-radius:14px;background:#314c63}
+.v6-mini-gl-coding b{left:8%;width:82px;justify-items:start;padding-left:9px}
+.v6-mini-gl-coding b:nth-of-type(1){top:9%}
+.v6-mini-gl-coding b:nth-of-type(2){top:32%}
+.v6-mini-gl-coding b:nth-of-type(3){top:55%}
+.v6-mini-gl-coding b:nth-of-type(4){top:78%}
+.v6-mini-gl-coding:before{content:'';display:block;position:absolute;left:54%;top:12%;bottom:12%;width:1px;background:rgba(49,76,99,.18)}
+
+/* Lease: two source controls pass through a validation gate into finance. */
+.v6-mini-lease-vendor-management strong{left:50%;top:50%;transform:translate(-50%,-50%);width:82px;height:82px;border-radius:16px;background:#42556a}
+.v6-mini-lease-vendor-management b:nth-of-type(1){left:7%;top:18%}
+.v6-mini-lease-vendor-management b:nth-of-type(2){left:7%;bottom:18%}
+.v6-mini-lease-vendor-management b:nth-of-type(3){right:7%;top:18%}
+.v6-mini-lease-vendor-management b:nth-of-type(4){right:7%;bottom:18%}
+.v6-mini-lease-vendor-management:before{content:'';display:block;position:absolute;left:18%;right:18%;top:50%;height:1px;background:rgba(66,85,106,.2)}
+
 @media(max-width:760px){
   .site-footer{padding:34px 0 20px}
   .footer-grid{grid-template-columns:1fr;gap:16px}
@@ -7,4 +116,73 @@
   .footer-bottom{display:flex;justify-content:space-between;gap:12px;padding-top:14px}
   .footer-bottom span:first-child{display:none}
   .footer-bottom span{font-size:.6rem}
+
+  /* Do not compress desktop system maps on mobile. Recompose them. */
+  .v6-order-map,.v6-forecast-map,.v6-orbit-map{
+    position:static;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    min-height:0!important;
+    padding:2px 0 4px;
+  }
+  .v6-order-core,.v6-forecast-core,.v6-orbit-core{
+    position:static;
+    left:auto;right:auto;top:auto;bottom:auto;
+    width:auto;height:auto;min-height:108px;
+    transform:none;
+    border-radius:18px;
+    padding:15px;
+  }
+  .v6-order-node,.v6-forecast-node,.v6-orbit-node{
+    position:static;
+    left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    min-width:0;min-height:70px;
+    transform:none!important;
+    padding:10px;
+  }
+  .v6-order-status,.v6-forecast-ring,.v6-orbit-track{
+    position:static;
+    left:auto;right:auto;top:auto;bottom:auto;
+    grid-column:1/-1;
+    display:flex;
+    max-width:none;
+    transform:none;
+    white-space:normal;
+    justify-content:center;
+    flex-wrap:wrap;
+    padding-top:2px;
+  }
+
+  .v6-order-node.o1{grid-column:1;grid-row:1}.v6-order-node.o2{grid-column:2;grid-row:1}
+  .v6-order-core{grid-column:1/-1;grid-row:2}
+  .v6-order-node.o3{grid-column:1;grid-row:3}.v6-order-node.o4{grid-column:2;grid-row:3}
+  .v6-order-status{grid-row:4}
+
+  .v6-forecast-node.f1{grid-column:1;grid-row:1}.v6-forecast-node.f2{grid-column:2;grid-row:1}
+  .v6-forecast-node.f3{grid-column:1;grid-row:2}.v6-forecast-node.f4{grid-column:2;grid-row:2}
+  .v6-forecast-core{grid-column:1/-1;grid-row:3}
+  .v6-forecast-ring{grid-row:4}
+
+  .v6-orbit-core{grid-column:1/-1;grid-row:1}
+  .v6-orbit-node.n1{grid-column:1;grid-row:2}.v6-orbit-node.n2{grid-column:2;grid-row:2}
+  .v6-orbit-node.n3{grid-column:1;grid-row:3}.v6-orbit-node.n4{grid-column:2;grid-row:3}
+  .v6-orbit-node.n5{grid-column:1/-1;grid-row:4}
+  .v6-orbit-track{grid-row:5}
+
+  .v6-mini-map{min-height:160px}
+}
+
+@media(max-width:520px){
+  .v6-work-card{gap:12px}
+  .v6-mini-map{min-height:154px}
+  .v6-mini-map strong{width:66px;height:66px;font-size:.61rem}
+  .v6-mini-map b{font-size:.45rem;min-width:43px;padding:5px 6px}
+  .v6-mini-rag-analysis-agent strong{width:70px;height:86px}
+  .v6-mini-rfds strong{width:90px;height:44px}
+  .v6-mini-gl-coding strong{width:62px;height:92px}
+  .v6-mini-lease-vendor-management strong{width:74px;height:74px}
+
+  .v6-order-core,.v6-forecast-core,.v6-orbit-core{min-height:96px}
+  .v6-order-node,.v6-forecast-node,.v6-orbit-node{min-height:64px}
 }
