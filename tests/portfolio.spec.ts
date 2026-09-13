@@ -47,7 +47,7 @@ test('all six projects use one Jira-style epic workspace', async ({ page }, test
     await expect(workspace.locator('.feature-item')).toHaveCount(4);
     await expect(workspace.getByText('The big picture', { exact: true })).toBeVisible();
     await expect(workspace.getByText('Key product decisions', { exact: true })).toBeVisible();
-    await expect(workspace.getByText('Focus areas', { exact: true })).toBeVisible();
+    await expect(workspace.locator('.focus-section .section-label > span')).toHaveText('Focus areas');
     await expect(page.getByText('Senior TPO scope', { exact: true })).toHaveCount(0);
     await expect(page.getByText(/INC-0/i)).toHaveCount(0);
 
