@@ -1,0 +1,158 @@
+---
+import { projects } from '../data/projects';
+import { eomDecisions, eomEpic, eomFocusAreas, eomMetrics } from '../data/eomCase';
+
+const base = import.meta.env.BASE_URL;
+const currentIndex = projects.findIndex((item) => item.slug === 'enterprise-order-management');
+const nextProject = projects[(currentIndex + 1) % projects.length]!;
+---
+
+<main class="eom-epic shell">
+  <nav class="epic-bar glass-bar" aria-label="Project navigation">
+    <a href={`${base}#work`}>← Back to portfolio</a>
+    <span>{eomEpic.code}</span>
+    <a href={`${base}work/${nextProject.slug}/`}>Next project →</a>
+  </nav>
+
+  <header class="epic-hero">
+    <div>
+      <span class="epic-category">{eomEpic.category}</span>
+      <h1>{eomEpic.title}</h1>
+      <p>{eomEpic.headline}</p>
+    </div>
+    <aside class="epic-context glass-card" aria-label="Product context">
+      <span>Product context</span>
+      <strong>19+ teams</strong>
+      <small>18 service intents · dependency-driven orchestration</small>
+    </aside>
+  </header>
+
+  <section class="epic-metrics" aria-label="Key evidence">
+    {eomMetrics.map((metric) => (
+      <article class="glass-card">
+        <span>{metric.type}</span>
+        <strong>{metric.value}</strong>
+        <p>{metric.label}</p>
+      </article>
+    ))}
+  </section>
+
+  <section class="big-picture" aria-labelledby="big-picture-title">
+    <div class="section-heading">
+      <span>The big picture</span>
+      <h2 id="big-picture-title">Change the operating model for product change.</h2>
+    </div>
+    <p class="big-picture-copy">{eomEpic.bigPicture}</p>
+
+    <div class="story-triptych">
+      <article class="glass-card">
+        <span>Problem</span>
+        <h3>Product change had become workflow change.</h3>
+        <p>{eomEpic.problem}</p>
+      </article>
+      <article class="glass-card">
+        <span>Product decision</span>
+        <h3>Describe dependencies instead of every path.</h3>
+        <p>{eomEpic.decision}</p>
+      </article>
+      <article class="glass-card story-outcome">
+        <span>Outcome</span>
+        <h3>A reusable platform for changing service combinations.</h3>
+        <p>{eomEpic.outcome}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="epic-decisions" aria-labelledby="decisions-title">
+    <div class="section-heading compact-heading">
+      <span>Key product decisions</span>
+      <h2 id="decisions-title">Why the product moved this way.</h2>
+    </div>
+    <div class="decision-rows glass-card">
+      {eomDecisions.map((decision, index) => (
+        <article>
+          <b>{String(index + 1).padStart(2, '0')}</b>
+          <div>
+            <h3>{decision.title}</h3>
+            <p>{decision.body}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="product-evolution" aria-labelledby="evolution-title">
+    <div class="section-heading compact-heading">
+      <span>Product evolution</span>
+      <h2 id="evolution-title">Four focus areas carried the transformation.</h2>
+      <p>Open a focus area for the detailed case study: what I owned, what was hard, the decisions, trade-offs, system flow, and the evidence behind it.</p>
+    </div>
+
+    <div class="focus-track">
+      {eomFocusAreas.map((area, index) => (
+        <a class="focus-node glass-card" href={`${base}work/enterprise-order-management/${area.slug}/`}>
+          <div class="focus-node-top">
+            <span>{area.code}</span>
+            <b>{String(index + 1).padStart(2, '0')}</b>
+          </div>
+          <h3>{area.title}</h3>
+          <p>{area.purpose}</p>
+          <strong>View focus area →</strong>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="epic-evidence glass-card" aria-labelledby="evidence-title">
+    <div>
+      <span>Evidence discipline</span>
+      <h2 id="evidence-title">The number is only useful if the reader knows what it proves.</h2>
+    </div>
+    <div class="evidence-lines">
+      {eomMetrics.map((metric) => (
+        <article>
+          <strong>{metric.value}</strong>
+          <div>
+            <span>{metric.type} · {metric.label}</span>
+            <p>{metric.detail}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <a class="epic-next glass-card" href={`${base}work/${nextProject.slug}/`}>
+    <span>Next epic</span>
+    <strong>{nextProject.title}</strong>
+    <b aria-hidden="true">→</b>
+  </a>
+</main>
+
+<style>
+  .eom-epic{padding:20px 0 72px;color:#0f2f50}
+  .epic-bar{position:sticky;top:92px;z-index:40;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;min-height:54px;margin-bottom:26px;padding:8px 12px}
+  .epic-bar a{padding:8px 10px;font-size:.69rem;font-weight:760;color:#5f7890}.epic-bar a:last-child{justify-self:end}.epic-bar span{font-size:.66rem;font-weight:850;letter-spacing:.08em;color:#4d6d8b}
+
+  .epic-hero{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(250px,.55fr);gap:20px;align-items:end;padding:28px 6px 22px}
+  .epic-category,.section-heading>span,.epic-context>span,.story-triptych article>span,.epic-metrics article>span,.epic-evidence>div>span{display:block;font-size:.58rem;font-weight:850;letter-spacing:.095em;text-transform:uppercase;color:#7890a8}
+  .epic-hero h1{margin:12px 0 12px;font-size:clamp(2.8rem,5.2vw,4.8rem);line-height:.96;letter-spacing:-.052em;color:#102f50}
+  .epic-hero>div>p{max-width:820px;margin:0;color:#5e7890;font-size:.98rem;line-height:1.62}
+  .epic-context{display:grid;gap:5px;padding:22px}.epic-context strong{font-size:1.55rem;color:#225b9b}.epic-context small{font-size:.67rem;line-height:1.5;color:#71879c}
+
+  .epic-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:8px}.epic-metrics article{padding:18px 20px}.epic-metrics strong{display:block;margin:7px 0 2px;font-size:1.55rem;color:#1f5fb8}.epic-metrics p{margin:0;color:#677f95;font-size:.67rem}
+
+  .big-picture,.epic-decisions,.product-evolution{padding-top:54px}.section-heading{max-width:820px;margin-bottom:18px}.section-heading h2{margin:8px 0 0;font-size:clamp(2rem,3.7vw,3.2rem);line-height:1.02;letter-spacing:-.04em;color:#143754}.compact-heading{max-width:none;display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.65fr);column-gap:28px;align-items:end}.compact-heading>span,.compact-heading>h2{grid-column:1}.compact-heading>p{grid-column:2;grid-row:1/3;margin:0;color:#6b8297;font-size:.73rem;line-height:1.55}
+  .big-picture-copy{max-width:1060px;margin:0 0 20px;color:#5f778e;font-size:.84rem;line-height:1.7}
+  .story-triptych{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.story-triptych article{padding:22px;min-height:210px}.story-triptych h3{margin:12px 0 8px;font-size:1rem;line-height:1.22;color:#173b5c}.story-triptych p{margin:0;color:#657d93;font-size:.73rem;line-height:1.58}.story-outcome{background:linear-gradient(145deg,rgba(245,251,255,.88),rgba(255,255,255,.76))}
+
+  .decision-rows{overflow:hidden;padding:0}.decision-rows article{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;padding:18px 22px;border-bottom:1px solid rgba(20,55,84,.075)}.decision-rows article:last-child{border-bottom:0}.decision-rows b{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:rgba(228,238,255,.85);font-size:.61rem;color:#2f63b0}.decision-rows h3{margin:1px 0 4px;font-size:.83rem;color:#173a5a}.decision-rows p{margin:0;color:#6b8196;font-size:.69rem;line-height:1.52}
+
+  .focus-track{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.focus-track:before{content:"";position:absolute;left:8%;right:8%;top:30px;height:1px;background:linear-gradient(90deg,rgba(63,111,211,.18),rgba(63,111,211,.55),rgba(63,111,211,.18));z-index:0}.focus-node{position:relative;z-index:1;display:flex;flex-direction:column;min-height:255px;padding:20px;text-decoration:none}.focus-node-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}.focus-node-top span{padding:5px 8px;border-radius:999px;background:rgba(239,245,255,.93);font-size:.52rem;font-weight:850;color:#4e72a6}.focus-node-top b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#3269c7;color:#fff;font-size:.56rem;box-shadow:0 0 0 6px rgba(235,242,255,.9)}.focus-node h3{margin:0 0 8px;font-size:.96rem;color:#153858}.focus-node p{margin:0 0 16px;color:#6b8297;font-size:.69rem;line-height:1.55}.focus-node>strong{margin-top:auto;font-size:.63rem;color:#3566ad}.focus-node:hover{transform:translateY(-2px);border-color:rgba(49,105,199,.24)}
+
+  .epic-evidence{display:grid;grid-template-columns:minmax(260px,.65fr) minmax(0,1.35fr);gap:30px;margin-top:54px;padding:25px}.epic-evidence h2{margin:9px 0 0;font-size:1.35rem;line-height:1.12;letter-spacing:-.025em;color:#173957}.evidence-lines{display:grid}.evidence-lines article{display:grid;grid-template-columns:105px minmax(0,1fr);gap:14px;padding:12px 0;border-bottom:1px solid rgba(20,55,84,.07)}.evidence-lines article:last-child{border-bottom:0}.evidence-lines strong{font-size:1.15rem;color:#1f60b8}.evidence-lines span{font-size:.62rem;font-weight:800;color:#456887}.evidence-lines p{margin:3px 0 0;color:#71869a;font-size:.64rem;line-height:1.45}
+
+  .epic-next{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;margin-top:16px;padding:18px 22px;text-decoration:none}.epic-next span{font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:#8295a6}.epic-next strong{font-size:.8rem;color:#244d73}.epic-next b{color:#376db3}
+
+  @media(max-width:900px){.epic-hero,.compact-heading,.epic-evidence{grid-template-columns:1fr}.compact-heading>span,.compact-heading>h2,.compact-heading>p{grid-column:1;grid-row:auto}.compact-heading>p{margin-top:8px}.story-triptych{grid-template-columns:1fr}.focus-track{grid-template-columns:repeat(2,minmax(0,1fr))}.focus-track:before{display:none}.epic-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:600px){.eom-epic{padding-top:10px}.epic-bar{top:70px;grid-template-columns:1fr auto;margin-bottom:12px}.epic-bar>a:last-child{display:none}.epic-bar span{justify-self:end}.epic-hero{padding-top:16px}.epic-hero h1{font-size:2.55rem}.epic-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.epic-metrics article{padding:15px}.focus-track{grid-template-columns:1fr}.focus-node{min-height:0}.story-triptych article{min-height:0}.big-picture,.epic-decisions,.product-evolution{padding-top:42px}.evidence-lines article{grid-template-columns:88px 1fr}.epic-next{grid-template-columns:1fr auto}.epic-next span{display:none}}
+</style>
