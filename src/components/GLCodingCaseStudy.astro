@@ -1,0 +1,165 @@
+---
+import type { Project } from '../data/projects';
+
+interface Props { project: Project; }
+const { project } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<main class="gl-case shell">
+  <nav class="gl-topbar" aria-label="Project navigation">
+    <a href={`${base}#work`}>← Work</a>
+    <span>Featured case study</span>
+    <a href={`${base}work/${project.slug}/`}>Dynamic GL Coding</a>
+  </nav>
+
+  <header class="gl-hero">
+    <div class="gl-hero-copy">
+      <p class="eyebrow">Financial operations · Configurable policy</p>
+      <h1>From hard-coded financial logic to a configurable enterprise capability.</h1>
+      <p class="lede">A legacy financial-routing model had reached its scalability limit. As Senior Technical Product Owner, I led a four-month redesign that separated accounting policy from application code, standardized project context across three enterprise systems, and created a reusable model for onboarding new portfolios.</p>
+      <div class="gl-hero-tags" aria-label="Case study themes">
+        <span>Platform modernization</span><span>Financial controls</span><span>Cross-system identity</span><span>Product strategy</span>
+      </div>
+    </div>
+    <aside class="gl-summary-card">
+      <span class="label">Product outcome</span>
+      <strong>Make policy changeable without making the architecture fragile.</strong>
+      <p>The initiative shifted routine financial-policy changes from software releases toward controlled configuration while preserving validation, traceability, and accounting governance.</p>
+    </aside>
+  </header>
+
+  <section class="gl-evidence" aria-label="Key evidence">
+    <article><strong>40%</strong><span>Faster close</span><small>validated through post-implementation scenario analysis</small></article>
+    <article><strong>4+</strong><span>Portfolios supported</span><small>measured expansion beyond the original model</small></article>
+    <article><strong>3</strong><span>Enterprise systems aligned</span><small>operations, WMS, and ERP around one project context</small></article>
+    <article><strong>&lt; 1 wk</strong><span>Enablement cycle</span><small>estimated vs. 2–3 months of development for supported scenarios</small></article>
+  </section>
+
+  <section class="gl-section gl-two-col">
+    <div>
+      <p class="section-kicker">01 · The challenge</p>
+      <h2>The business was growing faster than the financial model could adapt.</h2>
+      <p>The original solution worked for a narrow business context. Financial-routing logic was embedded directly in application behavior, so every new portfolio introduced more conditional logic, more testing, and more dependency on Engineering.</p>
+      <div class="gl-risk-grid">
+        <article><strong>Release dependency</strong><p>New business contexts could require months of development before financial tracking was ready.</p></article>
+        <article><strong>Fragmented context</strong><p>Operations, warehouse processes, and ERP each carried only part of the financial story.</p></article>
+        <article><strong>Manual reconciliation</strong><p>Misclassification and downstream corrections increased close-cycle friction and audit exposure.</p></article>
+      </div>
+    </div>
+    <div class="gl-before-after" role="img" aria-label="Before and after operating model">
+      <div class="state before">
+        <span>Before</span>
+        <strong>Policy change</strong><i>→</i><strong>Engineering change</strong><i>→</i><strong>Test</strong><i>→</i><strong>Release</strong>
+        <small>Every new context extended the codebase.</small>
+      </div>
+      <div class="shift">↓</div>
+      <div class="state after">
+        <span>After</span>
+        <strong>Approved policy</strong><i>→</i><strong>Configuration</strong><i>→</i><strong>Validation</strong>
+        <small>Supported changes moved out of the software-release cycle.</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="gl-section">
+    <p class="section-kicker">02 · Product decisions</p>
+    <h2>Three decisions changed the operating model.</h2>
+    <div class="gl-decision-grid">
+      <article>
+        <span>01</span><h3>Decouple policy from code</h3>
+        <p>Move changing accounting rules into metadata-driven lookup structures so business policy could evolve without embedding every change directly into application logic.</p>
+      </article>
+      <article>
+        <span>02</span><h3>Standardize one common key</h3>
+        <p>Carry a consistent project identifier through Operations, WMS, and ERP so operational activity retained its financial context across every handoff.</p>
+      </article>
+      <article>
+        <span>03</span><h3>Build for portfolio growth</h3>
+        <p>Choose a four-month foundational redesign over a quicker project-specific patch, trading short-term speed for reuse, lower technical debt, and future configuration-led onboarding.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="gl-section gl-ecosystem-wrap">
+    <div>
+      <p class="section-kicker">03 · Product model</p>
+      <h2>Financial context had to survive the entire enterprise flow.</h2>
+      <p>The redesign treated the problem as an ecosystem capability rather than a single application feature. The common project key became the connective tissue between planning, physical movement, and the financial system of record.</p>
+    </div>
+    <div class="gl-ecosystem" role="img" aria-label="Common project key flows across operations, warehouse, policy engine, and ERP">
+      <div class="sys"><small>Plan</small><strong>Operations</strong></div>
+      <i>→</i>
+      <div class="key"><small>COMMON PROJECT CONTEXT</small><strong>Report code</strong></div>
+      <i>→</i>
+      <div class="sys"><small>Move</small><strong>WMS</strong></div>
+      <i>→</i>
+      <div class="policy"><small>DECIDE</small><strong>Configurable policy</strong><span>project · activity · item context</span></div>
+      <i>→</i>
+      <div class="sys result"><small>Record</small><strong>ERP / Ledger</strong></div>
+    </div>
+    <div class="gl-validation-strip"><span>Validate at source</span><i>→</i><span>Preserve context</span><i>→</i><span>Route exceptions</span><i>→</i><span>Post with evidence</span></div>
+  </section>
+
+  <section class="gl-section gl-two-col">
+    <div>
+      <p class="section-kicker">04 · Delivery strategy</p>
+      <h2>Sequence the foundation before the automation.</h2>
+      <div class="gl-sequence">
+        <article><span>1</span><div><strong>Common identity</strong><p>Establish a consistent project context across participating systems.</p></div></article>
+        <article><span>2</span><div><strong>Policy configuration</strong><p>Move financial mappings and rules into controlled metadata.</p></div></article>
+        <article><span>3</span><div><strong>Routing & validation</strong><p>Generate and validate financial treatment from business context.</p></div></article>
+        <article><span>4</span><div><strong>Cross-system reconciliation</strong><p>Keep the financial context intact across operational and ERP handoffs.</p></div></article>
+      </div>
+    </div>
+    <aside class="gl-tradeoff">
+      <span class="label">The tradeoff</span>
+      <h3>Quick fix or reusable capability?</h3>
+      <p>A narrower extension could have supported the next project sooner. I advocated for the larger foundational redesign because another project-specific patch would keep Engineering on the critical path and increase technical debt.</p>
+      <div><strong>Short-term cost</strong><span>larger initial investment</span></div>
+      <div><strong>Long-term gain</strong><span>configuration-led growth</span></div>
+    </aside>
+  </section>
+
+  <section class="gl-section">
+    <p class="section-kicker">05 · Evidence</p>
+    <h2>Separate measured outcomes from estimates and stakeholder validation.</h2>
+    <div class="gl-proof-grid">
+      <article class="measured"><span>Measured / validated</span><strong>40% faster close</strong><p>Post-implementation scenario analysis showed reduced reconciliation and less back-and-forth with controllership.</p></article>
+      <article class="measured"><span>Measured</span><strong>4+ portfolios</strong><p>The reusable model expanded beyond the original business context without requiring a new financial-routing architecture for each portfolio.</p></article>
+      <article class="measured"><span>Measured</span><strong>3 systems standardized</strong><p>Operations, warehouse processes, and ERP aligned around a common project identifier.</p></article>
+      <article class="estimated"><span>Estimated</span><strong>2–3 months → &lt;1 week</strong><p>Supported new-business enablement shifted from development cycles toward controlled configuration.</p></article>
+      <article class="estimated"><span>Business-case estimate</span><strong>Headcount growth avoided</strong><p>The model was designed to absorb portfolio growth without proportional increases in administrative support.</p></article>
+      <article class="feedback"><span>Stakeholder validation</span><strong>Less engineering dependency</strong><p>Post-implementation feedback highlighted easier policy management, stronger cross-system consistency, and simpler onboarding of new portfolios.</p></article>
+    </div>
+  </section>
+
+  <section class="gl-section gl-closing">
+    <p class="section-kicker">06 · What this demonstrates</p>
+    <h2>The product was not a better GL string. It was a more scalable business capability.</h2>
+    <p>This initiative represents how I approach Senior Technical Product Ownership: identify when an operational problem is really an architectural constraint, make the tradeoff between immediate delivery and scalable design, translate policy-heavy business rules into product behavior, and connect technical decisions to measurable operating value.</p>
+  </section>
+</main>
+
+<style>
+  .gl-case{padding:1.25rem 0 5rem;color:var(--ink,#172033)}
+  .gl-topbar{display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:.8rem 1rem;border:1px solid rgba(24,39,75,.12);border-radius:18px;background:rgba(255,255,255,.76);backdrop-filter:blur(18px);position:sticky;top:.75rem;z-index:5}
+  .gl-topbar a{color:inherit;text-decoration:none;font-weight:650}.gl-topbar span{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#667085}
+  .gl-hero{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.75fr);gap:1.2rem;padding:4.5rem 0 2rem;align-items:end}
+  .eyebrow,.section-kicker,.label{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:#3567a8;font-weight:800}
+  .gl-hero h1{font-size:clamp(2.7rem,6vw,5.6rem);line-height:.98;letter-spacing:-.055em;max-width:13ch;margin:.45rem 0 1.25rem}.lede{font-size:1.08rem;line-height:1.75;color:#4f5d73;max-width:72ch}
+  .gl-hero-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.35rem}.gl-hero-tags span{padding:.45rem .72rem;border-radius:999px;background:#eef4fb;color:#325d93;font-size:.82rem;font-weight:700}
+  .gl-summary-card,.gl-tradeoff{padding:1.4rem;border-radius:24px;border:1px solid rgba(24,39,75,.12);background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(240,246,253,.85));box-shadow:0 20px 55px rgba(31,57,91,.08)}
+  .gl-summary-card strong{display:block;font-size:1.35rem;line-height:1.25;margin:.55rem 0}.gl-summary-card p,.gl-tradeoff p{color:#5c687b;line-height:1.65}
+  .gl-evidence{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin:1.25rem 0 4rem}.gl-evidence article{padding:1.15rem;border:1px solid rgba(24,39,75,.1);border-radius:20px;background:#fff}.gl-evidence strong{font-size:2rem;display:block;letter-spacing:-.04em}.gl-evidence span{display:block;font-weight:800;margin:.2rem 0}.gl-evidence small{color:#7a8495;line-height:1.4;display:block}
+  .gl-section{padding:4rem 0;border-top:1px solid rgba(24,39,75,.1)}.gl-section h2{font-size:clamp(2rem,4vw,3.5rem);line-height:1.05;letter-spacing:-.04em;max-width:18ch;margin:.5rem 0 1.15rem}.gl-section>p:not(.section-kicker){max-width:74ch;color:#596779;line-height:1.75}
+  .gl-two-col{display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:start}.gl-risk-grid{display:grid;gap:.65rem;margin-top:1.35rem}.gl-risk-grid article{padding:1rem 1.05rem;border-left:3px solid #7fa9d7;background:#f7faff;border-radius:0 14px 14px 0}.gl-risk-grid strong{display:block}.gl-risk-grid p{margin:.3rem 0 0;color:#677487;line-height:1.55}
+  .gl-before-after{padding:1.15rem;border-radius:24px;background:#f4f7fb;border:1px solid rgba(24,39,75,.1)}.state{padding:1.1rem;border-radius:18px;background:#fff;display:grid;gap:.55rem}.state>span{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800}.state strong{font-size:.98rem}.state i{font-style:normal;color:#9ca7b8}.before>span{color:#9a5a5a}.after>span{color:#3567a8}.shift{text-align:center;padding:.45rem;color:#8290a3}
+  .gl-decision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-top:1.5rem}.gl-decision-grid article{padding:1.35rem;border-radius:22px;border:1px solid rgba(24,39,75,.1);background:#fff}.gl-decision-grid article>span{font-size:.75rem;color:#6c92bd;font-weight:900}.gl-decision-grid h3{font-size:1.25rem;margin:.45rem 0}.gl-decision-grid p{color:#657286;line-height:1.65}
+  .gl-ecosystem-wrap{overflow:hidden}.gl-ecosystem{margin:2rem 0 1rem;display:flex;align-items:center;gap:.65rem;padding:1.35rem;border-radius:26px;background:linear-gradient(135deg,#f7faff,#eef4fb);border:1px solid rgba(24,39,75,.1)}.gl-ecosystem>i{font-style:normal;color:#7f8da1;font-size:1.25rem}.sys,.key,.policy{min-width:0;flex:1;padding:1rem;border-radius:18px;background:#fff;text-align:center;border:1px solid rgba(24,39,75,.09)}.key,.policy{background:#eaf2fb;border-color:#aac4e2}.sys small,.key small,.policy small{display:block;font-size:.66rem;letter-spacing:.08em;color:#748298}.sys strong,.key strong,.policy strong{display:block;margin:.3rem 0}.policy span{font-size:.72rem;color:#64748b}.result{box-shadow:inset 0 0 0 1px #c8dcef}.gl-validation-strip{display:flex;justify-content:center;flex-wrap:wrap;gap:.6rem;color:#50637a;font-size:.85rem;font-weight:700}.gl-validation-strip i{font-style:normal;color:#9aabbd}
+  .gl-sequence{display:grid;gap:.65rem;margin-top:1.25rem}.gl-sequence article{display:grid;grid-template-columns:40px 1fr;gap:.75rem;align-items:start;padding:.9rem 0;border-bottom:1px solid rgba(24,39,75,.08)}.gl-sequence article>span{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#eaf2fb;color:#3567a8;font-weight:900}.gl-sequence strong{display:block}.gl-sequence p{margin:.25rem 0;color:#657286}.gl-tradeoff h3{font-size:1.45rem;margin:.55rem 0}.gl-tradeoff div{display:flex;justify-content:space-between;gap:1rem;padding:.8rem 0;border-top:1px solid rgba(24,39,75,.08)}.gl-tradeoff div strong{font-size:.85rem}.gl-tradeoff div span{font-size:.85rem;color:#657286;text-align:right}
+  .gl-proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:1.5rem}.gl-proof-grid article{padding:1.2rem;border-radius:20px;border:1px solid rgba(24,39,75,.1);background:#fff}.gl-proof-grid article>span{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:850}.gl-proof-grid .measured>span{color:#2f6f61}.gl-proof-grid .estimated>span{color:#946d2f}.gl-proof-grid .feedback>span{color:#6f5799}.gl-proof-grid strong{display:block;font-size:1.35rem;margin:.45rem 0}.gl-proof-grid p{color:#667386;line-height:1.58;margin:0}
+  .gl-closing{padding-bottom:1rem}.gl-closing h2{max-width:20ch}.gl-closing>p:last-child{font-size:1.05rem}
+  @media (max-width:900px){.gl-hero,.gl-two-col{grid-template-columns:1fr}.gl-evidence{grid-template-columns:repeat(2,1fr)}.gl-decision-grid,.gl-proof-grid{grid-template-columns:1fr 1fr}.gl-ecosystem{overflow-x:auto;justify-content:flex-start}.sys,.key,.policy{min-width:150px}}
+  @media (max-width:620px){.gl-topbar span{display:none}.gl-hero{padding-top:2.7rem}.gl-evidence,.gl-decision-grid,.gl-proof-grid{grid-template-columns:1fr}.gl-hero h1{font-size:2.65rem}.gl-section{padding:3rem 0}.gl-ecosystem{padding:1rem}.gl-evidence{margin-bottom:2.5rem}}
+</style>

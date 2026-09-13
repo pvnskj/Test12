@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectDashboardV6 from '../../components/ProjectDashboardV6.astro';
+import GLCodingCaseStudy from '../../components/GLCodingCaseStudy.astro';
 import { projects, type Project } from '../../data/projects';
 
 export function getStaticPaths() {
@@ -16,5 +17,9 @@ const { project } = Astro.props;
   description={`${project.question} ${project.productGoal}`}
   bareMain
 >
-  <ProjectDashboardV6 project={project} />
+  {project.slug === 'gl-coding' ? (
+    <GLCodingCaseStudy project={project} />
+  ) : (
+    <ProjectDashboardV6 project={project} />
+  )}
 </BaseLayout>
