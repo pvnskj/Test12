@@ -10,25 +10,29 @@ const projects = [
   { path: './work/lease-vendor-management/', title: 'Lease & Vendor Management' },
 ];
 
-test('homepage presents all six projects as a product epic workspace', async ({ page }, testInfo) => {
+test('homepage presents product ownership approach and six proof-oriented projects', async ({ page }, testInfo) => {
   await page.goto('./');
   await expect(page).toHaveTitle(/Venkata Parimi/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('From complex problems to scalable products.');
-  await expect(page.locator('.workspace-model')).toBeVisible();
-  await expect(page.locator('.epic-row')).toHaveCount(projects.length);
-  await expect(page.getByText('EPIC-01', { exact: true })).toBeVisible();
-  await expect(page.getByText('EPIC-06', { exact: true })).toBeVisible();
+  await expect(page.locator('.ownership-difference')).toBeVisible();
+  await expect(page.locator('.ownership-principle')).toHaveCount(4);
+  await expect(page.locator('.project-row')).toHaveCount(projects.length);
+  await expect(page.locator('.project-problem')).toHaveCount(projects.length);
+  await expect(page.locator('.project-decision')).toHaveCount(projects.length);
+  await expect(page.locator('.project-evidence')).toHaveCount(projects.length);
+  await expect(page.getByText('Portfolio design principle', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('How the work is organized', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Peer-to-Peer Transactions')).toHaveCount(0);
   await expect(page.getByText('Asset & Portfolio Management')).toHaveCount(0);
 
-  const text = await page.locator('.workspace-home').innerText();
-  expect(text.length).toBeLessThan(5000);
-  await page.screenshot({ path: testInfo.outputPath('homepage-product-workspace.png'), fullPage: true });
+  const text = await page.locator('.ownership-home').innerText();
+  expect(text.length).toBeLessThan(6000);
+  await page.screenshot({ path: testInfo.outputPath('homepage-product-ownership.png'), fullPage: true });
 });
 
 test('homepage does not expose internal program or vendor terminology', async ({ page }) => {
   await page.goto('./');
-  const text = (await page.locator('.workspace-home').innerText()).toLowerCase();
+  const text = (await page.locator('.ownership-home').innerText()).toLowerCase();
   for (const term of ['hansen', 'camunda', 'change bucket', 'vendorone', 'uc1']) {
     expect(text).not.toContain(term);
   }
