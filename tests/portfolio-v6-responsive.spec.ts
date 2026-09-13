@@ -9,7 +9,7 @@ const routes = [
   './work/lease-vendor-management/',
 ];
 
-test('all project case studies fit a 390px mobile viewport', async ({ page }) => {
+test('all project workspaces fit a 390px mobile viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   for (const route of routes) {
     await page.goto(route);
@@ -17,18 +17,13 @@ test('all project case studies fit a 390px mobile viewport', async ({ page }) =>
       viewport: window.innerWidth,
       scrollWidth: document.documentElement.scrollWidth,
       bodyWidth: document.body.getBoundingClientRect().width,
-      caseWidth: (document.querySelector('.eom-workspace') ?? document.querySelector('.case-v8'))?.getBoundingClientRect().width ?? 0,
+      caseWidth: (document.querySelector('.eom-workspace') ?? document.querySelector('.product-workspace'))?.getBoundingClientRect().width ?? 0,
     }));
     expect(dimensions.viewport, route).toBe(390);
     expect(dimensions.scrollWidth, route).toBeLessThanOrEqual(391);
     expect(dimensions.bodyWidth, route).toBeGreaterThan(385);
     expect(dimensions.caseWidth, route).toBeGreaterThan(360);
-
-    if (route.includes('enterprise-order-management')) {
-      await expect(page.locator('.story-grid')).toBeVisible();
-      await expect(page.locator('.feature-list')).toBeVisible();
-    } else {
-      await expect(page.locator('.case-glance')).toBeVisible();
-    }
+    await expect(page.locator('.story-grid')).toBeVisible();
+    await expect(page.locator('.feature-list')).toBeVisible();
   }
 });
