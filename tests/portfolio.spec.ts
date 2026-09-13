@@ -84,10 +84,10 @@ test('all mobile project case studies use the full viewport without horizontal o
 
 test('projected and estimated outcomes remain visibly qualified', async ({ page }) => {
   await page.goto('./work/enterprise-order-management/');
-  await expect(page.getByText('Projected order capacity', { exact: true })).toBeVisible();
+  await expect(page.locator('.case-proof').getByText('Projected order capacity', { exact: true })).toBeVisible();
 
   await page.goto('./work/lease-vendor-management/');
-  await expect(page.getByText('Estimated ROI', { exact: true })).toBeVisible();
+  await expect(page.locator('.case-proof').getByText('Estimated ROI', { exact: true })).toBeVisible();
 });
 
 test('removed initiatives do not have public portfolio routes', async ({ request }) => {
