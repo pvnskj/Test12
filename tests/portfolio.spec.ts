@@ -13,13 +13,15 @@ const projects = [
 test('homepage presents product ownership approach and six proof-oriented projects', async ({ page }, testInfo) => {
   await page.goto('./');
   await expect(page).toHaveTitle(/Venkata Parimi/);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('From complex problems to scalable products.');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Turning challenges into opportunity.');
   await expect(page.locator('.ownership-difference')).toBeVisible();
   await expect(page.locator('.ownership-principle')).toHaveCount(4);
   await expect(page.locator('.project-row')).toHaveCount(projects.length);
   await expect(page.locator('.project-problem')).toHaveCount(projects.length);
   await expect(page.locator('.project-decision')).toHaveCount(projects.length);
   await expect(page.locator('.project-evidence')).toHaveCount(projects.length);
+  await expect(page.getByText('AI has changed how I think about product ownership.', { exact: false })).toBeVisible();
+  await expect(page.getByText('Open any project for the complete product story', { exact: false })).toHaveCount(0);
   await expect(page.getByText('Portfolio design principle', { exact: true })).toHaveCount(0);
   await expect(page.getByText('How the work is organized', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Peer-to-Peer Transactions')).toHaveCount(0);
