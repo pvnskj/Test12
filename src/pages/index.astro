@@ -75,7 +75,7 @@ const principles = [
     <section class="ownership-hero" aria-labelledby="portfolio-title">
       <div class="ownership-hero-copy">
         <p class="eyebrow">Product ownership in practice</p>
-        <h1 id="portfolio-title">From complex problems to scalable products.</h1>
+        <h1 id="portfolio-title">Turning challenges into opportunity.</h1>
         <p class="ownership-lede">
           I work where business intent, system constraints, and delivery choices collide. My role is to make the problem precise, turn ambiguity into product decisions, and keep evidence visible enough to change the next choice.
         </p>
@@ -108,17 +108,14 @@ const principles = [
         <h2 id="approach-title">Make the problem explicit. Make the decision visible. Make the evidence testable.</h2>
       </div>
       <p>
-        I do not treat a backlog as a list of requests. I use it to connect outcomes, constraints, dependencies, risk, and learning. That means understanding enough of the system to challenge the obvious solution, choosing where configuration should replace repeated customization, sequencing work around what we need to learn, and being precise about what the numbers actually prove.
+        AI has changed how I think about product ownership. The advantage is no longer who can produce the most requirements; it is who can frame the right problem, interrogate the system quickly, test assumptions earlier, and turn better evidence into better decisions. I use AI to accelerate discovery, analysis, and technical understanding—not to outsource judgment. What I bring is the ability to connect business intent with system reality, challenge the obvious solution, and create a faster learning loop from idea to evidence.
       </p>
     </section>
 
     <section id="work" class="product-work" aria-labelledby="work-title">
       <div class="work-heading">
-        <div>
-          <p class="eyebrow">Selected product work</p>
-          <h2 id="work-title">The problem, the decision, and the evidence.</h2>
-        </div>
-        <p>Open any project for the complete product story, trade-offs, focus areas, ownership, and evidence behind the headline.</p>
+        <p class="eyebrow">Selected product work</p>
+        <h2 id="work-title">The problem, the decision, and the evidence.</h2>
       </div>
 
       <div class="project-table glass-card">
@@ -198,10 +195,9 @@ const principles = [
   .ownership-approach>p{margin:0;color:#61778d;font-size:.84rem;line-height:1.72}
 
   .product-work{padding:38px 0 18px}
-  .work-heading{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.55fr);gap:38px;align-items:end;margin-bottom:18px;padding:0 4px}
+  .work-heading{display:block;margin-bottom:18px;padding:0 4px}
   .work-heading .eyebrow{margin-bottom:10px}
-  .work-heading h2{max-width:790px;margin:0;font-size:clamp(2rem,3.7vw,3.55rem);line-height:1.03;letter-spacing:-.04em;color:#143755}
-  .work-heading>p{max-width:470px;margin:0 0 4px;color:#73879a;font-size:.75rem;line-height:1.6}
+  .work-heading h2{width:100%;max-width:none;margin:0;font-size:clamp(2rem,3.7vw,3.55rem);line-height:1.03;letter-spacing:-.04em;color:#143755}
 
   .project-table{overflow:hidden;padding:0;border-radius:22px}
   .project-table-head{display:grid;grid-template-columns:minmax(210px,.72fr) minmax(220px,1fr) minmax(240px,1fr) minmax(190px,.68fr) 28px;gap:18px;padding:13px 22px;border-bottom:1px solid rgba(15,23,42,.07);background:rgba(246,249,253,.5)}
@@ -243,7 +239,7 @@ const principles = [
 
   @media(max-width:860px){
     .principle-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .ownership-approach,.work-heading{grid-template-columns:1fr;gap:18px}
+    .ownership-approach{grid-template-columns:1fr;gap:18px}
     .project-row{grid-template-columns:1fr 180px 24px;gap:14px}
     .project-identity{grid-column:1}
     .project-problem,.project-decision{grid-column:1;padding:10px 0 0;border-left:0;border-top:1px solid rgba(15,23,42,.06)}
