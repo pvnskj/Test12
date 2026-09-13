@@ -26,6 +26,15 @@ const proofBySlug: Record<string,string[]> = {
   'gl-coding':['40% faster close','Configurable financial routing'],
   'lease-vendor-management':['$23.7M monthly rent roll','Lease-to-pay controls'],
 };
+
+const miniBySlug: Record<string,{ core:string; nodes:string[] }> = {
+  'enterprise-order-management': { core:'DAG', nodes:['Hansen','Workers','Kafka','Context'] },
+  'rag-analysis-agent': { core:'Ground', nodes:['MCP','Retrieve','Rerank','Cite'] },
+  'build-plus': { core:'Asset ID', nodes:['Master','Plan','OMS','WMS','ERP'] },
+  rfds: { core:'RFDS', nodes:['RF plan','Catalog','Rules','Validate'] },
+  'gl-coding': { core:'GL', nodes:['Project ID','Policy','Validate','Post'] },
+  'lease-vendor-management': { core:'Validate', nodes:['Lease','Vendor','Oracle','Pay'] },
+};
 ---
 
 <BaseLayout>
@@ -84,7 +93,10 @@ const proofBySlug: Record<string,string[]> = {
               <p>{project.question}</p>
               <div class="v6-card-proof">{proofBySlug[project.slug]?.map((proof)=><span>{proof}</span>)}</div>
             </div>
-            <div class="v6-mini-map" aria-hidden="true"><strong>{project.index}</strong><span></span><span></span><span></span><span></span></div>
+            <div class={`v6-mini-map v6-mini-${project.slug}`} aria-hidden="true">
+              <strong>{miniBySlug[project.slug]?.core}<small>{project.index}</small></strong>
+              {miniBySlug[project.slug]?.nodes.map((node)=><b>{node}</b>)}
+            </div>
           </a>
         ))}
       </div>
