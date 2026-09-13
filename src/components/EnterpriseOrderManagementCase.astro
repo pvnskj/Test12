@@ -1,0 +1,306 @@
+---
+import { projects } from '../data/projects';
+
+const base = import.meta.env.BASE_URL;
+const currentIndex = projects.findIndex((item) => item.slug === 'enterprise-order-management');
+const nextProject = projects[(currentIndex + 1) % projects.length]!;
+
+const metrics = [
+  {
+    value: '20%',
+    label: 'Faster logic mapping',
+    type: 'Measured',
+    detail: 'Measured in a proof-of-concept comparison between dependency-driven self-assembly and manually modeled fulfillment logic.',
+  },
+  {
+    value: '19+',
+    label: 'Teams coordinated',
+    type: 'Actual',
+    detail: 'Cross-team delivery scope required to preserve behavior while the orchestration model changed underneath it.',
+  },
+  {
+    value: '18',
+    label: 'Service intents in scope',
+    type: 'Actual',
+    detail: 'Existing service behaviors that had to remain functionally intact during the migration to the new model.',
+  },
+  {
+    value: '75K/day',
+    label: 'Target order capacity',
+    type: 'Projected',
+    detail: 'A modeled scale target for the event-driven architecture—not presented as achieved production throughput.',
+  },
+];
+
+const decisions = [
+  {
+    title: 'Dependencies over diagrams',
+    body: 'Instead of defining every fulfillment path in advance, capabilities declare what they need and the platform resolves the executable sequence. Product variation becomes a dependency problem rather than another workflow-redesign exercise.',
+    tradeoff: 'More rigor in capability contracts; far less repeated path modeling.',
+  },
+  {
+    title: 'Assess before execution',
+    body: 'Catalog interpretation, identifiers, configuration, and enrichment are resolved before fulfillment starts. That creates a deliberate readiness boundary so downstream work does not consume incomplete technical state.',
+    tradeoff: 'An explicit gate adds discipline up front and reduces downstream ambiguity.',
+  },
+  {
+    title: 'One shared order context',
+    body: 'A governed order context travels through the lifecycle so each capability can enrich the same representation instead of rebuilding its own version of the order.',
+    tradeoff: 'A common contract requires governance, but removes repeated translation and state drift.',
+  },
+  {
+    title: 'Configuration over repeated customization',
+    body: 'Product and orchestration policy move toward configuration and metadata while the core execution engine stays stable. New variations should change product rules before they require structural code changes.',
+    tradeoff: 'Configuration needs guardrails; the payoff is a more reusable platform.',
+  },
+];
+
+const focusAreas = [
+  {
+    title: 'Orchestration model',
+    approach: 'Dependency-first',
+    body: 'Define capabilities and dependencies so the platform can assemble work dynamically instead of relying on a manually redrawn path for each variation.',
+    signal: 'Reduced modeling effort',
+  },
+  {
+    title: 'Product decomposition',
+    approach: 'Intent-to-work',
+    body: 'Translate customer and product intent into the technical work required for fulfillment without embedding every combination into a static workflow.',
+    signal: 'Cleaner product change',
+  },
+  {
+    title: 'Shared order context',
+    approach: 'Governed state',
+    body: 'Use one lifecycle context for validation, enrichment, and execution so parallel capabilities operate on consistent information.',
+    signal: 'Less state drift',
+  },
+  {
+    title: 'Scale & observability',
+    approach: 'Operate the platform',
+    body: 'Design event-driven coordination, visibility, and policy controls so the platform remains understandable as order volume and service combinations grow.',
+    signal: 'Scale with control',
+  },
+];
+
+const flow = [
+  'Customer intent',
+  'Product decomposition',
+  'Capability proposals',
+  'Dependency graph',
+  'Assessment & enrichment',
+  'Readiness gate',
+  'Execution',
+  'Provisioning',
+];
+---
+
+<main class="eom-page shell">
+  <nav class="eom-bar glass-bar" aria-label="Project navigation">
+    <a href={`${base}#work`} class="eom-back">← Product work</a>
+    <span>Enterprise Order Management</span>
+    <a href={`${base}work/${nextProject.slug}/`} class="eom-next-top">Next →</a>
+  </nav>
+
+  <header class="eom-hero">
+    <div class="eom-hero-copy">
+      <p class="eyebrow">Platform modernization · Order orchestration</p>
+      <h1>Enterprise Order Management</h1>
+      <p class="eom-lede">Turning fulfillment from manually modeled paths into a configurable orchestration platform that can absorb product change without repeatedly rebuilding the execution model.</p>
+      <div class="eom-tags" aria-label="Product approach">
+        <span>Dependency-first</span>
+        <span>Configurable</span>
+        <span>Governed context</span>
+        <span>Evidence-led</span>
+      </div>
+    </div>
+
+    <aside class="eom-shift glass-card" aria-label="Product transformation">
+      <small>Product shift</small>
+      <div class="shift-line">
+        <span>Every variation changes the workflow</span>
+        <b aria-hidden="true">→</b>
+        <strong>Capabilities declare intent and dependencies</strong>
+      </div>
+      <p>The product moved from describing every path to governing the rules, context, and dependencies that let the path assemble itself.</p>
+    </aside>
+  </header>
+
+  <section class="metric-strip" aria-label="Key evidence">
+    {metrics.map((metric) => (
+      <article class="metric-tile glass-card">
+        <span>{metric.type}</span>
+        <strong>{metric.value}</strong>
+        <small>{metric.label}</small>
+      </article>
+    ))}
+  </section>
+
+  <section class="story-grid" aria-labelledby="story-title">
+    <div class="section-intro">
+      <p class="eyebrow">The product story</p>
+      <h2 id="story-title">What changed, what I owned, and what made it hard.</h2>
+    </div>
+
+    <div class="story-board glass-card">
+      <article>
+        <small>Problem</small>
+        <h3>Product change had become a workflow change.</h3>
+        <p>As plans, services, and dependencies expanded, each variation added more modeled paths, deployment work, and regression surface. The bottleneck was no longer an individual workflow—it was the operating model for change.</p>
+      </article>
+      <article>
+        <small>What I owned</small>
+        <h3>The product direction, not just the backlog.</h3>
+        <p>I shaped the move toward dependency-aware orchestration, the readiness model before execution, the shared order-context contract, and the sequencing needed to migrate existing behavior without overstating projected scale.</p>
+      </article>
+      <article>
+        <small>What was hard</small>
+        <h3>Change the engine without changing the business behavior.</h3>
+        <p>The new model had to coordinate many delivery teams, preserve existing service outcomes, support parallel work safely, and make technical state consistent enough that capabilities could act independently without losing control.</p>
+      </article>
+      <article>
+        <small>Outcome</small>
+        <h3>A reusable platform instead of a growing library of paths.</h3>
+        <p>The product reduced logic-mapping effort and created a foundation where new service combinations could be expressed through intent, dependencies, shared context, and configuration rather than repeated structural redesign.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="decision-section" aria-labelledby="decision-title">
+    <div class="section-intro section-intro--wide">
+      <p class="eyebrow">Why the product moved this way</p>
+      <h2 id="decision-title">Four decisions changed the operating model.</h2>
+      <p>Architecture matters here only where it changes how the product scales, how teams make changes, or how safely the platform can execute.</p>
+    </div>
+
+    <div class="decision-list glass-card">
+      {decisions.map((decision, index) => (
+        <article>
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <h3>{decision.title}</h3>
+            <p>{decision.body}</p>
+          </div>
+          <aside>
+            <small>Trade-off</small>
+            <p>{decision.tradeoff}</p>
+          </aside>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="focus-section" aria-labelledby="focus-title">
+    <div class="section-intro section-intro--wide">
+      <p class="eyebrow">Focus areas</p>
+      <h2 id="focus-title">The capabilities I used to turn the strategy into a product.</h2>
+      <p>These are the product areas that carried the transformation—not a list of tickets, sprints, or internal program names.</p>
+    </div>
+
+    <div class="focus-grid">
+      {focusAreas.map((area) => (
+        <article class="focus-card glass-card">
+          <div class="focus-top"><span>{area.approach}</span><small>{area.signal}</small></div>
+          <h3>{area.title}</h3>
+          <p>{area.body}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="flow-section glass-card" aria-labelledby="flow-title">
+    <div class="flow-copy">
+      <p class="eyebrow">How the product works</p>
+      <h2 id="flow-title">Intent becomes executable work through governed context and dependencies.</h2>
+    </div>
+    <div class="flow-track" aria-label="End-to-end product flow">
+      {flow.map((step, index) => (
+        <>
+          <span>{step}</span>
+          {index < flow.length - 1 && <b aria-hidden="true">→</b>}
+        </>
+      ))}
+    </div>
+  </section>
+
+  <section class="evidence-section" aria-labelledby="evidence-title">
+    <div class="section-intro section-intro--wide">
+      <p class="eyebrow">What each number means</p>
+      <h2 id="evidence-title">Evidence with the qualification left intact.</h2>
+      <p>The point is not to make every number look equally impressive. It is to distinguish what was measured, what was actual delivery scope, and what remained a modeled target.</p>
+    </div>
+
+    <div class="evidence-grid">
+      {metrics.map((metric) => (
+        <article class="evidence-card glass-card">
+          <div>
+            <span>{metric.type}</span>
+            <strong>{metric.value}</strong>
+            <h3>{metric.label}</h3>
+          </div>
+          <p>{metric.detail}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <a class="eom-next glass-card" href={`${base}work/${nextProject.slug}/`}>
+    <span>Next product story</span>
+    <strong>{nextProject.title}</strong>
+    <b aria-hidden="true">→</b>
+  </a>
+</main>
+
+<style>
+  .eom-page{padding:20px 0 78px}
+  .eom-bar{position:sticky;top:92px;z-index:40;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;min-height:56px;margin-bottom:40px;padding:8px 12px}
+  .eom-bar>a{padding:8px 10px;font-size:.7rem;font-weight:750;color:#5e7891}
+  .eom-bar>span{font-size:.72rem;font-weight:800;color:#294e72}
+  .eom-next-top{justify-self:end}
+
+  .eom-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);gap:20px;align-items:end}
+  .eom-hero-copy{padding:32px 8px 26px 0}
+  .eom-hero-copy .eyebrow{margin-bottom:15px}
+  .eom-hero h1{max-width:900px;margin:0 0 18px;font-size:clamp(3.5rem,6.8vw,6.4rem);line-height:.94;letter-spacing:-.055em}
+  .eom-lede{max-width:850px;margin:0;color:#587086;font-size:1rem;line-height:1.65}
+  .eom-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:22px}
+  .eom-tags span,.focus-top span{padding:6px 9px;border:1px solid rgba(37,99,235,.08);border-radius:999px;background:rgba(242,247,255,.78);font-size:.59rem;font-weight:800;color:#466b8d}
+
+  .eom-shift{padding:26px}
+  .eom-shift>small,.story-board small,.focus-top small{font-size:.58rem;font-weight:850;letter-spacing:.09em;text-transform:uppercase;color:#7a91a6}
+  .shift-line{display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);gap:10px;align-items:center;margin:16px 0}
+  .shift-line span,.shift-line strong{font-size:.76rem;line-height:1.45}.shift-line span{color:#8798a8}.shift-line strong{color:#224b72}.shift-line b{text-align:center;color:#91a2b2}
+  .eom-shift>p{margin:0;padding-top:14px;border-top:1px solid rgba(15,23,42,.07);color:#687f94;font-size:.72rem;line-height:1.58}
+
+  .metric-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}
+  .metric-tile{display:grid;gap:3px;padding:18px 20px}
+  .metric-tile>span,.evidence-card span{font-size:.53rem;font-weight:850;letter-spacing:.09em;text-transform:uppercase;color:#7890a5}
+  .metric-tile strong{font-size:1.38rem;color:#225b9b}.metric-tile small{font-size:.65rem;color:#6d8398}
+
+  .story-grid,.decision-section,.focus-section,.evidence-section{padding-top:72px}
+  .section-intro{max-width:880px;margin-bottom:22px}.section-intro--wide{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.75fr);column-gap:44px;align-items:end;max-width:none}
+  .section-intro--wide .eyebrow,.section-intro--wide h2{grid-column:1}.section-intro--wide>p:last-child{grid-column:2;grid-row:1/3;align-self:end;margin-bottom:4px}
+  .section-intro .eyebrow{margin-bottom:11px}.section-intro h2{margin:0;font-size:clamp(2.2rem,4.2vw,4rem);line-height:1.02;letter-spacing:-.045em;color:#143755}
+  .section-intro>p:last-child{margin:0;color:#6a8197;font-size:.8rem;line-height:1.62}
+
+  .story-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:hidden;padding:0}
+  .story-board article{min-height:235px;padding:26px;border-right:1px solid rgba(15,23,42,.07);border-bottom:1px solid rgba(15,23,42,.07)}
+  .story-board article:nth-child(2n){border-right:0}.story-board article:nth-child(n+3){border-bottom:0}
+  .story-board h3{margin:14px 0 10px;font-size:1.2rem;line-height:1.2;color:#183b5b}.story-board p{margin:0;color:#637b90;font-size:.78rem;line-height:1.65}
+
+  .decision-list{overflow:hidden;padding:0}
+  .decision-list article{display:grid;grid-template-columns:50px minmax(0,1.3fr) minmax(220px,.7fr);gap:20px;align-items:start;padding:24px 26px;border-bottom:1px solid rgba(15,23,42,.07)}
+  .decision-list article:last-child{border-bottom:0}.decision-list>article>span{display:grid;width:38px;height:38px;place-items:center;border-radius:11px;background:rgba(232,241,255,.8);font-size:.62rem;font-weight:850;color:#33659a}
+  .decision-list h3{margin:2px 0 8px;font-size:1rem;color:#16395a}.decision-list p{margin:0;color:#647c91;font-size:.74rem;line-height:1.58}
+  .decision-list aside{padding-left:18px;border-left:1px solid rgba(15,23,42,.07)}.decision-list aside small{font-size:.55rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:#8aa0b4}.decision-list aside p{margin-top:7px;color:#486985}
+
+  .focus-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.focus-card{min-height:220px;padding:24px}.focus-top{display:flex;justify-content:space-between;gap:12px;align-items:center}.focus-top small{letter-spacing:.05em}.focus-card h3{margin:24px 0 10px;font-size:1.35rem;color:#173a5a}.focus-card p{margin:0;color:#647c91;font-size:.78rem;line-height:1.62}
+
+  .flow-section{display:grid;grid-template-columns:minmax(280px,.6fr) minmax(0,1.4fr);gap:32px;align-items:center;margin-top:72px;padding:28px}.flow-copy .eyebrow{margin-bottom:10px}.flow-copy h2{margin:0;font-size:1.45rem;line-height:1.15;color:#173a5a}.flow-track{display:flex;flex-wrap:wrap;align-items:center;gap:7px}.flow-track span{padding:7px 10px;border-radius:999px;background:rgba(241,247,255,.82);font-size:.59rem;font-weight:750;color:#4c6c89}.flow-track b{font-size:.62rem;color:#98a8b7}
+
+  .evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.evidence-card{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:center;padding:24px}.evidence-card strong{display:block;margin:5px 0 4px;font-size:1.65rem;color:#1c58a7}.evidence-card h3{margin:0;font-size:.8rem;color:#345875}.evidence-card p{margin:0;padding-left:20px;border-left:1px solid rgba(15,23,42,.07);color:#697f93;font-size:.72rem;line-height:1.58}
+
+  .eom-next{display:grid;grid-template-columns:1fr auto 28px;gap:16px;align-items:center;margin-top:54px;padding:20px 24px}.eom-next span{font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7c91a5}.eom-next strong{font-size:.9rem;color:#254d72}.eom-next b{font-size:1rem;color:#6d86a0}
+
+  @media(max-width:1000px){.eom-hero{grid-template-columns:1fr}.eom-hero-copy{padding-right:0}.metric-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.section-intro--wide{grid-template-columns:1fr;gap:14px}.section-intro--wide .eyebrow,.section-intro--wide h2,.section-intro--wide>p:last-child{grid-column:1;grid-row:auto}.decision-list article{grid-template-columns:42px 1fr}.decision-list aside{grid-column:2;padding:12px 0 0;border-left:0;border-top:1px solid rgba(15,23,42,.06)}.flow-section{grid-template-columns:1fr}.evidence-card{grid-template-columns:150px 1fr}}
+  @media(max-width:700px){.eom-page{padding-top:10px}.eom-bar{top:74px;grid-template-columns:1fr auto}.eom-bar>span{display:none}.eom-hero h1{font-size:clamp(2.8rem,14vw,4.6rem)}.metric-strip,.story-board,.focus-grid,.evidence-grid{grid-template-columns:1fr}.story-board article{min-height:0;border-right:0}.story-board article:nth-child(n+3){border-bottom:1px solid rgba(15,23,42,.07)}.story-board article:last-child{border-bottom:0}.story-grid,.decision-section,.focus-section,.evidence-section{padding-top:54px}.decision-list article{grid-template-columns:36px 1fr;gap:13px;padding:20px 18px}.evidence-card{grid-template-columns:1fr;gap:14px}.evidence-card p{padding:12px 0 0;border-left:0;border-top:1px solid rgba(15,23,42,.07)}.flow-section{margin-top:54px;padding:22px}.flow-track{gap:6px}.eom-next{grid-template-columns:1fr 24px}.eom-next strong{grid-column:1}.eom-next b{grid-column:2;grid-row:1/3}.section-intro h2{font-size:clamp(2rem,10vw,3.2rem)}}
+</style>

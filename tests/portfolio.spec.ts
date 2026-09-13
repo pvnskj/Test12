@@ -10,6 +10,8 @@ const projects = [
   { path: './work/lease-vendor-management/', title: 'Lease & Vendor Management' },
 ];
 
+const legacyCaseProjects = projects.slice(1);
+
 test('homepage presents product ownership approach and six proof-oriented projects', async ({ page }, testInfo) => {
   await page.goto('./');
   await expect(page).toHaveTitle(/Venkata Parimi/);
@@ -40,8 +42,29 @@ test('homepage does not expose internal program or vendor terminology', async ({
   }
 });
 
-test('every selected initiative leads with a concise case study instead of a product-model diagram', async ({ page }) => {
-  for (const project of projects) {
+test('enterprise order management integrates the complete product story into one page', async ({ page }, testInfo) => {
+  await page.goto('./work/enterprise-order-management/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Enterprise Order Management');
+  await expect(page.locator('.eom-shift')).toBeVisible();
+  await expect(page.locator('.story-board > article')).toHaveCount(4);
+  await expect(page.locator('.decision-list > article')).toHaveCount(4);
+  await expect(page.locator('.focus-card')).toHaveCount(4);
+  await expect(page.locator('.evidence-card')).toHaveCount(4);
+  await expect(page.getByText('What I owned', { exact: true })).toBeVisible();
+  await expect(page.getByText('What was hard', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Four decisions changed the operating model.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Evidence with the qualification left intact.' })).toBeVisible();
+  await expect(page.locator('.case-detail')).toHaveCount(0);
+  await expect(page.getByText('Senior TPO scope', { exact: true })).toHaveCount(0);
+
+  const text = (await page.locator('.eom-page').innerText()).toLowerCase();
+  for (const term of ['hansen', 'camunda', 'change bucket', 'uc1']) expect(text).not.toContain(term);
+  expect(text.length).toBeLessThan(6500);
+  await page.screenshot({ path: testInfo.outputPath('enterprise-order-management-product-story.png'), fullPage: true });
+});
+
+test('remaining selected initiatives retain the current concise case-study structure', async ({ page }) => {
+  for (const project of legacyCaseProjects) {
     await page.goto(project.path);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title);
     await expect(page.locator('.case-shift')).toBeVisible();
@@ -57,8 +80,8 @@ test('every selected initiative leads with a concise case study instead of a pro
   }
 });
 
-test('full supporting detail preserves the deeper case-study evidence', async ({ page }) => {
-  await page.goto('./work/enterprise-order-management/');
+test('existing supporting detail remains available on projects not yet migrated', async ({ page }) => {
+  await page.goto('./work/rag-analysis-agent/');
   await page.locator('.case-detail summary').click();
   await expect(page.locator('.case-detail')).toHaveAttribute('open', '');
   await expect(page.getByText('Senior TPO scope', { exact: true })).toBeVisible();
@@ -67,13 +90,11 @@ test('full supporting detail preserves the deeper case-study evidence', async ({
   await expect(page.getByText('What each number actually means', { exact: true })).toBeVisible();
 });
 
-test('project switcher moves directly between initiatives', async ({ page }) => {
+test('EOM next-story navigation moves directly to RAG', async ({ page }) => {
   await page.goto('./work/enterprise-order-management/');
-  await page.locator('.case-switcher summary').click();
-  await page.locator('.case-switcher nav a', { hasText: 'Enterprise RAG Analysis Agent' }).click();
+  await page.locator('.eom-next').click();
   await expect(page).toHaveURL(/\/work\/rag-analysis-agent\/$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Enterprise RAG Analysis Agent');
-  await expect(page.locator('.case-glance')).toBeVisible();
 });
 
 test('all mobile project case studies use the full viewport without horizontal overflow', async ({ page }, testInfo) => {
@@ -85,7 +106,7 @@ test('all mobile project case studies use the full viewport without horizontal o
       viewport: window.innerWidth,
       scrollWidth: document.documentElement.scrollWidth,
       bodyWidth: document.body.getBoundingClientRect().width,
-      projectWidth: document.querySelector('.case-v8')?.getBoundingClientRect().width ?? 0,
+      projectWidth: (document.querySelector('.eom-page') ?? document.querySelector('.case-v8'))?.getBoundingClientRect().width ?? 0,
     }));
     expect(dims.viewport).toBe(390);
     expect(dims.scrollWidth).toBeLessThanOrEqual(391);
@@ -93,13 +114,14 @@ test('all mobile project case studies use the full viewport without horizontal o
     expect(dims.projectWidth).toBeGreaterThan(360);
   }
 
-  await page.goto('./work/gl-coding/');
-  await page.screenshot({ path: testInfo.outputPath('gl-coding-mobile-case-study.png'), fullPage: true });
+  await page.goto('./work/enterprise-order-management/');
+  await page.screenshot({ path: testInfo.outputPath('enterprise-order-management-mobile.png'), fullPage: true });
 });
 
 test('projected and estimated outcomes remain visibly qualified', async ({ page }) => {
   await page.goto('./work/enterprise-order-management/');
-  await expect(page.locator('.case-proof').getByText('Projected order capacity', { exact: true })).toBeVisible();
+  await expect(page.locator('.evidence-grid').getByText('Projected', { exact: true })).toBeVisible();
+  await expect(page.locator('.evidence-grid').getByText('75K/day', { exact: true })).toBeVisible();
 
   await page.goto('./work/lease-vendor-management/');
   await expect(page.locator('.case-proof').getByText('Estimated ROI', { exact: true })).toBeVisible();

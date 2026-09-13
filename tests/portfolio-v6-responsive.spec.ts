@@ -17,12 +17,17 @@ test('all project case studies fit a 390px mobile viewport', async ({ page }) =>
       viewport: window.innerWidth,
       scrollWidth: document.documentElement.scrollWidth,
       bodyWidth: document.body.getBoundingClientRect().width,
-      caseWidth: document.querySelector('.case-v8')?.getBoundingClientRect().width ?? 0,
+      caseWidth: (document.querySelector('.eom-page') ?? document.querySelector('.case-v8'))?.getBoundingClientRect().width ?? 0,
     }));
     expect(dimensions.viewport, route).toBe(390);
     expect(dimensions.scrollWidth, route).toBeLessThanOrEqual(391);
     expect(dimensions.bodyWidth, route).toBeGreaterThan(385);
     expect(dimensions.caseWidth, route).toBeGreaterThan(360);
-    await expect(page.locator('.case-glance')).toBeVisible();
+
+    if (route.includes('enterprise-order-management')) {
+      await expect(page.locator('.story-board')).toBeVisible();
+    } else {
+      await expect(page.locator('.case-glance')).toBeVisible();
+    }
   }
 });
