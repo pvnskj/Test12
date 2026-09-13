@@ -53,80 +53,80 @@ export const projects: Project[] = [
     category: 'Telecom order orchestration · Platform modernization',
     eyebrow: 'Declarative orchestration',
     question: 'What happens when every new product change requires developers to redraw the fulfillment engine?',
-    headline: 'Replacing rigid BPMN flows with declarative, dependency-driven order orchestration.',
+    headline: 'Replacing rigid fulfillment models with declarative, dependency-driven order orchestration.',
     summary:
-      'The legacy order platform encoded fulfillment paths as Camunda BPMN and XML. As plans, services, and dependencies expanded, every change accumulated more gateways, diagrams, deployment work, and regression risk. I led the product strategy for a new orchestration model where workers declare dependencies, shared order context is governed explicitly, and the engine assembles the executable fulfillment graph.',
+      'The legacy order platform encoded fulfillment paths as manually modeled workflows and deployment artifacts. As plans, services, and dependencies expanded, every change accumulated more path logic, deployment work, and regression risk. I led the product strategy for a new orchestration model where capabilities declare dependencies, shared order context is governed explicitly, and the platform assembles the executable fulfillment graph.',
     productGoal:
       'Create an order-orchestration platform that can launch and change subscriber services without manually remodeling every fulfillment path, while preserving deterministic execution, shared context, and operational visibility.',
     problem:
-      'Static BPMN worked when fulfillment paths were limited and predictable. At scale, hundreds of rigid models became a change bottleneck: parallel execution had to be drawn manually, product changes triggered model deployments, and fragmented state across workers increased the risk of incomplete enrichment or logic gaps.',
+      'Static workflow modeling worked when fulfillment paths were limited and predictable. At scale, hundreds of rigid models became a change bottleneck: parallel execution had to be defined manually, product changes triggered model deployments, and fragmented state across capabilities increased the risk of incomplete enrichment or logic gaps.',
     complexity: [
-      'Legacy Camunda BPMN orchestration with manually modeled parallel gateways and XML deployments',
-      'Hansen commercial-offer decomposition into technical resource specifications',
-      'Kafka-based worker coordination and dependency-driven execution',
-      'Phase 1 assessment / enrichment separated from Phase 2 execution',
-      'Canonical order context shared across catalog, validation, enrichment, and provisioning',
+      'Legacy workflow orchestration with manually modeled parallel paths and deployment artifacts',
+      'Commercial-product decomposition into technical resource specifications',
+      'Event-driven capability coordination and dependency-driven execution',
+      'Assessment and enrichment separated from downstream execution',
+      'Canonical order context shared across product decomposition, validation, enrichment, and provisioning',
       '19+ delivery teams and 18 dynamic service intents that had to retain existing business behavior',
     ],
     ownership: [
-      'Own the product direction from imperative BPMN modeling toward declarative, dependency-aware orchestration',
-      'Lead UC1 Change Bucket functionality and define how plan modifications and add-ons decompose through the catalog',
-      'Introduce the two-phase evaluation model so execution cannot consume partially enriched order state',
-      'Standardize the canonical orderContext contract across workers and fulfillment stages',
+      'Own the product direction from imperative workflow modeling toward declarative, dependency-aware orchestration',
+      'Lead the initial service-change capability and define how plan modifications and add-ons decompose into technical work',
+      'Introduce a two-stage evaluation model so execution cannot consume partially enriched order state',
+      'Standardize the shared order-context contract across capabilities and fulfillment stages',
       'Coordinate cross-team migration of existing intents while separating implemented capability from target-scale projections',
     ],
     decisions: [
       {
         title: 'Replace static flows with dependency-driven execution',
         body:
-          'Workers declare what they require and what they can execute. The orchestration engine resolves those dependencies into a directed execution graph, so parallelism follows the topology instead of being redrawn as BPMN gateways for every product variation.',
+          'Capabilities declare what they require and what they can execute. The orchestration engine resolves those dependencies into a directed execution graph, so parallelism follows the topology instead of being redrawn for every product variation.',
       },
       {
         title: 'Separate assessment from execution',
         body:
-          'Phase 1 resolves catalog decomposition, identifiers, configuration, and enrichment before Phase 2 begins fulfillment. The phase boundary prevents downstream execution from consuming incomplete technical state and creates a deterministic synchronization point.',
+          'The assessment stage resolves product decomposition, identifiers, configuration, and enrichment before fulfillment begins. The readiness boundary prevents downstream execution from consuming incomplete technical state and creates a deterministic synchronization point.',
       },
       {
         title: 'Standardize shared order context',
         body:
-          'A canonical, version-controlled orderContext travels through the lifecycle so workers contribute controlled enrichment without creating divergent representations or repeatedly reconstructing the order from source systems.',
+          'A canonical, version-controlled order context travels through the lifecycle so capabilities contribute controlled enrichment without creating divergent representations or repeatedly reconstructing the order from source systems.',
       },
       {
         title: 'Move orchestration policy toward configuration',
         body:
-          'JSON/AppConfig and worker metadata replace an increasing portion of XML/model deployment. The architecture keeps core execution stable while product and policy behavior can evolve with less structural rework.',
+          'Governed configuration and capability metadata replace an increasing portion of modeled deployment logic. The architecture keeps core execution stable while product and policy behavior can evolve with less structural rework.',
       },
     ],
-    flow: ['Business intent', 'Hansen decomposition', 'Worker proposals', 'Dependency graph', 'Assessment & enrichment', 'Phase gate', 'Kafka execution', 'Provisioning'],
+    flow: ['Business intent', 'Product decomposition', 'Capability proposals', 'Dependency graph', 'Assessment & enrichment', 'Readiness gate', 'Event-driven execution', 'Provisioning'],
     flowCaption:
-      'The architectural shift is from telling the engine exactly how to traverse a diagram to declaring capabilities, dependencies, and intent so the executable topology can be assembled consistently.',
+      'The architectural shift is from telling the engine exactly how to traverse a predefined path to declaring capabilities, dependencies, and intent so the executable topology can be assembled consistently.',
     increments: [
       {
-        title: 'Prove the orchestration model',
-        focus: 'Camunda comparison, worker registration, dependency graph, parallel execution',
-        learning: 'Can dependency declarations replace manually modeled gateways without losing deterministic behavior?',
+        title: 'Orchestration foundation',
+        focus: 'Capability registration, dependency graph, parallel execution',
+        learning: 'Can dependency declarations replace manually modeled paths without losing deterministic behavior?',
       },
       {
-        title: 'Change Bucket / catalog decomposition',
-        focus: 'Commercial offers, resource specifications, plan modifications, add-ons',
-        learning: 'Can high-level customer intent become the right technical work without embedding every path in BPMN?',
+        title: 'Product decomposition',
+        focus: 'Commercial offers, technical resources, plan modifications, add-ons',
+        learning: 'Can high-level customer intent become the right technical work without embedding every path in a static workflow?',
       },
       {
         title: 'Governed order context',
-        focus: 'Assessment, enrichment, common data contract, phase synchronization',
-        learning: 'Can parallel workers share enriched state without data loss or premature execution?',
+        focus: 'Assessment, enrichment, common data contract, readiness synchronization',
+        learning: 'Can parallel capabilities share enriched state without data loss or premature execution?',
       },
       {
         title: 'Scale & observability',
-        focus: 'Kafka push model, live DAG rendering, configuration-driven policy, throughput modeling',
+        focus: 'Event-driven coordination, execution visibility, configuration-driven policy, throughput modeling',
         learning: 'Can the platform remain observable and adaptable as order volume and service combinations increase?',
       },
     ],
     valueNarrative:
-      'The transformation reduces the effort required to model changing fulfillment logic and creates a platform designed for substantially higher order volume. The current evidence includes a measured 20% improvement in logic-mapping time; the 75K-orders/day figure remains a projected capacity target based on the Kafka push architecture, not a claimed production throughput result.',
+      'The transformation reduces the effort required to model changing fulfillment logic and creates a platform designed for substantially higher order volume. The current evidence includes a measured 20% improvement in logic-mapping time; the 75K-orders/day figure remains a projected capacity target for the event-driven architecture, not a claimed production throughput result.',
     metrics: [
-      { value: '20%', label: 'Measured mapping-time improvement', detail: 'POC comparison of dependency-driven self-assembly versus manual BPMN modeling.' },
-      { value: '75K/day', label: 'Projected order capacity', detail: 'Modeled target for the Kafka push architecture; not presented as achieved production throughput.' },
+      { value: '20%', label: 'Measured mapping-time improvement', detail: 'Proof-of-concept comparison of dependency-driven self-assembly versus manual workflow modeling.' },
+      { value: '75K/day', label: 'Projected order capacity', detail: 'Modeled target for the event-driven architecture; not presented as achieved production throughput.' },
       { value: '19+', label: 'Teams coordinated', detail: 'Actual cross-team delivery complexity for migration and intent mapping.' },
       { value: '18', label: 'Service intents in scope', detail: 'Actual legacy intent scope to preserve during orchestration migration.' },
     ],
