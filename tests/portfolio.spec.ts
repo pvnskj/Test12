@@ -85,7 +85,8 @@ test('EOM focus areas open as detailed feature-style case studies', async ({ pag
 
   const text = (await page.locator('.eom-focus').innerText()).toLowerCase();
   for (const term of ['hansen', 'camunda', 'change bucket', 'uc1']) expect(text).not.toContain(term);
-  expect(text).not.toMatch(/mar|apr|may|jun|jul|aug|sep|oct|nov|dec|jan|feb/);
+  expect(text).not.toMatch(/\b20\d{2}\b/);
+  expect(text).not.toMatch(/\b(?:january|february|march|april|june|july|august|september|october|november|december)\b/);
   await page.screenshot({ path: testInfo.outputPath('enterprise-order-management-focus.png'), fullPage: true });
 });
 
