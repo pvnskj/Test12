@@ -10,19 +10,28 @@ const projects = [
   { path: './work/lease-vendor-management/', title: 'Lease & Vendor Management' },
 ];
 
-test('homepage presents all six projects in a compact editorial index', async ({ page }, testInfo) => {
+test('homepage presents all six projects as a product epic workspace', async ({ page }, testInfo) => {
   await page.goto('./');
   await expect(page).toHaveTitle(/Venkata Parimi/);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Complex products. Clear product decisions.');
-  await expect(page.locator('.home-hero-guide')).toBeVisible();
-  await expect(page.locator('.work-row')).toHaveCount(projects.length);
-  await expect(page.locator('.principle-card')).toHaveCount(4);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('From complex problems to scalable products.');
+  await expect(page.locator('.workspace-model')).toBeVisible();
+  await expect(page.locator('.epic-row')).toHaveCount(projects.length);
+  await expect(page.getByText('EPIC-01', { exact: true })).toBeVisible();
+  await expect(page.getByText('EPIC-06', { exact: true })).toBeVisible();
   await expect(page.getByText('Peer-to-Peer Transactions')).toHaveCount(0);
   await expect(page.getByText('Asset & Portfolio Management')).toHaveCount(0);
 
-  const text = await page.locator('.home-v8').innerText();
+  const text = await page.locator('.workspace-home').innerText();
   expect(text.length).toBeLessThan(5000);
-  await page.screenshot({ path: testInfo.outputPath('homepage-case-study-index.png'), fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('homepage-product-workspace.png'), fullPage: true });
+});
+
+test('homepage does not expose internal program or vendor terminology', async ({ page }) => {
+  await page.goto('./');
+  const text = (await page.locator('.workspace-home').innerText()).toLowerCase();
+  for (const term of ['hansen', 'camunda', 'change bucket', 'vendorone', 'uc1']) {
+    expect(text).not.toContain(term);
+  }
 });
 
 test('every selected initiative leads with a concise case study instead of a product-model diagram', async ({ page }) => {
