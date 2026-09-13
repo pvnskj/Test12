@@ -10,6 +10,13 @@ const projects = [
   { path: './work/lease-vendor-management/', title: 'Lease & Vendor Management' },
 ];
 
+const eomFocusPaths = [
+  './work/enterprise-order-management/orchestration-foundation/',
+  './work/enterprise-order-management/product-decomposition/',
+  './work/enterprise-order-management/shared-order-context/',
+  './work/enterprise-order-management/scale-observability/',
+];
+
 const legacyCaseProjects = projects.slice(1);
 
 test('homepage presents product ownership approach and six proof-oriented projects', async ({ page }, testInfo) => {
@@ -42,25 +49,54 @@ test('homepage does not expose internal program or vendor terminology', async ({
   }
 });
 
-test('enterprise order management integrates the complete product story into one page', async ({ page }, testInfo) => {
+test('enterprise order management opens as an epic overview with progressive disclosure', async ({ page }, testInfo) => {
   await page.goto('./work/enterprise-order-management/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Enterprise Order Management');
-  await expect(page.locator('.eom-shift')).toBeVisible();
-  await expect(page.locator('.story-board > article')).toHaveCount(4);
-  await expect(page.locator('.decision-list > article')).toHaveCount(4);
-  await expect(page.locator('.focus-card')).toHaveCount(4);
-  await expect(page.locator('.evidence-card')).toHaveCount(4);
-  await expect(page.getByText('What I owned', { exact: true })).toBeVisible();
-  await expect(page.getByText('What was hard', { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Four decisions changed the operating model.' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Evidence with the qualification left intact.' })).toBeVisible();
-  await expect(page.locator('.case-detail')).toHaveCount(0);
+  await expect(page.locator('.epic-metrics > article')).toHaveCount(4);
+  await expect(page.locator('.story-triptych > article')).toHaveCount(3);
+  await expect(page.locator('.decision-rows > article')).toHaveCount(4);
+  await expect(page.locator('.focus-node')).toHaveCount(4);
+  await expect(page.locator('.epic-evidence .evidence-lines > article')).toHaveCount(4);
+  await expect(page.getByText('The big picture', { exact: true })).toBeVisible();
+  await expect(page.getByText('Key product decisions', { exact: true })).toBeVisible();
+  await expect(page.getByText('Product evolution', { exact: true })).toBeVisible();
   await expect(page.getByText('Senior TPO scope', { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/INC-0/i)).toHaveCount(0);
 
-  const text = (await page.locator('.eom-page').innerText()).toLowerCase();
+  const text = (await page.locator('.eom-epic').innerText()).toLowerCase();
   for (const term of ['hansen', 'camunda', 'change bucket', 'uc1']) expect(text).not.toContain(term);
-  expect(text.length).toBeLessThan(6500);
-  await page.screenshot({ path: testInfo.outputPath('enterprise-order-management-product-story.png'), fullPage: true });
+  expect(text.length).toBeLessThan(5200);
+  await page.screenshot({ path: testInfo.outputPath('enterprise-order-management-epic.png'), fullPage: true });
+});
+
+test('EOM focus areas open as detailed feature-style case studies', async ({ page }, testInfo) => {
+  await page.goto('./work/enterprise-order-management/shared-order-context/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Shared Order Context');
+  await expect(page.locator('.at-a-glance > article')).toHaveCount(4);
+  await expect(page.locator('.detail-pair > article')).toHaveCount(2);
+  await expect(page.locator('.ownership-list')).toBeVisible();
+  await expect(page.locator('.decision-stack > article')).toHaveCount(2);
+  await expect(page.locator('.system-map')).toBeVisible();
+  await expect(page.locator('.learning-card')).toBeVisible();
+  await expect(page.locator('.result-grid > article')).toHaveCount(2);
+  await expect(page.getByText('What I owned', { exact: true })).toBeVisible();
+  await expect(page.getByText('Challenges & trade-offs', { exact: true })).toBeVisible();
+  await expect(page.getByText('Product learning', { exact: true })).toBeVisible();
+
+  const text = (await page.locator('.eom-focus').innerText()).toLowerCase();
+  for (const term of ['hansen', 'camunda', 'change bucket', 'uc1']) expect(text).not.toContain(term);
+  expect(text).not.toMatch(/\b20\d{2}\b/);
+  expect(text).not.toMatch(/\b(?:january|february|march|april|june|july|august|september|october|november|december)\b/);
+  await page.screenshot({ path: testInfo.outputPath('enterprise-order-management-focus.png'), fullPage: true });
+});
+
+test('EOM focus nodes navigate from epic to detailed case study', async ({ page }) => {
+  await page.goto('./work/enterprise-order-management/');
+  await page.locator('.focus-node', { hasText: 'Shared Order Context' }).click();
+  await expect(page).toHaveURL(/\/work\/enterprise-order-management\/shared-order-context\/$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Shared Order Context');
+  await page.getByRole('link', { name: 'Back to epic' }).click();
+  await expect(page).toHaveURL(/\/work\/enterprise-order-management\/$/);
 });
 
 test('remaining selected initiatives retain the current concise case-study structure', async ({ page }) => {
@@ -90,9 +126,9 @@ test('existing supporting detail remains available on projects not yet migrated'
   await expect(page.getByText('What each number actually means', { exact: true })).toBeVisible();
 });
 
-test('EOM next-story navigation moves directly to RAG', async ({ page }) => {
+test('EOM next-epic navigation moves directly to RAG', async ({ page }) => {
   await page.goto('./work/enterprise-order-management/');
-  await page.locator('.eom-next').click();
+  await page.locator('.epic-next').click();
   await expect(page).toHaveURL(/\/work\/rag-analysis-agent\/$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Enterprise RAG Analysis Agent');
 });
@@ -106,7 +142,7 @@ test('all mobile project case studies use the full viewport without horizontal o
       viewport: window.innerWidth,
       scrollWidth: document.documentElement.scrollWidth,
       bodyWidth: document.body.getBoundingClientRect().width,
-      projectWidth: (document.querySelector('.eom-page') ?? document.querySelector('.case-v8'))?.getBoundingClientRect().width ?? 0,
+      projectWidth: (document.querySelector('.eom-epic') ?? document.querySelector('.case-v8'))?.getBoundingClientRect().width ?? 0,
     }));
     expect(dims.viewport).toBe(390);
     expect(dims.scrollWidth).toBeLessThanOrEqual(391);
@@ -114,14 +150,26 @@ test('all mobile project case studies use the full viewport without horizontal o
     expect(dims.projectWidth).toBeGreaterThan(360);
   }
 
-  await page.goto('./work/enterprise-order-management/');
-  await page.screenshot({ path: testInfo.outputPath('enterprise-order-management-mobile.png'), fullPage: true });
+  for (const path of eomFocusPaths) {
+    await page.goto(path);
+    const dims = await page.evaluate(() => ({
+      viewport: window.innerWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      focusWidth: document.querySelector('.eom-focus')?.getBoundingClientRect().width ?? 0,
+    }));
+    expect(dims.viewport).toBe(390);
+    expect(dims.scrollWidth).toBeLessThanOrEqual(391);
+    expect(dims.focusWidth).toBeGreaterThan(360);
+  }
+
+  await page.goto('./work/enterprise-order-management/shared-order-context/');
+  await page.screenshot({ path: testInfo.outputPath('enterprise-order-management-focus-mobile.png'), fullPage: true });
 });
 
 test('projected and estimated outcomes remain visibly qualified', async ({ page }) => {
   await page.goto('./work/enterprise-order-management/');
-  await expect(page.locator('.evidence-grid').getByText('Projected', { exact: true })).toBeVisible();
-  await expect(page.locator('.evidence-grid').getByText('75K/day', { exact: true })).toBeVisible();
+  await expect(page.locator('.epic-evidence').getByText('Projected · Target order capacity', { exact: true })).toBeVisible();
+  await expect(page.locator('.epic-evidence').getByText('75K/day', { exact: true })).toBeVisible();
 
   await page.goto('./work/lease-vendor-management/');
   await expect(page.locator('.case-proof').getByText('Estimated ROI', { exact: true })).toBeVisible();
@@ -140,8 +188,8 @@ test('removed initiatives do not have public portfolio routes', async ({ request
   for (const path of removed) expect((await request.get(path)).status(), path).toBe(404);
 });
 
-test('homepage and every project pass automated accessibility scans', async ({ page }) => {
-  const paths = ['./', ...projects.map((project) => project.path)];
+test('homepage, projects, and EOM focus pages pass automated accessibility scans', async ({ page }) => {
+  const paths = ['./', ...projects.map((project) => project.path), ...eomFocusPaths];
   for (const path of paths) {
     await page.goto(path);
     const results = await new AxeBuilder({ page })

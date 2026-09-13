@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectDashboardV6 from '../../components/ProjectDashboardV6.astro';
-import EnterpriseOrderManagementCase from '../../components/EnterpriseOrderManagementCase.astro';
+import EnterpriseOrderManagementEpic from '../../components/EnterpriseOrderManagementEpic.astro';
 import { projects, type Project } from '../../data/projects';
 
 export function getStaticPaths() {
@@ -16,11 +16,11 @@ const isEnterpriseOrderManagement = project.slug === 'enterprise-order-managemen
 <BaseLayout
   title={`${project.title} | Venkata Parimi`}
   description={isEnterpriseOrderManagement
-    ? 'Enterprise Order Management product case study: the problem, product decisions, ownership, focus areas, trade-offs, and qualified evidence behind a configurable orchestration platform.'
+    ? 'Enterprise Order Management epic: product problem, product decisions, focus areas, ownership, trade-offs, and qualified evidence behind a configurable orchestration platform.'
     : `${project.question} ${project.productGoal}`}
   bareMain
 >
   {isEnterpriseOrderManagement
-    ? <EnterpriseOrderManagementCase />
+    ? <EnterpriseOrderManagementEpic />
     : <ProjectDashboardV6 project={project} />}
 </BaseLayout>
