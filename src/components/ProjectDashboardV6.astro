@@ -214,4 +214,107 @@ const brief = briefs[project.slug]!;
       <ul>{brief.depth.map((item) => <li>{item}</li>)}</ul>
     </details>
   </section>
+
+  <details class="v6-full-case glass-card">
+    <summary>
+      <div><span>Full case study</span><strong>{project.headline}</strong></div>
+      <i aria-hidden="true">+</i>
+    </summary>
+    <div class="v6-full-case-body">
+      <section class="v6-case-two">
+        <article>
+          <small>Business problem</small>
+          <h2>{project.question}</h2>
+          <p>{project.problem}</p>
+        </article>
+        <article>
+          <small>Product goal</small>
+          <h2>What I optimized for</h2>
+          <p>{project.productGoal}</p>
+        </article>
+      </section>
+
+      <section class="v6-case-two">
+        <article>
+          <small>My ownership</small>
+          <h2>Senior TPO scope</h2>
+          <ul>{project.ownership.map((item) => <li>{item}</li>)}</ul>
+        </article>
+        <article>
+          <small>Complexity</small>
+          <h2>What made this hard</h2>
+          <ul>{project.complexity.map((item) => <li>{item}</li>)}</ul>
+        </article>
+      </section>
+
+      <section class="v6-case-flow">
+        <small>End-to-end product flow</small>
+        <div>{project.flow.map((step, index) => <><span>{step}</span>{index < project.flow.length - 1 && <i>→</i>}</>)}</div>
+        <p>{project.flowCaption}</p>
+      </section>
+
+      <section>
+        <div class="v6-case-heading"><small>Delivery</small><h2>How the capability was sequenced</h2></div>
+        <div class="v6-case-increments">
+          {project.increments.map((increment, index) => (
+            <article>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <h3>{increment.title}</h3>
+              <strong>{increment.focus}</strong>
+              <p>{increment.learning}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <div class="v6-case-heading"><small>Evidence</small><h2>Outcomes with qualification intact</h2></div>
+        <p class="v6-case-value">{project.valueNarrative}</p>
+        <div class="v6-case-metrics">
+          {project.metrics.map((metric) => (
+            <article>
+              <strong>{metric.value}</strong>
+              <span>{metric.label}</span>
+              <p>{metric.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  </details>
 </main>
+
+<style>
+  .v6-full-case{margin-top:18px;overflow:hidden}
+  .v6-full-case>summary{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:20px 22px;cursor:pointer;list-style:none}
+  .v6-full-case>summary::-webkit-details-marker{display:none}
+  .v6-full-case>summary div{display:grid;gap:5px}
+  .v6-full-case>summary span,.v6-case-two small,.v6-case-flow>small,.v6-case-heading small{font-size:.56rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7290aa}
+  .v6-full-case>summary strong{font-size:.9rem;color:#1d405d}
+  .v6-full-case>summary i{display:grid;width:32px;height:32px;place-items:center;border-radius:10px;background:rgba(233,242,254,.9);font-style:normal;color:#315d85}
+  .v6-full-case[open]>summary i{transform:rotate(45deg)}
+  .v6-full-case-body{display:grid;gap:14px;padding:0 14px 14px}
+  .v6-case-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .v6-case-two article,.v6-case-flow,.v6-case-increments article,.v6-case-metrics article{border:1px solid rgba(37,99,235,.08);border-radius:16px;background:rgba(255,255,255,.62)}
+  .v6-case-two article{padding:20px}
+  .v6-case-two h2,.v6-case-heading h2{margin:7px 0 10px;font-size:clamp(1.35rem,2.3vw,2rem);color:#193f5f}
+  .v6-case-two p,.v6-case-two li,.v6-case-flow p,.v6-case-value,.v6-case-increments p,.v6-case-metrics p{font-size:.72rem;line-height:1.58;color:#647c91}
+  .v6-case-two ul{display:grid;gap:8px;margin:12px 0 0;padding-left:18px}
+  .v6-case-flow{padding:20px}
+  .v6-case-flow>div{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:12px 0}
+  .v6-case-flow span{padding:6px 9px;border-radius:999px;background:rgba(233,242,254,.9);font-size:.6rem;font-weight:750;color:#4f708b}
+  .v6-case-flow i{font-style:normal;color:#8ca4b8}
+  .v6-case-flow p{margin:0;max-width:900px}
+  .v6-case-heading{padding:12px 6px 2px}
+  .v6-case-increments,.v6-case-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .v6-case-increments article,.v6-case-metrics article{padding:16px}
+  .v6-case-increments article>span{font-size:.55rem;font-weight:800;color:#7890a6}
+  .v6-case-increments h3{margin:8px 0 7px;font-size:.9rem;color:#1d425f}
+  .v6-case-increments strong{font-size:.64rem;line-height:1.4;color:#42617a}
+  .v6-case-increments p{margin:9px 0 0}
+  .v6-case-value{max-width:980px;margin:0 6px 14px}
+  .v6-case-metrics strong{display:block;font-size:1.35rem;color:#1b4f79}
+  .v6-case-metrics span{display:block;margin-top:5px;font-size:.62rem;font-weight:800;color:#355c7a}
+  .v6-case-metrics p{margin:8px 0 0}
+  @media (max-width:820px){.v6-case-two,.v6-case-increments,.v6-case-metrics{grid-template-columns:1fr}.v6-full-case>summary{align-items:flex-start}.v6-full-case>summary strong{font-size:.78rem}}
+</style>
