@@ -3,9 +3,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { projects } from '../data/projects';
 
 const expertise = [
-  { n:'01', title:'Enterprise orchestration', tags:['ERP / MDM / WMS','APIs','Reconciliation'] },
-  { n:'02', title:'Rules & decision products', tags:['Policy','Validation','Exceptions'] },
-  { n:'03', title:'Data lifecycle & integrity', tags:['Identity','State','Lineage'] },
+  { n:'01', title:'Enterprise orchestration', tags:['Order platforms','Kafka / APIs','Cross-system state'] },
+  { n:'02', title:'AI & decision products', tags:['RAG','Grounding','Rules / validation'] },
+  { n:'03', title:'Data lifecycle & integrity', tags:['Identity','Governance','Lineage'] },
   { n:'04', title:'Technical product execution', tags:['Product Goal','Increments','Evidence'] },
 ];
 
@@ -19,13 +19,12 @@ const approaches = [
 ];
 
 const proofBySlug: Record<string,string[]> = {
-  'asset-catalog':['312% projected ROI','Master data'],
-  inventory:['285% projected ROI','Chain of custody'],
-  rfds:['72% faster approvals','Engineering automation'],
-  inspection:['345% projected ROI','Maintenance intelligence'],
-  'gl-coding':['40% faster close','Configurable policy'],
-  'order-fulfillment':['Cross-system lifecycle','Metrics withheld'],
-  'financial-projections':['-15% forecast variance','Scenario platform'],
+  'enterprise-order-management':['20% measured mapping gain','Declarative orchestration'],
+  'rag-analysis-agent':['~6 days → ~2 hrs','Grounded enterprise RAG'],
+  'build-plus':['18-month demand horizon','Cradle-to-grave SCM'],
+  rfds:['$1.2M measured avoidance','Engineering automation'],
+  'gl-coding':['40% faster close','Configurable financial routing'],
+  'lease-vendor-management':['$23.7M monthly rent roll','Lease-to-pay controls'],
 };
 ---
 
@@ -35,7 +34,7 @@ const proofBySlug: Record<string,string[]> = {
       <div class="v6-home-copy" data-reveal>
         <p class="eyebrow">Senior Technical Product Owner</p>
         <h1>Make complex products easy to understand.</h1>
-        <p>Enterprise systems, workflow platforms, data products, and decision logic—shaped into clear product goals, buildable increments, and measurable outcomes.</p>
+        <p>Enterprise platforms, AI analysis, workflow orchestration, data products, and decision logic—shaped into clear product goals, buildable increments, and measurable outcomes.</p>
         <div class="v6-hero-actions">
           <a class="button button-primary" href="#work">Selected work →</a>
           <a class="button button-secondary" href="#approach">How I think</a>
