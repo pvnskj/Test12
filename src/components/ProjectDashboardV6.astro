@@ -3,14 +3,7 @@ import { projects, type Project } from '../data/projects';
 
 interface Props { project: Project; }
 
-type Brief = {
-  tagline: string;
-  goal: string;
-  decisions: string[];
-  sequence: string[];
-  proof: { value: string; label: string }[];
-  depth: string[];
-};
+type Transition = { from: string; to: string };
 
 const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
@@ -18,88 +11,52 @@ const currentIndex = projects.findIndex((item) => item.slug === project.slug);
 const previousProject = projects[(currentIndex - 1 + projects.length) % projects.length]!;
 const nextProject = projects[(currentIndex + 1) % projects.length]!;
 
-const briefs: Record<string, Brief> = {
+const transitions: Record<string, Transition> = {
   'enterprise-order-management': {
-    tagline: 'Move from manually modeled BPMN paths to declarative, dependency-driven orchestration.',
-    goal: 'Launch and change subscriber services without redrawing every fulfillment path.',
-    decisions: ['Dependencies over diagrams', 'Assessment before execution', 'One canonical order context', 'Policy toward configuration'],
-    sequence: ['Orchestration model', 'Catalog decomposition', 'Order context', 'Scale & observability'],
-    proof: [
-      { value: '20%', label: 'Measured mapping-time improvement' },
-      { value: '75K/day', label: 'Projected order capacity' },
-      { value: '19+', label: 'Teams coordinated' },
-    ],
-    depth: ['Workers declare dependencies and the engine resolves the executable DAG', 'Phase 1 enriches and validates state before Phase 2 execution begins', 'Kafka push orchestration accepts greater offset-management complexity in exchange for target-scale throughput'],
+    from: 'Manually modeled BPMN fulfillment paths',
+    to: 'Declarative, dependency-driven orchestration',
   },
   'rag-analysis-agent': {
-    tagline: 'Turn fragmented engineering evidence into grounded operational intelligence.',
-    goal: 'Reduce technical investigation time without trading away source traceability or access control.',
-    decisions: ['Accuracy over response speed', 'Live sources over static uploads', 'Evaluation as a release gate', 'Safe index refresh'],
-    sequence: ['POC', 'Pilot', 'Live integrations', 'Evaluation loop'],
-    proof: [
-      { value: '~6 days → ~2 hrs', label: 'Measured analysis cycle' },
-      { value: '11GB+', label: 'Production corpus' },
-      { value: '558+', label: 'OM projects searchable' },
-    ],
-    depth: ['Hybrid retrieval combines semantic search with project, branch, and technical metadata', 'Every material answer is grounded in retrievable evidence and the agent explicitly abstains when support is insufficient', 'The 25+ case golden suite requires 100% groundedness and 90%+ recall before retrieval changes are promoted'],
+    from: 'Days of fragmented engineering search',
+    to: 'Grounded, cited technical analysis in hours',
   },
   'build-plus': {
-    tagline: 'Connect trusted part data, demand, fulfillment, custody, and recovery into one operating model.',
-    goal: 'Create a cradle-to-grave supply-chain lifecycle built on governed identity and upstream validation.',
-    decisions: ['Data anchor first', 'Demand from evidence', 'Validate before fulfillment', 'Preserve identity end to end'],
-    sequence: ['Master data', 'Predictive planning', 'Systemized fulfillment', 'Lifecycle closure'],
-    proof: [
-      { value: '50%+', label: 'MRO baseline on spreadsheets' },
-      { value: '18 mo', label: 'Rolling demand horizon' },
-      { value: '10,040', label: 'Projected hours returned / year' },
-    ],
-    depth: ['Item Master taxonomy and codification establish the common data anchor', 'BOM validation blocks invalid configurations before shipment', 'Serialization carries custody through deployment, return, fault handling, and financial disposition'],
+    from: 'Spreadsheet-heavy MRO and disconnected lifecycle state',
+    to: 'Governed cradle-to-grave supply-chain operations',
   },
   rfds: {
-    tagline: 'Turn engineering documents into outputs of a governed data-and-rules product.',
-    goal: 'Generate validated, field-ready RF designs in seconds while preserving engineering control.',
-    decisions: ['Data and rules over documents', 'Validate at source', 'Govern flexibility', 'Align fulfillment to design'],
-    sequence: ['Source model', 'Rules & governance', 'Automated output', 'Operational alignment'],
-    proof: [
-      { value: '$1.2M', label: 'Measured annual cost avoidance' },
-      { value: '2–4 hrs → <30 sec', label: 'Measured generation time' },
-      { value: '35–45% → <5%', label: 'Measured exception rate' },
-    ],
-    depth: ['RF planning and procurement data are normalized before document generation', 'Sector, frequency, structure, placement, cable, and diagram rules are explicit and testable', 'Existing inventory shipments are validated against the approved RFDS configuration'],
+    from: 'Manual engineering document creation and correction',
+    to: 'Rules-driven, validated RF design generation',
   },
   'gl-coding': {
-    tagline: 'Separate changing accounting policy from application architecture.',
-    goal: 'Create configurable financial routing that scales to new portfolios without repeating structural development.',
-    decisions: ['Policy outside code', 'Common project identity', 'Validate before posting', 'Scalability over the next quick fix'],
-    sequence: ['Common identity', 'Policy configuration', 'Routing & validation', 'Reconciliation'],
-    proof: [
-      { value: '40%', label: 'Measured faster close' },
-      { value: '4+', label: 'Observed portfolio adoption' },
-      { value: '3', label: 'Enterprise systems aligned' },
-    ],
-    depth: ['A shared project identifier carries financial context across operations, warehouse, and ERP', 'Metadata-driven lookup rules replace project-specific hard-coded branches', 'The 2–3 month to under one week enablement comparison remains explicitly estimated rather than a production SLA'],
+    from: 'Project-specific hard-coded accounting logic',
+    to: 'Configurable financial routing and policy',
   },
   'lease-vendor-management': {
-    tagline: 'Turn lease administration into a governed lease-to-pay financial control system.',
-    goal: 'Prevent invalid vendor and payment combinations before they reach Finance.',
-    decisions: ['Validate eligibility at source', 'Remove structural address limits', 'Treat lease data as financial-control data', 'Control over one-click speed'],
-    sequence: ['Lease lifecycle', 'Vendor scalability', 'Payment controls', 'Financial integrity'],
-    proof: [
-      { value: '$23.7M/mo', label: 'Actual rent roll governed' },
-      { value: '3 → scalable', label: 'Rent-address model' },
-      { value: '~2x', label: 'Estimated ROI' },
-    ],
-    depth: ['Vendor status, rent address, and Oracle identifiers are validated before payment approval', 'VendorOne secondary addresses are surfaced directly in the Lease Management workflow', 'GL/CIP treatment, retention, and audit evidence are governed as part of the lease lifecycle'],
+    from: 'Constrained lease administration and payment risk',
+    to: 'Governed lease-to-pay financial controls',
   },
 };
 
-const brief = briefs[project.slug]!;
+const transition = transitions[project.slug]!;
+
+const trimText = (text: string, max = 260) => {
+  if (text.length <= max) return text;
+  const slice = text.slice(0, max);
+  const sentence = slice.lastIndexOf('.');
+  const word = slice.lastIndexOf(' ');
+  const cut = sentence > max * .58 ? sentence + 1 : word;
+  return `${slice.slice(0, cut).trim()}…`;
+};
+
+const visibleDecisions = project.decisions.slice(0, 3);
+const visibleOwnership = project.ownership.slice(0, 2);
 ---
 
-<main class="v6-project shell" data-v6-project={project.slug}>
-  <div class="v6-projectbar glass-bar">
-    <a href={`${base}#work`} class="v6-project-home">← Work</a>
-    <details class="v6-project-switcher">
+<main class="case-v8 shell">
+  <div class="case-bar glass-bar">
+    <a href={`${base}#work`} class="case-back">← All work</a>
+    <details class="case-switcher">
       <summary><span>{project.index}</span><strong>{project.title}</strong><i aria-hidden="true">⌄</i></summary>
       <nav aria-label="Switch project">
         {projects.map((item) => (
@@ -109,132 +66,141 @@ const brief = briefs[project.slug]!;
         ))}
       </nav>
     </details>
-    <div class="v6-project-arrows" aria-label="Project navigation">
+    <div class="case-arrows" aria-label="Project navigation">
       <a href={`${base}work/${previousProject.slug}/`} aria-label={`Previous project: ${previousProject.title}`}>←</a>
       <a href={`${base}work/${nextProject.slug}/`} aria-label={`Next project: ${nextProject.title}`}>→</a>
     </div>
   </div>
 
-  <header class="v6-project-intro">
-    <div>
+  <header class="case-hero">
+    <div class="case-hero-copy">
       <p class="eyebrow">{project.eyebrow}</p>
       <h1>{project.title}</h1>
-      <p>{brief.tagline}</p>
+      <p class="case-headline">{project.headline}</p>
     </div>
-    <aside class="v6-goal glass-card">
-      <span>Product Goal</span>
-      <strong>{brief.goal}</strong>
+
+    <aside class="case-shift glass-card" aria-label="Transformation summary">
+      <small>What changed</small>
+      <div>
+        <span>{transition.from}</span>
+        <i aria-hidden="true">→</i>
+        <strong>{transition.to}</strong>
+      </div>
     </aside>
   </header>
 
-  <section class="v6-dashboard-grid" aria-label={`${project.title} project story`}>
-    <article class="v6-visual glass-card">
-      <div class="v6-panel-head"><span>Product model</span><small>one scan</small></div>
-
-      {project.slug === 'enterprise-order-management' && (
-        <div class="v6-order-map" role="img" aria-label="Business intent is decomposed through the catalog into worker dependencies, shared context, Kafka execution, and provisioning">
-          <div class="v6-order-core"><small>DECLARATIVE ENGINE</small><strong>Fulfillment DAG</strong><span>intent → dependencies</span></div>
-          <div class="v6-order-node o1"><strong>Hansen</strong><small>decompose</small></div>
-          <div class="v6-order-node o2"><strong>Workers</strong><small>propose</small></div>
-          <div class="v6-order-node o3"><strong>Kafka</strong><small>push tasks</small></div>
-          <div class="v6-order-node o4"><strong>Context</strong><small>shared state</small></div>
-          <div class="v6-order-status"><span>assess</span><span>enrich</span><span>phase gate</span><span>execute</span></div>
-        </div>
-      )}
-
-      {project.slug === 'rag-analysis-agent' && (
-        <div class="v6-forecast-map" role="img" aria-label="Live engineering sources flow through hybrid retrieval, reranking, a language model, and grounding verification to produce cited answers">
-          <div class="v6-forecast-core"><small>GROUNDING GATE</small><strong>Cited answer</strong><span>answer or abstain</span></div>
-          <div class="v6-forecast-node f1"><strong>MCP</strong><small>live sources</small></div>
-          <div class="v6-forecast-node f2"><strong>Retrieve</strong><small>hybrid search</small></div>
-          <div class="v6-forecast-node f3"><strong>Rerank</strong><small>technical fit</small></div>
-          <div class="v6-forecast-node f4"><strong>Claude</strong><small>analysis</small></div>
-          <div class="v6-forecast-ring"><span>permissions</span><span>versions</span><span>citations</span></div>
-        </div>
-      )}
-
-      {project.slug === 'build-plus' && (
-        <div class="v6-orbit-map" role="img" aria-label="A governed asset identity connects master data, planning, fulfillment, warehouse custody, and finance across the supply-chain lifecycle">
-          <div class="v6-orbit-core"><small>COMMON DATA ANCHOR</small><strong>Asset / part identity</strong></div>
-          <div class="v6-orbit-node n1"><strong>Item Master</strong><small>taxonomy</small></div>
-          <div class="v6-orbit-node n2"><strong>Planning</strong><small>18-month demand</small></div>
-          <div class="v6-orbit-node n3"><strong>OMS</strong><small>validate / route</small></div>
-          <div class="v6-orbit-node n4"><strong>WMS</strong><small>custody</small></div>
-          <div class="v6-orbit-node n5"><strong>Oracle</strong><small>financial state</small></div>
-          <div class="v6-orbit-track"><span>define</span><i>→</i><span>forecast</span><i>→</i><span>fulfill</span><i>→</i><span>recover</span></div>
-        </div>
-      )}
-
-      {project.slug === 'rfds' && (
-        <div class="v6-rfds-map" role="img" aria-label="RF planning and procurement data become a governed site model, engineering rules, validation, and field-ready RFDS output">
-          <div class="v6-source-pair"><span>RF planning</span><span>Procurement</span></div><i>↓</i>
-          <div class="v6-node is-wide"><strong>Governed site model</strong><small>site · sector · frequency · equipment</small></div><i>↓</i>
-          <div class="v6-rule-cloud"><strong>Rules</strong><span>sector</span><span>placement</span><span>frequency</span><span>cable</span></div><i>↓</i>
-          <div class="v6-branch"><div><strong>Valid</strong><small>generate</small></div><div><strong>Exception</strong><small>correct / review</small></div></div><i>↓</i>
-          <div class="v6-node is-result is-wide"><strong>RFDS + diagrams</strong><small>approved · field-ready · traceable</small></div>
-        </div>
-      )}
-
-      {project.slug === 'gl-coding' && (
-        <div class="v6-gl-map" role="img" aria-label="Business context and common project identity flow through configurable accounting policy, validation, posting, and evidence">
-          <div class="v6-signal-row"><span>project ID</span><span>activity</span><span>item</span><span>portfolio</span></div><i>↓</i>
-          <div class="v6-node is-accent is-wide"><strong>Configurable policy</strong><small>lookup tables · mappings · exceptions</small></div><i>↓</i>
-          <div class="v6-control-track"><span>assemble</span><i>→</i><span>validate</span><i>→</i><span>post</span></div><i>↓</i>
-          <div class="v6-branch"><div><strong>GL treatment</strong><small>consistent routing</small></div><div><strong>Evidence</strong><small>reason · approver · lineage</small></div></div>
-        </div>
-      )}
-
-      {project.slug === 'lease-vendor-management' && (
-        <div class="v6-flow-map v6-asset" role="img" aria-label="Lease lifecycle and vendor data pass through eligibility validation, payment generation, Oracle execution, and reconciliation">
-          <div class="v6-input-stack"><span>Lease</span><span>VendorOne</span><span>Rent address</span></div>
-          <i>→</i><div class="v6-node is-accent"><small>VALIDATE</small><strong>Payment eligibility</strong></div>
-          <i>→</i><div class="v6-node"><strong>Schedule</strong><small>lease obligation</small></div>
-          <i>→</i><div class="v6-node"><strong>Oracle</strong><small>GL / payment</small></div>
-          <i>→</i><div class="v6-node is-result"><strong>Reconcile</strong><small>evidence / closeout</small></div>
-        </div>
-      )}
-    </article>
-
-    <aside class="v6-decision-panel glass-card">
-      <div class="v6-panel-head"><span>Product decisions</span><small>why this worked</small></div>
-      <div class="v6-decision-list">
-        {brief.decisions.map((decision, index) => <div><span>{String(index + 1).padStart(2, '0')}</span><strong>{decision}</strong></div>)}
-      </div>
-      <div class="v6-sequence">
-        <small>Backlog / delivery sequence</small>
-        <div>{brief.sequence.map((step, index) => <><span>{step}</span>{index < brief.sequence.length - 1 && <i>→</i>}</>)}</div>
-      </div>
-    </aside>
+  <section class="case-proof" aria-label="Key evidence">
+    {project.metrics.slice(0, 3).map((metric) => (
+      <article class="glass-card">
+        <strong>{metric.value}</strong>
+        <span>{metric.label}</span>
+      </article>
+    ))}
   </section>
 
-  <section class="v6-proof-row" aria-label="Business value and evidence">
-    {brief.proof.map((item) => <article class="glass-card"><strong>{item.value}</strong><span>{item.label}</span></article>)}
-    <details class="v6-depth glass-card">
-      <summary><span>Deeper reasoning</span><strong>+</strong></summary>
-      <ul>{brief.depth.map((item) => <li>{item}</li>)}</ul>
-    </details>
+  <section class="case-section">
+    <div class="case-section-head">
+      <div>
+        <p class="eyebrow">Case study at a glance</p>
+        <h2>The story before the detail.</h2>
+      </div>
+      <p>Enough context to understand the product problem, my ownership, the decision, and the result without reading a wall of text.</p>
+    </div>
+
+    <div class="case-glance glass-card">
+      <article>
+        <small>01 · Problem</small>
+        <h3>{project.question}</h3>
+        <p>{trimText(project.problem, 310)}</p>
+      </article>
+      <article>
+        <small>02 · Product goal</small>
+        <h3>What I optimized for</h3>
+        <p>{trimText(project.productGoal, 300)}</p>
+      </article>
+      <article>
+        <small>03 · My ownership</small>
+        <h3>Where I made the product call</h3>
+        <ul>{visibleOwnership.map((item) => <li>{item}</li>)}</ul>
+      </article>
+      <article>
+        <small>04 · Result</small>
+        <h3>What changed in practice</h3>
+        <p>{trimText(project.valueNarrative, 315)}</p>
+      </article>
+    </div>
   </section>
 
-  <details class="v6-full-case glass-card">
+  <section class="case-section">
+    <div class="case-section-head">
+      <div>
+        <p class="eyebrow">Product decisions</p>
+        <h2>The choices that shaped the outcome.</h2>
+      </div>
+      <p>Architecture appears here only where it changed the product decision, trade-off, operating model, or delivery sequence.</p>
+    </div>
+
+    <div class="decision-grid">
+      {visibleDecisions.map((decision, index) => (
+        <article class="decision-card glass-card">
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <h3>{decision.title}</h3>
+          <p>{trimText(decision.body, 230)}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="case-section case-delivery">
+    <div class="case-section-head">
+      <div>
+        <p class="eyebrow">Delivery</p>
+        <h2>How I sequenced the uncertainty.</h2>
+      </div>
+      <p>The increments are shown as questions resolved—not as a list of features shipped.</p>
+    </div>
+
+    <div class="delivery-track glass-card">
+      {project.increments.map((increment, index) => (
+        <article>
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <h3>{increment.title}</h3>
+          <p>{trimText(increment.learning, 175)}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="case-section">
+    <div class="case-section-head">
+      <div>
+        <p class="eyebrow">Evidence</p>
+        <h2>Outcomes with qualification intact.</h2>
+      </div>
+      <p>Measured outcomes, observed scale, projections, and estimates stay explicitly separated.</p>
+    </div>
+
+    <div class="evidence-grid">
+      {project.metrics.map((metric) => (
+        <article class="evidence-card glass-card">
+          <strong>{metric.value}</strong>
+          <span>{metric.label}</span>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <details class="case-detail glass-card">
     <summary>
-      <div><span>Full case study</span><strong>{project.headline}</strong></div>
+      <div>
+        <span>Full supporting detail</span>
+        <strong>Ownership, complexity, complete decisions, flow, and evidence notes</strong>
+      </div>
       <i aria-hidden="true">+</i>
     </summary>
-    <div class="v6-full-case-body">
-      <section class="v6-case-two">
-        <article>
-          <small>Business problem</small>
-          <h2>{project.question}</h2>
-          <p>{project.problem}</p>
-        </article>
-        <article>
-          <small>Product goal</small>
-          <h2>What I optimized for</h2>
-          <p>{project.productGoal}</p>
-        </article>
-      </section>
 
-      <section class="v6-case-two">
+    <div class="case-detail-body">
+      <section class="detail-two">
         <article>
           <small>My ownership</small>
           <h2>Senior TPO scope</h2>
@@ -247,30 +213,42 @@ const brief = briefs[project.slug]!;
         </article>
       </section>
 
-      <section class="v6-case-flow">
-        <small>End-to-end product flow</small>
-        <div>{project.flow.map((step, index) => <><span>{step}</span>{index < project.flow.length - 1 && <i>→</i>}</>)}</div>
-        <p>{project.flowCaption}</p>
-      </section>
-
-      <section>
-        <div class="v6-case-heading"><small>Delivery</small><h2>How the capability was sequenced</h2></div>
-        <div class="v6-case-increments">
-          {project.increments.map((increment, index) => (
+      <section class="detail-decisions">
+        <div class="detail-heading">
+          <small>Complete decision record</small>
+          <h2>Why the product moved this way</h2>
+        </div>
+        <div>
+          {project.decisions.map((decision, index) => (
             <article>
               <span>{String(index + 1).padStart(2, '0')}</span>
-              <h3>{increment.title}</h3>
-              <strong>{increment.focus}</strong>
-              <p>{increment.learning}</p>
+              <h3>{decision.title}</h3>
+              <p>{decision.body}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section>
-        <div class="v6-case-heading"><small>Evidence</small><h2>Outcomes with qualification intact</h2></div>
-        <p class="v6-case-value">{project.valueNarrative}</p>
-        <div class="v6-case-metrics">
+      <section class="detail-flow">
+        <small>End-to-end product flow</small>
+        <div>
+          {project.flow.map((step, index) => (
+            <>
+              <span>{step}</span>
+              {index < project.flow.length - 1 && <i aria-hidden="true">→</i>}
+            </>
+          ))}
+        </div>
+        <p>{project.flowCaption}</p>
+      </section>
+
+      <section class="detail-evidence">
+        <div class="detail-heading">
+          <small>Evidence notes</small>
+          <h2>What each number actually means</h2>
+        </div>
+        <p class="detail-value">{project.valueNarrative}</p>
+        <div>
           {project.metrics.map((metric) => (
             <article>
               <strong>{metric.value}</strong>
@@ -282,39 +260,140 @@ const brief = briefs[project.slug]!;
       </section>
     </div>
   </details>
+
+  <a class="case-next glass-card" href={`${base}work/${nextProject.slug}/`}>
+    <span>Next case study</span>
+    <strong>{nextProject.title}</strong>
+    <i aria-hidden="true">→</i>
+  </a>
 </main>
 
 <style>
-  .v6-full-case{margin-top:18px;overflow:hidden}
-  .v6-full-case>summary{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:20px 22px;cursor:pointer;list-style:none}
-  .v6-full-case>summary::-webkit-details-marker{display:none}
-  .v6-full-case>summary div{display:grid;gap:5px}
-  .v6-full-case>summary span,.v6-case-two small,.v6-case-flow>small,.v6-case-heading small{font-size:.56rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7290aa}
-  .v6-full-case>summary strong{font-size:.9rem;color:#1d405d}
-  .v6-full-case>summary i{display:grid;width:32px;height:32px;place-items:center;border-radius:10px;background:rgba(233,242,254,.9);font-style:normal;color:#315d85}
-  .v6-full-case[open]>summary i{transform:rotate(45deg)}
-  .v6-full-case-body{display:grid;gap:14px;padding:0 14px 14px}
-  .v6-case-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  .v6-case-two article,.v6-case-flow,.v6-case-increments article,.v6-case-metrics article{border:1px solid rgba(37,99,235,.08);border-radius:16px;background:rgba(255,255,255,.62)}
-  .v6-case-two article{padding:20px}
-  .v6-case-two h2,.v6-case-heading h2{margin:7px 0 10px;font-size:clamp(1.35rem,2.3vw,2rem);color:#193f5f}
-  .v6-case-two p,.v6-case-two li,.v6-case-flow p,.v6-case-value,.v6-case-increments p,.v6-case-metrics p{font-size:.72rem;line-height:1.58;color:#647c91}
-  .v6-case-two ul{display:grid;gap:8px;margin:12px 0 0;padding-left:18px}
-  .v6-case-flow{padding:20px}
-  .v6-case-flow>div{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:12px 0}
-  .v6-case-flow span{padding:6px 9px;border-radius:999px;background:rgba(233,242,254,.9);font-size:.6rem;font-weight:750;color:#4f708b}
-  .v6-case-flow i{font-style:normal;color:#8ca4b8}
-  .v6-case-flow p{margin:0;max-width:900px}
-  .v6-case-heading{padding:12px 6px 2px}
-  .v6-case-increments,.v6-case-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-  .v6-case-increments article,.v6-case-metrics article{padding:16px}
-  .v6-case-increments article>span{font-size:.55rem;font-weight:800;color:#7890a6}
-  .v6-case-increments h3{margin:8px 0 7px;font-size:.9rem;color:#1d425f}
-  .v6-case-increments strong{font-size:.64rem;line-height:1.4;color:#42617a}
-  .v6-case-increments p{margin:9px 0 0}
-  .v6-case-value{max-width:980px;margin:0 6px 14px}
-  .v6-case-metrics strong{display:block;font-size:1.35rem;color:#1b4f79}
-  .v6-case-metrics span{display:block;margin-top:5px;font-size:.62rem;font-weight:800;color:#355c7a}
-  .v6-case-metrics p{margin:8px 0 0}
-  @media (max-width:820px){.v6-case-two,.v6-case-increments,.v6-case-metrics{grid-template-columns:1fr}.v6-full-case>summary{align-items:flex-start}.v6-full-case>summary strong{font-size:.78rem}}
+  .case-v8{padding:20px 0 78px}
+  .case-bar{position:sticky;top:92px;z-index:40;display:grid;grid-template-columns:120px minmax(0,1fr) 90px;align-items:center;gap:12px;min-height:58px;margin-bottom:44px;padding:8px 10px}
+  .case-back{padding:8px 10px;font-size:.72rem;font-weight:750;color:#5c7690}
+  .case-switcher{position:relative;justify-self:center;width:min(460px,100%)}
+  .case-switcher summary{display:grid;grid-template-columns:34px minmax(0,1fr) 18px;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;list-style:none;border-radius:999px}
+  .case-switcher summary::-webkit-details-marker{display:none}
+  .case-switcher summary span,.case-switcher nav span{font-size:.62rem;font-weight:800;color:#8095aa}
+  .case-switcher summary strong{overflow:hidden;font-size:.76rem;white-space:nowrap;text-overflow:ellipsis}
+  .case-switcher summary i{font-style:normal;color:#8196aa}
+  .case-switcher nav{position:absolute;top:50px;left:0;right:0;display:grid;padding:8px;border:1px solid rgba(15,23,42,.08);border-radius:18px;background:rgba(255,255,255,.96);box-shadow:0 22px 60px rgba(42,68,120,.14);backdrop-filter:blur(20px)}
+  .case-switcher nav a{display:grid;grid-template-columns:34px 1fr;gap:8px;padding:10px 12px;border-radius:11px}
+  .case-switcher nav a:hover,.case-switcher nav a[aria-current='page']{background:rgba(239,246,255,.9)}
+  .case-switcher nav strong{font-size:.74rem}
+  .case-arrows{display:flex;justify-content:flex-end;gap:5px}
+  .case-arrows a{display:grid;width:36px;height:36px;place-items:center;border-radius:50%;font-size:.82rem;color:#59748e}
+  .case-arrows a:hover{background:rgba(37,99,235,.07)}
+  .case-hero{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(340px,.82fr);gap:20px;align-items:end;margin-bottom:18px}
+  .case-hero-copy{padding:34px 8px 24px 0}
+  .case-hero-copy .eyebrow{margin-bottom:16px}
+  .case-hero-copy h1{max-width:900px;margin:0 0 18px;font-size:clamp(3.5rem,7vw,6.7rem);line-height:.93}
+  .case-headline{max-width:820px;margin:0;color:#596f85;font-size:1.02rem;line-height:1.65}
+  .case-shift{padding:26px}
+  .case-shift>small{display:block;margin-bottom:16px;font-size:.59rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#7891a8}
+  .case-shift>div{display:grid;grid-template-columns:minmax(0,1fr) 26px minmax(0,1fr);gap:10px;align-items:center}
+  .case-shift span,.case-shift strong{font-size:.78rem;line-height:1.45}
+  .case-shift span{color:#8190a0}
+  .case-shift strong{color:#244c72}
+  .case-shift i{font-style:normal;text-align:center;color:#8ba0b5}
+  .case-proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .case-proof article{display:grid;gap:5px;padding:20px 22px}
+  .case-proof strong{font-size:1.45rem;color:#295d90}
+  .case-proof span{font-size:.7rem;line-height:1.45;color:#70859a}
+  .case-section{padding-top:82px}
+  .case-section-head{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:42px;align-items:end;margin-bottom:24px}
+  .case-section-head .eyebrow{margin-bottom:13px}
+  .case-section-head h2{max-width:900px;margin:0;font-size:clamp(2.3rem,4.4vw,4.3rem)}
+  .case-section-head>p{max-width:500px;margin:0 0 5px;font-size:.86rem;line-height:1.65;color:#6b8196}
+  .case-glance{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:hidden;padding:0}
+  .case-glance article{min-height:255px;padding:28px;border-right:1px solid rgba(15,23,42,.07);border-bottom:1px solid rgba(15,23,42,.07)}
+  .case-glance article:nth-child(2n){border-right:0}
+  .case-glance article:nth-child(n+3){border-bottom:0}
+  .case-glance small,.detail-two small,.detail-heading small,.detail-flow>small{font-size:.59rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#718ba4}
+  .case-glance h3{margin:16px 0 12px;font-size:1.28rem}
+  .case-glance p,.case-glance li{font-size:.8rem;line-height:1.65;color:#667d92}
+  .case-glance p{margin:0}
+  .case-glance ul{display:grid;gap:9px;margin:14px 0 0;padding-left:18px}
+  .decision-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .decision-card{min-height:280px;padding:26px}
+  .decision-card>span{display:inline-grid;width:34px;height:34px;place-items:center;border-radius:10px;background:rgba(232,241,254,.88);font-size:.62rem;font-weight:800;color:#35669b}
+  .decision-card h3{margin:34px 0 12px;font-size:1.18rem}
+  .decision-card p{margin:0;font-size:.79rem;line-height:1.65;color:#6a8095}
+  .delivery-track{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:hidden;padding:0}
+  .delivery-track article{min-height:240px;padding:24px;border-right:1px solid rgba(15,23,42,.07)}
+  .delivery-track article:last-child{border-right:0}
+  .delivery-track article>span{font-size:.62rem;font-weight:800;color:#7a91a8}
+  .delivery-track h3{margin:34px 0 11px;font-size:1rem}
+  .delivery-track p{margin:0;font-size:.75rem;line-height:1.6;color:#708499}
+  .evidence-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  .evidence-card{display:grid;gap:7px;min-height:140px;align-content:center;padding:22px}
+  .evidence-card strong{font-size:1.45rem;color:#285e92}
+  .evidence-card span{font-size:.69rem;line-height:1.45;color:#6f859a}
+  .case-detail{margin-top:82px;overflow:hidden}
+  .case-detail>summary{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 24px;cursor:pointer;list-style:none}
+  .case-detail>summary::-webkit-details-marker{display:none}
+  .case-detail>summary div{display:grid;gap:4px}
+  .case-detail>summary span{font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#718ba3}
+  .case-detail>summary strong{font-size:.88rem;color:#234867}
+  .case-detail>summary i{display:grid;width:34px;height:34px;place-items:center;border-radius:10px;background:rgba(232,241,254,.9);font-style:normal;color:#35608b;transition:transform .2s ease}
+  .case-detail[open]>summary i{transform:rotate(45deg)}
+  .case-detail-body{display:grid;gap:14px;padding:0 14px 14px}
+  .detail-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .detail-two article,.detail-decisions,.detail-flow,.detail-evidence{border:1px solid rgba(37,99,235,.08);border-radius:18px;background:rgba(255,255,255,.56)}
+  .detail-two article{padding:24px}
+  .detail-two h2,.detail-heading h2{margin:8px 0 12px;font-size:1.55rem;color:#244766}
+  .detail-two ul{display:grid;gap:9px;margin:0;padding-left:18px}
+  .detail-two li,.detail-decisions p,.detail-flow p,.detail-evidence p{font-size:.76rem;line-height:1.65;color:#6b8195}
+  .detail-decisions,.detail-evidence{padding:24px}
+  .detail-decisions>div:last-child{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
+  .detail-decisions article,.detail-evidence article{padding:18px;border:1px solid rgba(15,23,42,.06);border-radius:14px;background:rgba(255,255,255,.6)}
+  .detail-decisions article>span{font-size:.57rem;font-weight:800;color:#7d93a9}
+  .detail-decisions h3{margin:9px 0 8px;font-size:.96rem}
+  .detail-decisions p{margin:0}
+  .detail-flow{padding:24px}
+  .detail-flow>div{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:14px 0}
+  .detail-flow span{padding:6px 9px;border-radius:999px;background:rgba(233,242,254,.9);font-size:.62rem;font-weight:750;color:#52718e}
+  .detail-flow i{font-style:normal;color:#91a5b8}
+  .detail-flow p{max-width:980px;margin:0}
+  .detail-value{max-width:980px;margin:0 0 16px}
+  .detail-evidence>div:last-child{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .detail-evidence article strong{display:block;font-size:1.2rem;color:#295d8d}
+  .detail-evidence article span{display:block;margin:5px 0 8px;font-size:.65rem;font-weight:800;color:#365d7c}
+  .detail-evidence article p{margin:0}
+  .case-next{display:grid;grid-template-columns:150px minmax(0,1fr) 30px;gap:16px;align-items:center;margin-top:16px;padding:22px 24px}
+  .case-next span{font-size:.63rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7a91a7}
+  .case-next strong{font-size:1rem;color:#244967}
+  .case-next i{font-style:normal;color:#66839e}
+  @media(max-width:980px){
+    .case-hero{grid-template-columns:1fr}
+    .case-section-head{grid-template-columns:1fr;gap:14px}
+    .decision-grid{grid-template-columns:1fr}
+    .decision-card{min-height:0}
+    .delivery-track{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .delivery-track article:nth-child(2){border-right:0}
+    .delivery-track article:nth-child(-n+2){border-bottom:1px solid rgba(15,23,42,.07)}
+    .evidence-grid,.detail-evidence>div:last-child{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media(max-width:720px){
+    .case-v8{padding-top:12px}
+    .case-bar{top:86px;grid-template-columns:88px minmax(0,1fr) 74px;margin-bottom:28px}
+    .case-back{font-size:.66rem}
+    .case-hero-copy{padding-top:20px}
+    .case-hero-copy h1{font-size:clamp(3rem,14vw,4.6rem)}
+    .case-shift>div{grid-template-columns:1fr;gap:8px}
+    .case-shift i{text-align:left;transform:rotate(90deg);transform-origin:left center}
+    .case-proof{grid-template-columns:1fr}
+    .case-section{padding-top:62px}
+    .case-glance,.detail-two{grid-template-columns:1fr}
+    .case-glance article{min-height:0;border-right:0!important;border-bottom:1px solid rgba(15,23,42,.07)!important}
+    .case-glance article:last-child{border-bottom:0!important}
+    .delivery-track{grid-template-columns:1fr}
+    .delivery-track article{min-height:0;border-right:0!important;border-bottom:1px solid rgba(15,23,42,.07)}
+    .delivery-track article:last-child{border-bottom:0}
+    .evidence-grid,.detail-evidence>div:last-child,.detail-decisions>div:last-child{grid-template-columns:1fr}
+    .case-detail>summary{align-items:flex-start}
+    .case-next{grid-template-columns:1fr 24px}
+    .case-next span{grid-column:1/-1}
+  }
 </style>
