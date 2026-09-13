@@ -22,3 +22,9 @@ const isEnterpriseOrderManagement = project.slug === 'enterprise-order-managemen
     ? <EnterpriseOrderManagementEpic />
     : <ProductEpicWorkspace project={project} />}
 </BaseLayout>
+
+<script>
+  document.querySelectorAll('.flow-track').forEach((element) => {
+    if (element instanceof HTMLElement) element.tabIndex = 0;
+  });
+</script>
