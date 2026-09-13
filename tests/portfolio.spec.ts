@@ -2,88 +2,66 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 const projects = [
-  { path: './work/enterprise-order-management/', title: 'Enterprise Order Management', visual: '.v6-order-map' },
-  { path: './work/rag-analysis-agent/', title: 'Enterprise RAG Analysis Agent', visual: '.v6-forecast-map' },
-  { path: './work/build-plus/', title: 'Build Plus', visual: '.v6-orbit-map' },
-  { path: './work/rfds/', title: 'RFDS Automation', visual: '.v6-rfds-map' },
-  { path: './work/gl-coding/', title: 'Dynamic GL Coding', visual: '.v6-gl-map' },
-  { path: './work/lease-vendor-management/', title: 'Lease & Vendor Management', visual: '.v6-asset' },
+  { path: './work/enterprise-order-management/', title: 'Enterprise Order Management' },
+  { path: './work/rag-analysis-agent/', title: 'Enterprise RAG Analysis Agent' },
+  { path: './work/build-plus/', title: 'Build Plus' },
+  { path: './work/rfds/', title: 'RFDS Automation' },
+  { path: './work/gl-coding/', title: 'Dynamic GL Coding' },
+  { path: './work/lease-vendor-management/', title: 'Lease & Vendor Management' },
 ];
 
-test('homepage is visual, selective, and not text-heavy', async ({ page }, testInfo) => {
+test('homepage presents all six projects in a compact editorial index', async ({ page }, testInfo) => {
   await page.goto('./');
   await expect(page).toHaveTitle(/Venkata Parimi/);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Make complex products easy to understand.');
-  await expect(page.locator('.v6-control-map')).toBeVisible();
-  await expect(page.locator('.v6-expertise article')).toHaveCount(4);
-  await expect(page.locator('.v6-work-card')).toHaveCount(projects.length);
-  await expect(page.locator('.v6-approach-grid article')).toHaveCount(6);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Complex products. Clear product decisions.');
+  await expect(page.locator('.home-hero-guide')).toBeVisible();
+  await expect(page.locator('.work-row')).toHaveCount(projects.length);
+  await expect(page.locator('.principle-card')).toHaveCount(4);
   await expect(page.getByText('Peer-to-Peer Transactions')).toHaveCount(0);
   await expect(page.getByText('Asset & Portfolio Management')).toHaveCount(0);
 
-  const text = await page.locator('.v6-home').innerText();
+  const text = await page.locator('.home-v8').innerText();
   expect(text.length).toBeLessThan(5000);
-  await page.screenshot({ path: testInfo.outputPath('homepage-v7.png'), fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('homepage-case-study-index.png'), fullPage: true });
 });
 
-test('every selected initiative uses the compact dashboard with a distinct infographic', async ({ page }) => {
+test('every selected initiative leads with a concise case study instead of a product-model diagram', async ({ page }) => {
   for (const project of projects) {
     await page.goto(project.path);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title);
-    await expect(page.locator('.v6-dashboard-grid')).toBeVisible();
-    await expect(page.locator(project.visual)).toBeVisible();
-    await expect(page.locator('.v6-decision-list > div')).toHaveCount(4);
-    await expect(page.locator('.v6-proof-row > article')).toHaveCount(3);
-    await expect(page.locator('.v6-depth')).not.toHaveAttribute('open', '');
-    await expect(page.locator('.v5-story-tabs')).toHaveCount(0);
-    await expect(page.locator('.glc-dashboard')).toHaveCount(0);
+    await expect(page.locator('.case-shift')).toBeVisible();
+    await expect(page.locator('.case-glance')).toBeVisible();
+    await expect(page.locator('.decision-card')).toHaveCount(3);
+    await expect(page.locator('.case-proof > article')).toHaveCount(3);
+    await expect(page.locator('.case-detail')).not.toHaveAttribute('open', '');
+    await expect(page.getByText('Product model', { exact: true })).toHaveCount(0);
+    await expect(page.locator('.v6-dashboard-grid')).toHaveCount(0);
 
-    const visibleText = await page.locator('.v6-project').innerText();
-    expect(visibleText.length, `${project.title} visible text budget`).toBeLessThan(2800);
+    const visibleText = await page.locator('.case-v8').innerText();
+    expect(visibleText.length, `${project.title} visible text budget`).toBeLessThan(5200);
   }
 });
 
-test('motion system stages the visual story and evidence without hiding content', async ({ page }) => {
+test('full supporting detail preserves the deeper case-study evidence', async ({ page }) => {
   await page.goto('./work/enterprise-order-management/');
-  await expect(page.locator('body')).toHaveClass(/motion-ready/);
-
-  const visual = page.locator('.v6-visual');
-  await expect(visual).toHaveAttribute('data-motion-scene', '');
-  await expect(visual).toHaveClass(/motion-visible/);
-  expect(await visual.locator('[data-motion-part]').count()).toBeGreaterThan(6);
-
-  const firstPart = visual.locator('[data-motion-part]').first();
-  const animationName = await firstPart.evaluate((element) => getComputedStyle(element).animationName);
-  expect(animationName).toContain('v7PartIn');
-
-  const firstMetric = page.locator('.v6-proof-row article strong').first();
-  await firstMetric.scrollIntoViewIfNeeded();
-  await expect(firstMetric).toHaveAttribute('data-counted', 'true');
-  await expect(firstMetric).toHaveText('20%', { timeout: 2000 });
-});
-
-test('glass depth is enabled only when the device exposes a fine hover pointer', async ({ page }) => {
-  await page.goto('./');
-  const supportsFineHover = await page.evaluate(() => matchMedia('(hover:hover) and (pointer:fine)').matches);
-  if (supportsFineHover) {
-    await expect(page.locator('.v6-hero-board')).toHaveClass(/motion-tilt/);
-    await expect(page.locator('.v6-work-card').first()).toHaveClass(/motion-tilt/);
-  } else {
-    await expect(page.locator('.v6-hero-board')).not.toHaveClass(/motion-tilt/);
-    await expect(page.locator('.v6-work-card').first()).not.toHaveClass(/motion-tilt/);
-  }
+  await page.locator('.case-detail summary').click();
+  await expect(page.locator('.case-detail')).toHaveAttribute('open', '');
+  await expect(page.getByText('Senior TPO scope', { exact: true })).toBeVisible();
+  await expect(page.getByText('What made this hard', { exact: true })).toBeVisible();
+  await expect(page.getByText('Complete decision record', { exact: true })).toBeVisible();
+  await expect(page.getByText('What each number actually means', { exact: true })).toBeVisible();
 });
 
 test('project switcher moves directly between initiatives', async ({ page }) => {
   await page.goto('./work/enterprise-order-management/');
-  await page.locator('.v6-project-switcher summary').click();
-  await page.locator('.v6-project-switcher nav a', { hasText: 'Enterprise RAG Analysis Agent' }).click();
+  await page.locator('.case-switcher summary').click();
+  await page.locator('.case-switcher nav a', { hasText: 'Enterprise RAG Analysis Agent' }).click();
   await expect(page).toHaveURL(/\/work\/rag-analysis-agent\/$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Enterprise RAG Analysis Agent');
-  await expect(page.locator('.v6-forecast-map')).toBeVisible();
+  await expect(page.locator('.case-glance')).toBeVisible();
 });
 
-test('all mobile project dashboards use the full viewport without horizontal overflow', async ({ page }, testInfo) => {
+test('all mobile project case studies use the full viewport without horizontal overflow', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
 
   for (const project of projects) {
@@ -92,7 +70,7 @@ test('all mobile project dashboards use the full viewport without horizontal ove
       viewport: window.innerWidth,
       scrollWidth: document.documentElement.scrollWidth,
       bodyWidth: document.body.getBoundingClientRect().width,
-      projectWidth: document.querySelector('.v6-project')?.getBoundingClientRect().width ?? 0,
+      projectWidth: document.querySelector('.case-v8')?.getBoundingClientRect().width ?? 0,
     }));
     expect(dims.viewport).toBe(390);
     expect(dims.scrollWidth).toBeLessThanOrEqual(391);
@@ -101,7 +79,7 @@ test('all mobile project dashboards use the full viewport without horizontal ove
   }
 
   await page.goto('./work/gl-coding/');
-  await page.screenshot({ path: testInfo.outputPath('gl-coding-mobile-v7.png'), fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('gl-coding-mobile-case-study.png'), fullPage: true });
 });
 
 test('projected and estimated outcomes remain visibly qualified', async ({ page }) => {
@@ -134,23 +112,6 @@ test('homepage and every project pass automated accessibility scans', async ({ p
       .analyze();
     expect(results.violations, `Accessibility violations on ${path}`).toEqual([]);
   }
-});
-
-test('reduced motion preserves the complete visual story without staged movement', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('./work/rfds/');
-  await expect(page.locator('.v6-rfds-map')).toBeVisible();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('RFDS Automation');
-  await expect(page.locator('body')).toHaveClass(/motion-ready/);
-
-  const part = page.locator('.v6-visual [data-motion-part]').first();
-  await expect(part).toBeVisible();
-  const state = await part.evaluate((element) => ({
-    opacity: getComputedStyle(element).opacity,
-    duration: getComputedStyle(element).animationDuration,
-  }));
-  expect(state.opacity).toBe('1');
-  expect(['0s', '0.000001s', '1e-06s']).toContain(state.duration);
 });
 
 test('legacy source artifacts remain available without public deep-dive CTAs', async ({ page, request }) => {
