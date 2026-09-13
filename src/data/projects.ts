@@ -48,555 +48,526 @@ export type Project = {
 export const projects: Project[] = [
   {
     index: '01',
-    slug: 'asset-catalog',
-    title: 'Asset Catalog',
-    category: 'Master data · Workflow orchestration',
-    eyebrow: 'Enterprise asset data',
-    question: 'How do you stop bad master data before it propagates across the enterprise?',
-    headline: 'Building the governed path from asset request to enterprise-ready master data.',
+    slug: 'enterprise-order-management',
+    title: 'Enterprise Order Management',
+    category: 'Telecom order orchestration · Platform modernization',
+    eyebrow: 'Declarative orchestration',
+    question: 'What happens when every new product change requires developers to redraw the fulfillment engine?',
+    headline: 'Replacing rigid BPMN flows with declarative, dependency-driven order orchestration.',
     summary:
-      'The challenge was not collecting more fields. It was defining when an asset becomes trusted, who can approve it, how that state moves across MDM and ERP, and what happens when the systems disagree.',
+      'The legacy order platform encoded fulfillment paths as Camunda BPMN and XML. As plans, services, and dependencies expanded, every change accumulated more gateways, diagrams, deployment work, and regression risk. I led the product strategy for a new orchestration model where workers declare dependencies, shared order context is governed explicitly, and the engine assembles the executable fulfillment graph.',
     productGoal:
-      'Create one governed path from asset request to enterprise-ready master data while preventing incomplete, stale, or conflicting records from propagating downstream.',
+      'Create an order-orchestration platform that can launch and change subscriber services without manually remodeling every fulfillment path, while preserving deterministic execution, shared context, and operational visibility.',
     problem:
-      'Asset creation crossed business teams, governance roles, Master Data Management, ERP, and downstream consumers. A request could look complete to one team and still be unsafe to publish elsewhere. Treating the request form as the product would have automated the visible step while leaving the real lifecycle fragmented.',
+      'Static BPMN worked when fulfillment paths were limited and predictable. At scale, hundreds of rigid models became a change bottleneck: parallel execution had to be drawn manually, product changes triggered model deployments, and fragmented state across workers increased the risk of incomplete enrichment or logic gaps.',
     complexity: [
-      'Dynamic taxonomy and required attributes by asset type',
-      'Context-aware approval routing and separation of duties',
-      'MDM API orchestration followed by ERP ingestion',
-      'Mismatch, re-match, stale-data, and hold states',
-      'Business-admin configuration without a development cycle for every policy change',
+      'Legacy Camunda BPMN orchestration with manually modeled parallel gateways and XML deployments',
+      'Hansen commercial-offer decomposition into technical resource specifications',
+      'Kafka-based worker coordination and dependency-driven execution',
+      'Phase 1 assessment / enrichment separated from Phase 2 execution',
+      'Canonical order context shared across catalog, validation, enrichment, and provisioning',
+      '19+ delivery teams and 18 dynamic service intents that had to retain existing business behavior',
     ],
     ownership: [
-      'Frame the product boundary around the full asset lifecycle, not the submission screen',
-      'Clarify which system owns identity, governance state, and downstream financial state',
-      'Separate configurable business policy from application behavior where change frequency justified it',
-      'Order the Product Backlog around data integrity, dependencies, and risk before downstream automation',
-      'Make exception handling an explicit product capability rather than an operational afterthought',
+      'Own the product direction from imperative BPMN modeling toward declarative, dependency-aware orchestration',
+      'Lead UC1 Change Bucket functionality and define how plan modifications and add-ons decompose through the catalog',
+      'Introduce the two-phase evaluation model so execution cannot consume partially enriched order state',
+      'Standardize the canonical orderContext contract across workers and fulfillment stages',
+      'Coordinate cross-team migration of existing intents while separating implemented capability from target-scale projections',
     ],
     decisions: [
       {
-        title: 'Treat the lifecycle as the product',
+        title: 'Replace static flows with dependency-driven execution',
         body:
-          'The meaningful outcome was not a submitted request; it was a trusted asset that could safely exist across enterprise systems. That changed the conversation from screens and fields to states, ownership, orchestration, and evidence.',
+          'Workers declare what they require and what they can execute. The orchestration engine resolves those dependencies into a directed execution graph, so parallelism follows the topology instead of being redrawn as BPMN gateways for every product variation.',
       },
       {
-        title: 'Make governance configurable',
+        title: 'Separate assessment from execution',
         body:
-          'Asset types and approval policies evolve. Moving taxonomy and routing rules into business-controlled configuration reduced the need to turn every governance change into a code change.',
+          'Phase 1 resolves catalog decomposition, identifiers, configuration, and enrichment before Phase 2 begins fulfillment. The phase boundary prevents downstream execution from consuming incomplete technical state and creates a deterministic synchronization point.',
       },
       {
-        title: 'Fail safe when systems disagree',
+        title: 'Standardize shared order context',
         body:
-          'A mismatch or stale ERP file was treated as a product state. The workflow could hold propagation, notify the right owner, and re-run reconciliation rather than allowing older data to overwrite a trusted value.',
+          'A canonical, version-controlled orderContext travels through the lifecycle so workers contribute controlled enrichment without creating divergent representations or repeatedly reconstructing the order from source systems.',
+      },
+      {
+        title: 'Move orchestration policy toward configuration',
+        body:
+          'JSON/AppConfig and worker metadata replace an increasing portion of XML/model deployment. The architecture keeps core execution stable while product and policy behavior can evolve with less structural rework.',
       },
     ],
-    flow: ['Request', 'Dynamic taxonomy', 'Context routing', 'Final approval', 'MDM / PCM', 'ERP', 'Reconcile or hold', 'Enterprise-ready asset'],
+    flow: ['Business intent', 'Hansen decomposition', 'Worker proposals', 'Dependency graph', 'Assessment & enrichment', 'Phase gate', 'Kafka execution', 'Provisioning'],
     flowCaption:
-      'The system makes trust explicit: approval alone does not make an asset live; downstream synchronization and reconciliation complete the lifecycle.',
+      'The architectural shift is from telling the engine exactly how to traverse a diagram to declaring capabilities, dependencies, and intent so the executable topology can be assembled consistently.',
     increments: [
       {
-        title: 'Identity & validation',
-        focus: 'Asset model, taxonomy, required attributes, duplicate prevention',
-        learning: 'Can we create a complete and consistently understood asset definition?',
+        title: 'Prove the orchestration model',
+        focus: 'Camunda comparison, worker registration, dependency graph, parallel execution',
+        learning: 'Can dependency declarations replace manually modeled gateways without losing deterministic behavior?',
       },
       {
-        title: 'Governance',
-        focus: 'Dynamic routing, approvals, separation of duties, exceptions',
-        learning: 'Can the right experts govern the right requests without creating a bottleneck?',
+        title: 'Change Bucket / catalog decomposition',
+        focus: 'Commercial offers, resource specifications, plan modifications, add-ons',
+        learning: 'Can high-level customer intent become the right technical work without embedding every path in BPMN?',
       },
       {
-        title: 'Enterprise orchestration',
-        focus: 'MDM handoff, ERP ingestion, lifecycle state transitions',
-        learning: 'Can trusted data cross system boundaries without losing identity or state?',
+        title: 'Governed order context',
+        focus: 'Assessment, enrichment, common data contract, phase synchronization',
+        learning: 'Can parallel workers share enriched state without data loss or premature execution?',
       },
       {
-        title: 'Reconciliation & telemetry',
-        focus: 'Mismatch handling, holds, re-match, operational visibility',
-        learning: 'Can the product recover safely when real enterprise data is imperfect?',
+        title: 'Scale & observability',
+        focus: 'Kafka push model, live DAG rendering, configuration-driven policy, throughput modeling',
+        learning: 'Can the platform remain observable and adaptable as order volume and service combinations increase?',
       },
     ],
     valueNarrative:
-      'The value case is a governed asset backbone that reduces rework and downstream data defects while shortening the path from request to usable enterprise data. Existing repository business-case material projects a 312% three-year ROI, $307.4K net benefit, and $452.4K in value generated.',
+      'The transformation reduces the effort required to model changing fulfillment logic and creates a platform designed for substantially higher order volume. The current evidence includes a measured 20% improvement in logic-mapping time; the 75K-orders/day figure remains a projected capacity target based on the Kafka push architecture, not a claimed production throughput result.',
     metrics: [
-      { value: '312%', label: 'Projected 3-year ROI', detail: 'Existing portfolio business case.' },
-      { value: '$307.4K', label: 'Projected net benefit', detail: 'Existing portfolio business case.' },
-      { value: '$452.4K', label: 'Projected value generated', detail: 'Existing portfolio business case.' },
+      { value: '20%', label: 'Measured mapping-time improvement', detail: 'POC comparison of dependency-driven self-assembly versus manual BPMN modeling.' },
+      { value: '75K/day', label: 'Projected order capacity', detail: 'Modeled target for the Kafka push architecture; not presented as achieved production throughput.' },
+      { value: '19+', label: 'Teams coordinated', detail: 'Actual cross-team delivery complexity for migration and intent mapping.' },
+      { value: '18', label: 'Service intents in scope', detail: 'Actual legacy intent scope to preserve during orchestration migration.' },
     ],
     featured: true,
-    visual: 'catalog',
+    visual: 'fulfillment',
   },
   {
     index: '02',
-    slug: 'inventory',
-    title: 'Inventory & Asset Lifecycle',
-    category: 'Supply chain · Chain of custody',
-    eyebrow: 'System of systems',
-    question: 'Who owns the truth when five enterprise systems each know only part of an asset?',
-    headline: 'Creating a digital chain of custody across inventory, finance, and physical operations.',
+    slug: 'rag-analysis-agent',
+    title: 'Enterprise RAG Analysis Agent',
+    category: 'Enterprise AI · Grounded technical intelligence',
+    eyebrow: 'Production RAG platform',
+    question: 'How do you turn an 11GB engineering haystack into evidence a production team can trust?',
+    headline: 'Converting fragmented engineering knowledge into grounded, line-level operational intelligence.',
     summary:
-      'ERP knew procurement and capitalization. WMS knew physical movement. Fixed Assets knew capitalized equipment. Planning knew demand. Receiving knew what physically arrived. The product had to turn those partial truths into one auditable lifecycle.',
+      'Order Management troubleshooting depended on manual string searches across code, Jira, Confluence, logs, catalog imports, and technical design artifacts. The real problem was not finding documents; it was reconstructing functional relationships among identifiers, configuration, code, and deployed behavior without losing source evidence or version context.',
     productGoal:
-      'Establish end-to-end asset identity and custody across operational and financial systems so the business can locate an asset, understand its state, and prove how it got there.',
+      'Reduce technical investigation time by giving developers and analysts a permission-aware analysis agent that retrieves current engineering evidence, cites every material claim, and abstains when the available sources cannot support an answer.',
     problem:
-      'No single platform owned the complete asset lifecycle. Manual reconciliation between physical movement and financial records created opacity, audit exposure, and weak control over high-value inventory. Replacing every system was neither necessary nor realistic; the product needed to orchestrate them.',
+      'Complex failures could require days of cross-repository analysis. A single issue might involve a toggle, catalog decomposition, a missing GUID, environment configuration, code behavior, and documentation that no longer matched the deployed state. A generic chatbot would have increased risk if it generated plausible but ungrounded explanations.',
     complexity: [
-      'ERP, WMS, Fixed Assets, planning, and receiving systems with different responsibilities',
-      'Serialization and identity from receipt through deployment and return',
-      'Physical scans correcting vendor or ASN discrepancies',
-      'Parent-child / BOM validation for kitted assets',
-      'Reverse logistics for previously capitalized equipment',
+      '11GB+ heterogeneous corpus spanning 558+ GitLab projects, Jira, Confluence, transcripts, design documents, and 260MB+ Hansen XML imports',
+      'Hybrid retrieval across conceptual meaning, project metadata, branch/version context, and technical identifiers',
+      '512–1,024 token retrieval chunks with 10–15% overlap and file-type-aware processing',
+      'MCP-based live access using user credential pass-through rather than a privileged agent identity',
+      'Version-aware indexing with webhook-driven stale marking and refresh',
+      'Grounding verification, citation traceability, golden-dataset regression gates, and private Bedrock connectivity',
     ],
     ownership: [
-      'Define authoritative ownership by lifecycle state rather than declaring one universal source of truth',
-      'Use serialization as the persistent identity anchor for custody and auditability',
-      'Design exception paths around the reality that physical and digital records can disagree',
-      'Preserve financial controls while enabling recovered assets to re-enter physical inventory tracking',
-      'Sequence capabilities so identity and custody are trustworthy before adding broader lifecycle automation',
+      'Reframe the product from a conversational chatbot into a grounded technical-analysis agent',
+      'Define the grounding gate and the requirement to abstain when evidence is insufficient',
+      'Establish the golden-dataset CI gate for retrieval and answer-quality regression testing',
+      'Prioritize MCP integrations with engineering systems ahead of broader UI enhancements so answers reflect deployed reality',
+      'Lead the progression from a local Python proof of concept to FastAPI and AWS Bedrock production architecture',
     ],
     decisions: [
       {
-        title: 'Orchestrate instead of replace',
+        title: 'Choose accuracy over conversational speed',
         body:
-          'The product acts as a custody and integration layer. ERP remains authoritative for procurement and financial state; WMS remains authoritative for warehouse operations; the product creates the lifecycle narrative across them.',
+          'Reranking and a secondary grounding verification step add latency, but production troubleshooting requires evidence that can be acted on. The system is designed to return a slower, cited answer—or explicitly abstain—rather than produce a fast unsupported explanation.',
       },
       {
-        title: 'Make the physical scan authoritative at receipt',
+        title: 'Use live enterprise context instead of static uploads',
         body:
-          'Vendor shipping data can be wrong. Treating the physical scan as the entry-point truth allows the product to correct serial and shipment discrepancies before they become downstream inventory problems.',
+          'MCP integrations with GitLab and Jira allow the agent to work against current authorized engineering state. That decision made source freshness and user permissions part of the product architecture rather than a manual maintenance task.',
       },
       {
-        title: 'Preserve audit history through recovery',
+        title: 'Make evaluation a release gate',
         body:
-          'Returned capitalized assets receive a recovered identity that can re-enter zero-cost inventory tracking while remaining linked to the original capitalized record. Operational movement continues without breaking financial history.',
+          'Changes to retrieval, chunking, or prompting must pass a golden set of 25+ historical failures with 100% groundedness and at least 90% recall before promotion. AI quality is treated as a regression-tested product contract.',
+      },
+      {
+        title: 'Protect retrieval during index refresh',
+        body:
+          'Large indexing cycles are built away from active reads and swapped safely when ready, preventing concurrent analysts from querying a partially refreshed vector index.',
       },
     ],
-    flow: ['ERP / PO', 'Physical receipt', 'Scan & serialize', 'WMS custody', 'Deploy / move', 'Fixed Assets', 'Return / recover', 'Audit trail'],
+    flow: ['GitLab / Jira / Confluence', 'Parse & version', 'Hybrid retrieval', 'Metadata filter', 'Rerank', 'Claude via Bedrock', 'Grounding gate', 'Cited answer'],
     flowCaption:
-      'Each platform keeps its responsibility. The product preserves identity and reconciles state across the handoffs.',
+      'The answer is only the final layer. The product value comes from live source access, version-aware retrieval, evidence verification, and an explicit refusal path when grounding is insufficient.',
     increments: [
       {
-        title: 'Receive & identify',
-        focus: 'PO context, physical scan, serialization, format validation',
-        learning: 'Can every controlled asset enter the lifecycle with a trustworthy identity?',
+        title: 'POC',
+        focus: 'Large Hansen-file parsing, Bedrock feasibility, local retrieval',
+        learning: 'Can the platform reason over the technical artifacts that defeat manual search?',
       },
       {
-        title: 'Custody',
-        focus: 'Warehouse movement, kitting, parent-child validation, deployment state',
-        learning: 'Can physical movement be traced without relying on manual reconciliation?',
+        title: 'Pilot',
+        focus: 'Change Bucket use case, five analysts, citations, grounding behavior',
+        learning: 'Do grounded answers reduce investigation time without sacrificing analyst trust?',
       },
       {
-        title: 'Financial synchronization',
-        focus: 'ERP and Fixed Assets state, capitalization evidence, reconciliation',
-        learning: 'Can operational and financial states remain consistent across system boundaries?',
+        title: 'Production integration',
+        focus: 'MCP, token pass-through, webhook freshness, FastAPI async execution',
+        learning: 'Can the agent stay current, permission-aware, and responsive under concurrent use?',
       },
       {
-        title: 'Reverse lifecycle',
-        focus: 'Returns, recovered identity, retirement, complete audit linkage',
-        learning: 'Can the product handle the hard end-of-life cases without breaking financial controls?',
+        title: 'Evaluation & improvement loop',
+        focus: 'Golden failures, ungrounded-query review, chunking refinement, source-gap discovery',
+        learning: 'Can every failure improve both the retrieval system and the underlying knowledge ecosystem?',
       },
     ],
     valueNarrative:
-      'The business value comes from traceable inventory, lower reconciliation effort, stronger auditability, and more productive use of capital. Existing repository material projects a 285% three-year ROI, $630K net value, and $850K in capital released.',
+      'The measured end-to-end result was a reduction in complex technical investigation from roughly six days to about two hours. Individual retrieval steps can complete much faster—for example, a missing GUID in a large Hansen import was located and cited in 42 seconds—but those examples are kept separate from the full investigation-cycle metric.',
     metrics: [
-      { value: '285%', label: 'Projected 3-year ROI', detail: 'Existing portfolio business case.' },
-      { value: '$630K', label: 'Projected net value', detail: 'Existing portfolio business case.' },
-      { value: '$850K', label: 'Projected capital released', detail: 'Existing portfolio business case.' },
+      { value: '~6 days → ~2 hrs', label: 'Measured analysis cycle', detail: 'End-to-end technical investigation comparison from historical OM troubleshooting and pilot use.' },
+      { value: '11GB+', label: 'Production knowledge corpus', detail: 'Observed structured and unstructured engineering data indexed for analysis.' },
+      { value: '558+', label: 'OM projects searchable', detail: 'Observed cross-project impact-analysis scope.' },
+      { value: '100% / 90%+', label: 'Golden-set groundedness / recall', detail: 'Measured on the 25+ case evaluation suite; not a claim of universal model accuracy.' },
+    ],
+    featured: true,
+    visual: 'forecast',
+  },
+  {
+    index: '03',
+    slug: 'build-plus',
+    title: 'Build Plus',
+    category: 'Supply chain · Asset & material transformation',
+    eyebrow: 'Enterprise operating platform',
+    question: 'How do you connect trusted part data, predictive demand, fulfillment, custody, and recovery into one operating model?',
+    headline: 'Building a cradle-to-grave asset and supply-chain ecosystem.',
+    summary:
+      'The national rollout operated across fragmented master data, spreadsheet-driven demand, manual MRO fulfillment, disconnected inventory systems, and reverse-logistics handoffs. Build Plus consolidated those problems into one product program spanning Item Master governance, predictive planning, omnichannel fulfillment, serialization, and asset recovery.',
+    productGoal:
+      'Create a governed supply-chain operating model from part definition through demand, order, shipment, deployment, return, and financial disposition while reducing manual data carrying and protecting configuration integrity.',
+    problem:
+      'More than half of MRO fulfillment depended on spreadsheets, part data moved manually between systems, demand was reactive, and no single workflow preserved asset identity through forward and reverse logistics. Automating any one screen would have left the underlying data and custody gaps intact.',
+    complexity: [
+      'Governed Item Master across N1, Oracle, Scale, QDS, and legacy/manual data sources',
+      'Taxonomy and part codification separating capitalized wireless assets from consumables',
+      '18-month rolling demand planning using consumption data and regression analytics',
+      'Omnichannel fulfillment across Hubs, FSLs, IHS, GCs, inventory availability, and engineering BOMs',
+      'Mandatory BOM/configuration validation before shipment',
+      'Serialization and reverse-logistics workflow replacing manual handoffs across 19 teams',
+      '300+ requirements coordinated across planning, fulfillment, and finance systems',
+    ],
+    ownership: [
+      'Architect the governed Item Master and taxonomy foundation before scaling downstream automation',
+      'Prioritize high-benefit / lower-effort integrations using the Build Plus LOB and LOE framework',
+      'Drive the shift from reactive purchasing to an 18-month demand signal tied to rollout needs',
+      'Design the OMS fulfillment experience and BOM validation gate across distributed inventory nodes',
+      'Establish reverse-logistics RACI, serialization, fault reporting, and lifecycle governance',
+    ],
+    decisions: [
+      {
+        title: 'Establish the data anchor first',
+        body:
+          'Part taxonomy, codification, mandatory attributes, and system synchronization create the trusted identity needed by planning, fulfillment, finance, and lifecycle controls. Downstream automation was deliberately sequenced after the foundation could be trusted.',
+      },
+      {
+        title: 'Generate demand from evidence, not spreadsheets',
+        body:
+          'The planning model uses consumption and rollout signals across an 18-month horizon so procurement can move from buy-just-in-case behavior toward demand-aligned purchasing.',
+      },
+      {
+        title: 'Validate before fulfillment',
+        body:
+          'The BOM validation gate checks configuration integrity and inventory conditions before shipment. Errors are prevented upstream instead of discovered through post-shipment audits or field rework.',
+      },
+      {
+        title: 'Preserve identity through the full lifecycle',
+        body:
+          'Serialization connects receipt, custody, deployment, return, fault handling, and disposition so operational movement remains traceable without losing the associated financial history.',
+      },
+    ],
+    flow: ['Item Master', '18-month demand plan', 'Procurement', 'BOM / order', 'Validation gate', 'Fulfillment', 'Serialized custody', 'Return / disposition'],
+    flowCaption:
+      'Build Plus treats master data, planning, fulfillment, and reverse logistics as one lifecycle: trusted identity becomes the common key that lets each downstream decision remain coherent.',
+    increments: [
+      {
+        title: 'Master data foundation',
+        focus: 'IMD, taxonomy, codification, governance, Oracle/N1 synchronization',
+        learning: 'Can every downstream process start from the same governed definition of a part?',
+      },
+      {
+        title: 'Predictive planning',
+        focus: 'Consumption signals, regression analytics, 18-month rolling forecast',
+        learning: 'Can procurement respond to projected need instead of manually inferred demand?',
+      },
+      {
+        title: 'Systemized fulfillment',
+        focus: 'OMS, BOM validation, inventory visibility, routing across fulfillment nodes',
+        learning: 'Can an engineering requirement become a validated shipment without spreadsheet orchestration?',
+      },
+      {
+        title: 'Lifecycle closure',
+        focus: 'Serialization, fault reporting, reverse logistics, financial disposition',
+        learning: 'Can the organization prove custody and state from first receipt through recovery or retirement?',
+      },
+    ],
+    valueNarrative:
+      'Build Plus replaces fragmented manual operations with a governed data and workflow backbone. The 10,040-hour figure is retained as a program-level projected annual benefit under LOB Level 7 rather than being double-counted across individual initiatives.',
+    metrics: [
+      { value: '50%+', label: 'MRO previously spreadsheet-managed', detail: 'Measured baseline for the targeted fulfillment processes before systemization.' },
+      { value: '18 mo', label: 'Rolling demand horizon', detail: 'Implemented planning capability using consumption and regression-based forecasting.' },
+      { value: '10,040', label: 'Projected hours returned / year', detail: 'Build Plus program-level LOB Level 7 benefit across HQ, HUB, and Field operations.' },
+      { value: '19', label: 'Manual handoffs addressed', detail: 'Measured reverse-logistics operating complexity moved into governed workflow.' },
     ],
     featured: true,
     visual: 'inventory',
   },
   {
-    index: '03',
+    index: '04',
     slug: 'rfds',
     title: 'RFDS Automation',
     category: 'Telecommunications · Engineering automation',
-    eyebrow: 'Network engineering product',
-    question: 'How do you turn engineering knowledge trapped in spreadsheets into a dependable product?',
-    headline: 'Replacing spreadsheet-based network engineering with a rules-driven product.',
+    eyebrow: 'Engineering data product',
+    question: 'What changes when an engineering document becomes the output of a governed data system instead of the system itself?',
+    headline: 'Transforming RF design from static documents into governed engineering data and rules.',
     summary:
-      'RFDS generation depended on spreadsheets, macros, manual data entry, and domain knowledge distributed across people and files. The product had to combine source data, site context, engineering rules, validation, and document generation without hiding the exceptions that still required human judgment.',
+      'RFDS creation depended on spreadsheets, macros, manual drafting, and distributed engineering knowledge. I reframed the problem from generating documents faster to building a governed data-and-rules product that validates source data, applies repeatable engineering decisions, generates diagrams automatically, and keeps approved design context aligned with downstream execution.',
     productGoal:
-      'Reduce the cycle time and operational risk between approved RF planning data and a field-ready engineering document while preserving configuration accuracy and traceability.',
+      'Turn approved RF planning and equipment data into a validated, traceable, field-ready design in seconds while allowing engineering policy to evolve through governed configuration.',
     problem:
-      'As network densification, spectrum overlays, and large build programs increased configuration complexity, spreadsheet-based RFDS creation became a bottleneck. Version drift, manual mapping, and stale information could create rework or send field teams outdated specifications.',
+      'As the national footprint expanded, manual drafting created version drift, stale configurations, equipment mismatches, and rework. The scalable answer was not a faster spreadsheet; it was a rules-based engineering platform in which the RFDS PDF became one generated output of trusted underlying data.',
     complexity: [
-      'RF planning data and procurement catalog attributes arriving from separate sources',
-      'Site configuration differences such as monopole and rooftop structures',
-      'Alpha / Beta / Gamma sector-specific equipment assignments',
-      'Frequency, radio-model, placement, and cable-length decision rules',
-      'Scheduled synchronization plus an immediate validated manual path',
+      'RF planning and procurement catalog data arriving from separate systems',
+      'Site types, Alpha/Beta/Gamma sectors, frequency bands, radios, antennas, OVPs, placement, and cable-length rules',
+      'Dynamic plumbing, network, and OVP diagram selection',
+      'Scheduled synchronization plus a governed immediate/manual path for urgent work',
+      'Validation gates that block generation when critical source values do not match',
+      'Existing inventory fulfillment aligned to the approved RFDS configuration',
     ],
     ownership: [
-      'Reframe the goal from automating a spreadsheet to improving the full planning-to-field outcome',
-      'Translate domain rules into explicit product behavior that engineering could implement and test',
-      'Identify which decisions could be automated and where human review still protected quality',
-      'Order the backlog around source-data integrity and rule correctness before optimizing document generation',
-      'Keep lineage and exception handling visible so speed did not come at the expense of engineering trust',
+      'Move the product model from document creation to governed engineering data',
+      'Translate engineering judgment into explicit, testable rules and metadata',
+      'Prioritize strict source validation even when it added friction to user entry',
+      'Preserve a controlled urgent path using approved equipment and validated inputs',
+      'Connect approved design context to downstream operational execution without overstating unsupported system claims',
     ],
     decisions: [
       {
-        title: 'Centralize the data before automating the document',
+        title: 'Model engineering knowledge as data and rules',
         body:
-          'Generating a PDF faster would not solve stale or inconsistent inputs. The product first harmonizes RF planning data and procurement attributes into a site-level model that downstream rules can trust.',
+          'The platform centralizes site, sector, equipment, and technical attributes and applies configuration-driven logic so the same engineering decision can be executed consistently across the national portfolio.',
       },
       {
-        title: 'Turn expert judgment into testable rules',
+        title: 'Validate at the source',
         body:
-          'Sector mapping, structure-driven placement, frequency logic, and cable selection were made explicit so the same engineering decision could be applied consistently and validated repeatedly.',
+          'Required fields, approved equipment, and cross-source checks prevent invalid configurations from being released. Data integrity is treated as an upstream product control rather than a downstream audit activity.',
       },
       {
-        title: 'Keep a controlled manual path',
+        title: 'Govern flexibility instead of allowing free-form entry',
         body:
-          'Scheduled synchronization optimized normal operations, but urgent work still needed an immediate path. Validated dropdowns and approved parts allowed speed without abandoning governance.',
+          'Strict lookups and validation reduced user freedom, but that tradeoff was necessary to keep designs consistent at rollout scale. A controlled manual path preserved speed for legitimate urgent work.',
+      },
+      {
+        title: 'Keep fulfillment aligned with approved design',
+        body:
+          'For existing inventory, shipped parts are validated against the approved RFDS configuration so warehouse fulfillment remains aligned with engineering intent.',
       },
     ],
-    flow: ['RF planning', 'Procurement catalog', 'Data sync', 'Site model', 'Sector mapping', 'Rule engine', 'Validation', 'RFDS + diagrams'],
+    flow: ['RF planning', 'Procurement catalog', 'Governed site model', 'Engineering rules', 'Validation gate', 'RFDS + diagrams', 'Approved configuration', 'Field / inventory execution'],
     flowCaption:
-      'The document is the output. The real product is the data and decision pipeline that makes the output trustworthy.',
+      'The RFDS is an output. The durable product is the governed engineering-data pipeline that makes every generated design repeatable, auditable, and operationally usable.',
     increments: [
       {
-        title: 'Trusted source data',
-        focus: 'Integrations, synchronization, approved equipment attributes',
-        learning: 'Can the product establish a dependable site-level input model?',
+        title: 'Trusted source model',
+        focus: 'RF planning, procurement attributes, site and sector data',
+        learning: 'Can the product establish one dependable input model before automating design decisions?',
       },
       {
-        title: 'Site & sector model',
-        focus: 'Configuration, Alpha/Beta/Gamma views, equipment assignment',
-        learning: 'Can domain structure be represented clearly enough to support repeatable automation?',
+        title: 'Rules & governance',
+        focus: 'Equipment mapping, placement, frequency, cable logic, approved-part controls',
+        learning: 'Can expert decisions be encoded without creating silent configuration risk?',
       },
       {
-        title: 'Rules & validation',
-        focus: 'Frequency, placement, line-detail calculations, exception handling',
-        learning: 'Can expert decisions be automated without creating silent configuration risk?',
+        title: 'Automated design output',
+        focus: 'RFDS generation, dynamic diagrams, SOW/comments, version history',
+        learning: 'Does automation remove drafting effort while keeping design evidence visible?',
       },
       {
-        title: 'Field-ready output',
-        focus: 'RFDS generation, dynamic diagrams, lineage and approval flow',
-        learning: 'Does automation actually shorten the planning-to-field cycle while preserving trust?',
+        title: 'Operational alignment',
+        focus: 'Approved configuration, inventory alignment, downstream execution',
+        learning: 'Can the approved design remain intact as it moves from engineering into physical fulfillment?',
       },
     ],
     valueNarrative:
-      'The outcome is less manual engineering effort, fewer version-control errors, faster approvals, and a repeatable path from live source data to installation-ready output. The existing RFDS impact material reports 72% faster approval cycles.',
+      'The measured production story is materially stronger than the older approval-only metric: generation dropped from hours to seconds, design-to-field exceptions fell sharply, and the platform supported more than 1,000 designs per month while avoiding substantial annual labor cost.',
     metrics: [
-      { value: '72%', label: 'Faster approval cycles', detail: 'Claim in the existing RFDS impact material.' },
-      { value: 'Live', label: 'Lineage visibility', detail: 'Source, reviewer, and consumer context are retained.' },
-      { value: 'Exception-first', label: 'Routing model', detail: 'High-risk items can be routed for specialist review.' },
+      { value: '$1.2M', label: 'Measured annual cost avoidance', detail: 'Labor avoided at production rollout volume through automated RFDS generation.' },
+      { value: '2–4 hrs → <30 sec', label: 'Measured generation time', detail: 'Observed from the automated generation workflow and system logs.' },
+      { value: '35–45% → <5%', label: 'Measured exception rate', detail: 'Reduction in rework tied to design-to-field mismatches.' },
+      { value: '1,000+', label: 'Designs per month', detail: 'Observed operating scale.' },
     ],
     featured: true,
     visual: 'network',
-  },
-  {
-    index: '04',
-    slug: 'inspection',
-    title: 'Inspection & Predictive Maintenance',
-    category: 'Field operations · Reliability',
-    eyebrow: 'Maintenance intelligence',
-    question: 'How do you move maintenance from calendar-driven work to evidence-driven intervention?',
-    headline: 'Turning inspection data into risk-informed operational action.',
-    summary:
-      'The product connects authoritative asset requirements, usage and fault history, lifecycle context, predictive signals, work-order optimization, and field feedback so maintenance can evolve from scheduled activity toward targeted intervention.',
-    productGoal:
-      'Improve asset reliability and field efficiency by using the best available evidence to decide what should be inspected, when intervention is justified, and how field outcomes feed the next decision.',
-    problem:
-      'Traditional maintenance programs can be consistent without being intelligent. Fixed schedules ignore how assets are actually used, repeat failures are not always translated into future action, and independent work orders can create unnecessary truck rolls.',
-    complexity: [
-      'Asset catalog requirements, usage/fault history, and lifecycle data serving different decision needs',
-      'Planned, proactive, and predictive maintenance with different levels of uncertainty',
-      'External predictive intelligence feeding an operational workflow product',
-      'Human-in-the-loop approval for recommendations with operational consequences',
-      'Work-order consolidation, field dispatch, fault capture, and feedback loops',
-    ],
-    ownership: [
-      'Define the outcome around reliability and intervention quality rather than inspection volume',
-      'Separate predictive intelligence from workflow orchestration so each capability could evolve independently',
-      'Keep human judgment where model recommendations carried operational risk',
-      'Use configurable work-order windows to balance field efficiency with maintenance urgency',
-      'Treat field results as product feedback that should improve the next planning decision',
-    ],
-    decisions: [
-      {
-        title: 'Build a maturity path instead of jumping to prediction',
-        body:
-          'Planned maintenance establishes the operational foundation, proactive maintenance uses historical patterns, and predictive maintenance adds external forecasting. Each stage is useful on its own and creates evidence for the next.',
-      },
-      {
-        title: 'Keep prediction and orchestration separate',
-        body:
-          'A specialized usage-intelligence system can estimate likely failure windows while the product validates asset state and decides how to turn that signal into operational work. That boundary reduces coupling and clarifies accountability.',
-      },
-      {
-        title: 'Optimize field work, not just prediction accuracy',
-        body:
-          'When multiple maintenance events fall inside a configurable window, the workflow can combine them into one work order. The product outcome is fewer unnecessary visits and better intervention, not simply more alerts.',
-      },
-    ],
-    flow: ['Asset catalog', 'Usage & faults', 'Lifecycle context', 'Maintenance intelligence', 'Work-order rules', 'Field execution', 'Fault report', 'Feedback'],
-    flowCaption:
-      'Signals only create value when they become the right operational action and the result is captured for the next decision.',
-    increments: [
-      {
-        title: 'Planned maintenance',
-        focus: 'Eligibility, intervals, task definitions, lifecycle triggers',
-        learning: 'Can the product create a dependable baseline from authoritative asset data?',
-      },
-      {
-        title: 'Proactive prioritization',
-        focus: 'Defect patterns, repeat faults, human-reviewed recommendations',
-        learning: 'Does historical evidence improve which assets receive attention?',
-      },
-      {
-        title: 'Predictive signals',
-        focus: 'Failure-window forecasting, in-service validation, workflow integration',
-        learning: 'Can prediction change intervention timing without generating waste?',
-      },
-      {
-        title: 'Field feedback loop',
-        focus: 'Combined work orders, structured fault reports, outcome data',
-        learning: 'Are operational results improving the next maintenance decision?',
-      },
-    ],
-    valueNarrative:
-      'The value comes from reducing avoidable field work, improving reliability, and directing maintenance toward higher-risk assets while preserving audit-ready evidence. Existing portfolio material projects a 345% three-year ROI, $620K net value, and $800K in risk avoidance.',
-    metrics: [
-      { value: '345%', label: 'Projected 3-year ROI', detail: 'Existing portfolio business case.' },
-      { value: '$620K', label: 'Projected net value', detail: 'Existing portfolio business case.' },
-      { value: '$800K', label: 'Projected risk avoidance', detail: 'Existing portfolio business case.' },
-    ],
-    featured: true,
-    visual: 'inspection',
   },
   {
     index: '05',
     slug: 'gl-coding',
     title: 'Dynamic GL Coding',
     category: 'Financial operations · Configurable policy',
-    eyebrow: 'Financial product controls',
+    eyebrow: 'Financial routing platform',
     question: 'What happens when business policy changes faster than the software encoding it?',
-    headline: 'Turning accounting policy into configurable product logic.',
+    headline: 'Turning hard-coded accounting logic into a reusable, configurable financial-routing capability.',
     summary:
-      'A coding model designed for a narrow set of capital projects became a constraint as the portfolio expanded into new project types and mixed CapEx / OpEx activity. The product needed to preserve financial control without making every policy change a software release.',
+      'A financial-routing model designed for a narrow business context became a constraint as new portfolios and operating models emerged. I led the shift from project-specific conditional logic to a metadata-driven product that preserves a common project identity across operations, warehouse, and ERP systems and validates treatment before posting.',
     productGoal:
-      'Generate accurate, auditable financial coding across changing project types by separating configurable accounting policy from application logic.',
+      'Let approved accounting policy evolve through governed configuration while keeping application architecture stable, preserving auditability, and reducing engineering dependency for new portfolio onboarding.',
     problem:
-      'Hard-coded financial logic created risk when the business expanded beyond the project types the original model anticipated. Inaccurate classification, weak project-level allocation, and improper capitalization could all follow from treating a changing accounting policy as a fixed software rule.',
+      'New project types could trigger months of engineering change, financial context was represented inconsistently across enterprise systems, and manual interpretation increased reconciliation risk. Extending the existing hard-coded model for each initiative would have delivered short-term speed while compounding technical debt.',
     complexity: [
-      'Different project types with different CapEx / OpEx treatment',
-      'Multi-component GL codes assembled from business context',
-      'Configurable lookup tables and policy rules',
-      'Review, simulation, posting, and traceable evidence',
-      'Need to scale to new ventures without destabilizing existing financial behavior',
+      'Different project and activity types requiring different CapEx / OpEx treatment',
+      'Common project identity carried across operations, supply chain / WMS, and ERP',
+      'Metadata-driven lookup and multi-component GL assembly',
+      'Validation and exception handling before ledger posting',
+      'Financial review, reason codes, lineage, and audit evidence',
+      'Balancing a four-month foundational redesign against faster project-specific extensions',
     ],
     ownership: [
-      'Reframe the problem from generating a code string to maintaining financial policy safely at scale',
-      'Decompose the code into independently governed components rather than one monolithic rule',
-      'Make policy changes configurable where the business needed agility and retain controls around posting',
-      'Expose review and evidence states so automation remained auditable',
-      'Balance speed of onboarding new project types against the risk of financial misclassification',
+      'Own the target capability and translate accounting and operational policy into product requirements',
+      'Advocate for the foundational redesign instead of another project-specific branch of conditional logic',
+      'Establish the common project identity that preserves financial context across system handoffs',
+      'Sequence delivery around identity, policy configuration, routing/validation, and reconciliation',
+      'Validate outcomes with controllership and keep measured, estimated, and projected benefits explicitly separated',
     ],
     decisions: [
       {
         title: 'Decouple policy from code',
         body:
-          'The GL code became an assembly of metadata-driven components governed by configurable lookup tables. That allows policy to evolve without embedding every change directly into application logic.',
+          'Financial mappings move into governed metadata and lookup structures. Approved policy changes can be configured and validated without turning every adjustment into an application release.',
       },
       {
-        title: 'Preserve review before irreversible action',
+        title: 'Establish a common project identity',
         body:
-          'Simulation and reviewer routing create a controlled space to validate mappings before posting. Automation accelerates the repeatable decision while keeping financial exceptions inspectable.',
+          'A shared project identifier links operational activity to financial treatment as transactions move through operations, warehouse processes, and ERP, preventing context from being reinterpreted at every boundary.',
       },
       {
-        title: 'Design for new project types',
+        title: 'Validate before posting',
         body:
-          'The product was shaped as a reusable financial-coding capability rather than a one-off solution for the current portfolio. The test of the model is whether new ventures can be onboarded through configuration rather than structural rework.',
+          'Incomplete or invalid combinations are stopped or routed for correction before reaching the ledger. The product moves error detection upstream instead of relying on month-end reconciliation.',
+      },
+      {
+        title: 'Invest in scalability over the next quick fix',
+        body:
+          'The four-month redesign required more initial investment, but it changed future portfolio onboarding from structural development to controlled configuration for supported scenarios.',
       },
     ],
-    flow: ['Project context', 'Code components', 'Lookup rules', 'Policy evaluation', 'Simulation / review', 'Validated code', 'Posting', 'Audit evidence'],
+    flow: ['Business / project context', 'Common project ID', 'Configurable policy', 'Financial-code assembly', 'Validation', 'WMS / operational handoff', 'ERP posting', 'Audit evidence'],
     flowCaption:
-      'The key abstraction is simple: business policy can change while the product architecture remains stable.',
+      'The product principle is stable application architecture with financial policy evolving through controlled configuration and a shared identity carried across systems.',
     increments: [
       {
-        title: 'Component model',
-        focus: 'Decompose the GL code and define contextual inputs',
-        learning: 'Can the accounting model represent existing and emerging project types cleanly?',
+        title: 'Common identity',
+        focus: 'Project identifier, context propagation, system ownership',
+        learning: 'Can every participating system describe the same business activity consistently?',
       },
       {
-        title: 'Configurable policy',
-        focus: 'Lookup tables, mapping rules, validation',
-        learning: 'Can finance change policy safely without a code release for every adjustment?',
+        title: 'Policy configuration',
+        focus: 'Lookup structures, GL components, mapping rules',
+        learning: 'Can finance evolve supported policy without a code release for every change?',
       },
       {
-        title: 'Decision controls',
-        focus: 'Simulation, reviewer route, exception handling',
-        learning: 'Can automation increase speed while preserving financial governance?',
+        title: 'Routing & validation',
+        focus: 'Code assembly, source validation, exception handling',
+        learning: 'Can the product prevent incorrect treatment before it reaches the ledger?',
       },
       {
-        title: 'Posting & evidence',
-        focus: 'Ledger integration, reason codes, lineage, audit trail',
-        learning: 'Can every posted result be traced back to the policy and context that produced it?',
+        title: 'Reconciliation & evidence',
+        focus: 'Cross-system consistency, posting, approvers, reason codes, lineage',
+        learning: 'Can every result be traced to the business context and policy that produced it?',
       },
     ],
     valueNarrative:
-      'The product reduces manual coding and rework while improving consistency across project types and making policy decisions traceable. Existing impact material reports a 40% faster month-end close.',
+      'Post-implementation scenario analysis and reduced controllership back-and-forth support a measured 40% faster month-end close. The redesigned model also supported 4+ strategic portfolios; the 2–3 months to under one week onboarding comparison remains an estimate for supported scenarios rather than a production SLA.',
     metrics: [
-      { value: '40%', label: 'Faster month-end close', detail: 'Claim in the existing GL Coding impact material.' },
-      { value: 'Traceable', label: 'Mapping evidence', detail: 'Approvers, reason codes, and lineage are represented in the source material.' },
+      { value: '40%', label: 'Measured faster month-end close', detail: 'Validated through post-implementation scenario analysis and reduced reconciliation effort.' },
+      { value: '4+', label: 'Observed portfolio adoption', detail: 'Strategic portfolio types onboarded on the redesigned model.' },
+      { value: '3', label: 'Enterprise systems aligned', detail: 'Operations, warehouse / supply chain, and ERP share consistent project context.' },
+      { value: '2–3 mo → <1 wk', label: 'Estimated enablement comparison', detail: 'Supported-scenario estimate; not presented as a production SLA.' },
     ],
     featured: true,
     visual: 'ledger',
   },
   {
     index: '06',
-    slug: 'order-fulfillment',
-    title: 'Order & Fulfillment Management',
-    category: 'Fulfillment · Cross-system orchestration',
-    eyebrow: 'Customer promise',
-    question: 'How do you keep a customer promise when every system owns a different part of the order?',
-    headline: 'Orchestrating order state across planning, warehouse, transport, and finance.',
+    slug: 'lease-vendor-management',
+    title: 'Lease & Vendor Management',
+    category: 'Real estate operations · Financial controls',
+    eyebrow: 'Governed lease-to-pay',
+    question: 'How do you turn recurring lease obligations into a controlled financial workflow instead of a spreadsheet liability?',
+    headline: 'Building an enterprise lease-to-pay platform with vendor eligibility and financial controls at the source.',
     summary:
-      'The product acts as the system of engagement for an order while WMS, TMS, ERP, and planning platforms continue to own their specialized states. The difficult part is making those states coherent enough to manage backlog, fulfillment, exceptions, and customer visibility.',
+      'Thousands of site leases were managed through fragmented real-estate data, manual payment workarounds, and vendor constraints that could surface only when Finance attempted to pay. I led the ground-up Lease Management Module and VendorOne integration so lease lifecycle state, vendor eligibility, rent addresses, Oracle identifiers, GL treatment, and payment evidence could operate as one governed process.',
     productGoal:
-      'Create one reliable order lifecycle that coordinates inventory, warehouse execution, transportation, financial processing, and backlog decisions without replacing the systems that already perform those functions.',
+      'Govern lease obligations from execution through payment and closeout while preventing invalid vendor/payment combinations from reaching Finance and removing structural constraints that forced manual workarounds.',
     problem:
-      'Fragmented order operations created weak real-time visibility, manual backlog tracking, inconsistent fulfillment logic, and error-prone handoffs. No peripheral system had enough context to represent the complete customer promise.',
+      'The legacy vendor model supported only three active rent addresses per vendor, lease data was fragmented, and payment requests could reach Finance with inactive vendors or missing Oracle identifiers. At a $23.7M monthly rent-roll scale, those gaps represented recurring operational, financial, and compliance risk.',
     complexity: [
-      'Central order management plus WMS, TMS, ERP, and planning / forecasting',
-      'Order initiation, inventory availability, allocation, backlog, pick, ship, transit, and delivery states',
-      'Financial transfer or write-off states that do not belong in the warehouse platform',
-      'Exceptions and notifications that depend on the combined state of several systems',
+      'Ground-up lease lifecycle from site selection and executed agreement through commencement, payment, and closeout reconciliation',
+      'VendorOne integration and scalable multi-address landlord model',
+      'Vendor active status, rent-address eligibility, Oracle IDs, and site-code validation',
+      'GL coding and Construction in Progress correction within lease/payment workflows',
+      'NexsysOne, Oracle Finance, and RF/site context integration',
+      'SOX-oriented controls, seven-year retention, and roughly 150 delivered stories of scope',
     ],
     ownership: [
-      'Define the order lifecycle as the shared product model across specialized systems',
-      'Preserve clear ownership boundaries rather than duplicate WMS, TMS, or ERP capability',
-      'Make backlog and exception states visible product behavior rather than spreadsheet operations',
-      'Sequence integration work around the customer promise and operational dependencies',
+      'Define the lease-to-pay lifecycle as a financial-control product rather than a real-estate database',
+      'Design the vendor/payment eligibility gate before payment approval',
+      'Remove the hard-coded three-address vendor limit instead of extending manual workarounds',
+      'Connect VendorOne data dynamically into Lease Management payment generation',
+      'Integrate GL/CIP treatment and lifecycle visibility while balancing governance against user speed',
     ],
     decisions: [
       {
-        title: 'Use a hub-and-spoke model',
+        title: 'Validate payment eligibility at the source',
         body:
-          'The order platform becomes the orchestration hub while WMS, TMS, ERP, and planning remain responsible for their specialized execution. This creates end-to-end visibility without building another monolith.',
+          'Vendor status, eligible rent address, required Oracle identifiers, and related payment prerequisites are checked before approval so invalid combinations are stopped upstream instead of becoming Finance rework.',
       },
       {
-        title: 'Model the promise as state, not a status label',
+        title: 'Remove the structural address limit',
         body:
-          'An order is only understandable when inventory, warehouse, transportation, and financial events can be interpreted together. Explicit state transitions make backlog and exception decisions repeatable.',
+          'The product replaced the three-active-address constraint with a scalable multi-address model and exposed those addresses directly in Lease Management, eliminating the system limitation that drove landlord payment workarounds.',
       },
       {
-        title: 'Treat exceptions as first-class work',
+        title: 'Treat lease data as financial-control data',
         body:
-          'Backlog, unavailable inventory, fulfillment delays, and downstream handoff failures need clear owners and next actions. The product is designed for the failure path as deliberately as the happy path.',
+          'Lease milestones, payment schedules, vendor state, GL treatment, CIP corrections, and audit history are governed together because recurring rent is a financial obligation, not merely a document-tracking problem.',
+      },
+      {
+        title: 'Choose control over one-click speed',
+        body:
+          'Active-status and identifier validation added friction to submission, but the tradeoff was deliberate: prevent invalid payment instructions before they enter the ERP path.',
       },
     ],
-    flow: ['Demand / order', 'Order platform', 'Inventory decision', 'WMS', 'TMS', 'ERP', 'Unified order state', 'Customer / operations'],
+    flow: ['Lease execution', 'Lifecycle milestones', 'VendorOne', 'Eligibility gate', 'Payment schedule', 'GL / CIP treatment', 'Oracle execution', 'Reconciliation & evidence'],
     flowCaption:
-      'The customer sees one promise even though execution is distributed across several enterprise systems.',
+      'The product moves error detection from downstream Finance review to the moment lease and vendor data become eligible for payment.',
     increments: [
       {
-        title: 'Order model',
-        focus: 'Initiation, validation, ownership, lifecycle states',
-        learning: 'Can every team interpret the order state the same way?',
+        title: 'Lease lifecycle foundation',
+        focus: 'Site selection, execution, commencement, schedules, stage visibility',
+        learning: 'Can every recurring obligation be represented with a clear lifecycle and accountable state?',
       },
       {
-        title: 'Inventory & backlog',
-        focus: 'Availability, allocation, backlog decisions, planning signals',
-        learning: 'Can the product make constrained inventory visible before it becomes a fulfillment surprise?',
+        title: 'Vendor scalability',
+        focus: 'VendorOne, unlimited rent addresses, dynamic address selection',
+        learning: 'Can the platform support real landlord structures without manual payment workarounds?',
       },
       {
-        title: 'Execution orchestration',
-        focus: 'WMS, TMS, ERP handoffs and operational state synchronization',
-        learning: 'Can distributed execution behave like one coherent customer journey?',
+        title: 'Payment controls',
+        focus: 'Active status, Oracle identifiers, eligibility validation, approval gating',
+        learning: 'Can invalid payment instructions be prevented before Finance receives them?',
       },
       {
-        title: 'Exception visibility',
-        focus: 'Alerts, delays, handoff failures, evidence',
-        learning: 'Can operations intervene early enough to protect the promise?',
+        title: 'Financial integrity',
+        focus: 'GL coding, CIP corrections, ERP execution, retention and audit evidence',
+        learning: 'Can lease administration operate as a traceable financial-control system at rent-roll scale?',
       },
     ],
     valueNarrative:
-      'The source material supports the architecture and workflow story, but its current quantitative impact page is explicitly marked as placeholder material. The public portfolio therefore focuses on the product problem, decisions, and operating value without presenting those draft numbers as evidence.',
-    metrics: [],
-    featured: false,
-    visual: 'fulfillment',
-  },
-  {
-    index: '07',
-    slug: 'financial-projections',
-    title: 'Financial Projection Platform',
-    category: 'Financial services · Scalable computation',
-    eyebrow: 'Decision-support platform',
-    question: 'How do you make a computationally expensive financial model usable as a dependable product?',
-    headline: 'Designing projection services where model quality, scale, security, and cloud cost are product constraints.',
-    summary:
-      'The platform separates data aggregation, projection modeling, recommendation logic, API access, security, and cloud-cost governance so complex scenarios can evolve and scale without turning the product into one tightly coupled service.',
-    productGoal:
-      'Provide reliable, secure, reusable financial projections and scenario analysis while keeping model evolution, scale, and cloud cost manageable as product usage grows.',
-    problem:
-      'High-fidelity projections combine sensitive data, computationally expensive models, scenario management, recommendations, and changing assumptions. A monolithic implementation would make model changes risky, scaling inefficient, and cost harder to control.',
-    complexity: [
-      'Independent projection and recommendation responsibilities',
-      'API gateway concerns including authentication, routing, rate limiting, and load balancing',
-      'Sensitive data and end-to-end security requirements',
-      'Scenario reuse, variance monitoring, and model evolution',
-      'FinOps as a design constraint for computationally expensive workloads',
-    ],
-    ownership: [
-      'Frame reliability, model evolution, security, and cost as product requirements rather than backend implementation details',
-      'Separate independently changing capabilities so model experimentation does not destabilize the whole product',
-      'Treat API access and governance as part of the product surface for B2B consumers',
-      'Use scenario coverage and variance signals to inspect whether the product improves decision quality',
-    ],
-    decisions: [
-      {
-        title: 'Separate services by reason to change',
-        body:
-          'Projection modeling, recommendations, identity, and API concerns evolve at different rates. Independent services reduce the blast radius of model changes and allow selective scaling where compute demand is highest.',
-      },
-      {
-        title: 'Make the API boundary a product concern',
-        body:
-          'Authentication, rate limits, routing, and consumer contracts determine whether the platform is dependable for other products. They are part of the value proposition, not plumbing to hide from product decisions.',
-      },
-      {
-        title: 'Treat cloud cost as a constraint from the start',
-        body:
-          'Thousands of stochastic calculations can make an accurate product economically impractical. FinOps therefore belongs in scenario design, scaling decisions, and product trade-offs rather than being optimized after launch.',
-      },
-    ],
-    flow: ['Client / consumer', 'API gateway', 'Data aggregation', 'Projection engine', 'Scenario outputs', 'Recommendation engine', 'Delta alerts', 'Decision support'],
-    flowCaption:
-      'The platform isolates high-change and high-compute capabilities while presenting consumers with one governed service boundary.',
-    increments: [
-      {
-        title: 'Projection foundation',
-        focus: 'Data contracts, quality gates, baseline model service',
-        learning: 'Can the service generate stable, repeatable projections from trusted inputs?',
-      },
-      {
-        title: 'Scenario product',
-        focus: 'Reusable scenarios, comparison, coverage, model variation',
-        learning: 'Do scenarios improve the decisions users can explore rather than just producing more output?',
-      },
-      {
-        title: 'Platform boundary',
-        focus: 'API gateway, security, authentication, consumer contracts',
-        learning: 'Can other products consume the service reliably and safely?',
-      },
-      {
-        title: 'Scale & operating signals',
-        focus: 'Selective scaling, FinOps, SLOs, variance and delta alerts',
-        learning: 'Can the product remain economically and operationally reliable as workload and model complexity grow?',
-      },
-    ],
-    valueNarrative:
-      'The product value is better scenario coverage and faster awareness of material forecast changes without coupling every consumer to the underlying model. Existing impact material reports 15% lower forecast variance, 25% higher scenario coverage, and real-time delta notifications.',
+      'The strongest evidence is operating scale and implemented controls: the product governs a $23.7M monthly rent roll and removes the vendor-address constraint that created manual workarounds. The approximately 2x ROI remains an estimated business-case result because the operational return is estimated, even where delivery investment is known.',
     metrics: [
-      { value: '-15%', label: 'Forecast variance', detail: 'Claim in the existing Financial Projections impact material.' },
-      { value: '+25%', label: 'Scenario coverage', detail: 'Claim in the existing Financial Projections impact material.' },
-      { value: 'Real time', label: 'Delta notifications', detail: 'Operating pattern described in the existing impact material.' },
+      { value: '$23.7M/mo', label: 'Actual rent roll governed', detail: 'Actual recurring financial scale managed through the lease process.' },
+      { value: '3 → scalable', label: 'Rent-address model', detail: 'Implemented removal of the hard-coded three-active-address vendor constraint.' },
+      { value: '~2x', label: 'Estimated ROI', detail: 'Based on approximately $1.26M investment and an estimated $2.5M operational return.' },
+      { value: '~150', label: 'Stories delivered', detail: 'Actual delivery scope across lease, vendor, integration, and financial-control capabilities.' },
     ],
-    featured: false,
-    visual: 'forecast',
+    featured: true,
+    visual: 'catalog',
   },
 ];
 
