@@ -19,89 +19,77 @@ const previousProject = projects[(currentIndex - 1 + projects.length) % projects
 const nextProject = projects[(currentIndex + 1) % projects.length]!;
 
 const briefs: Record<string, Brief> = {
-  'asset-catalog': {
-    tagline: 'Govern asset creation from request to trusted enterprise data.',
-    goal: 'Stop incomplete or conflicting asset data before it propagates downstream.',
-    decisions: ['Lifecycle over form', 'Configurable governance', 'Reconcile before publish'],
-    sequence: ['Identity', 'Governance', 'Integration', 'Reconciliation'],
+  'enterprise-order-management': {
+    tagline: 'Move from manually modeled BPMN paths to declarative, dependency-driven orchestration.',
+    goal: 'Launch and change subscriber services without redrawing every fulfillment path.',
+    decisions: ['Dependencies over diagrams', 'Assessment before execution', 'One canonical order context', 'Policy toward configuration'],
+    sequence: ['Orchestration model', 'Catalog decomposition', 'Order context', 'Scale & observability'],
     proof: [
-      { value: '312%', label: 'Projected 3-year ROI' },
-      { value: '$307K', label: 'Projected net benefit' },
-      { value: '$452K', label: 'Projected value' },
+      { value: '20%', label: 'Measured mapping-time improvement' },
+      { value: '75K/day', label: 'Projected order capacity' },
+      { value: '19+', label: 'Teams coordinated' },
     ],
-    depth: ['Dynamic taxonomy and required attributes by asset type', 'Context-aware approvals and separation of duties', 'MDM → ERP orchestration with explicit hold and mismatch states'],
+    depth: ['Workers declare dependencies and the engine resolves the executable DAG', 'Phase 1 enriches and validates state before Phase 2 execution begins', 'Kafka push orchestration accepts greater offset-management complexity in exchange for target-scale throughput'],
   },
-  inventory: {
-    tagline: 'Create one auditable asset lifecycle across physical and financial systems.',
-    goal: 'Know where an asset is, what state it is in, and how it got there.',
-    decisions: ['Authority by lifecycle state', 'Serialization as identity', 'Physical truth at receipt'],
-    sequence: ['Receive', 'Identify', 'Custody', 'Finance', 'Recover'],
+  'rag-analysis-agent': {
+    tagline: 'Turn fragmented engineering evidence into grounded operational intelligence.',
+    goal: 'Reduce technical investigation time without trading away source traceability or access control.',
+    decisions: ['Accuracy over response speed', 'Live sources over static uploads', 'Evaluation as a release gate', 'Safe index refresh'],
+    sequence: ['POC', 'Pilot', 'Live integrations', 'Evaluation loop'],
     proof: [
-      { value: '285%', label: 'Projected 3-year ROI' },
-      { value: '$630K', label: 'Projected net value' },
-      { value: '$850K', label: 'Capital released' },
+      { value: '~6 days → ~2 hrs', label: 'Measured analysis cycle' },
+      { value: '11GB+', label: 'Production corpus' },
+      { value: '558+', label: 'OM projects searchable' },
     ],
-    depth: ['ERP, WMS, Fixed Assets, planning, and receiving retain specialized ownership', 'Parent-child/BOM validation supports controlled kitting', 'Recovered assets preserve financial history while re-entering operational tracking'],
+    depth: ['Hybrid retrieval combines semantic search with project, branch, and technical metadata', 'Every material answer is grounded in retrievable evidence and the agent explicitly abstains when support is insufficient', 'The 25+ case golden suite requires 100% groundedness and 90%+ recall before retrieval changes are promoted'],
+  },
+  'build-plus': {
+    tagline: 'Connect trusted part data, demand, fulfillment, custody, and recovery into one operating model.',
+    goal: 'Create a cradle-to-grave supply-chain lifecycle built on governed identity and upstream validation.',
+    decisions: ['Data anchor first', 'Demand from evidence', 'Validate before fulfillment', 'Preserve identity end to end'],
+    sequence: ['Master data', 'Predictive planning', 'Systemized fulfillment', 'Lifecycle closure'],
+    proof: [
+      { value: '50%+', label: 'MRO baseline on spreadsheets' },
+      { value: '18 mo', label: 'Rolling demand horizon' },
+      { value: '10,040', label: 'Projected hours returned / year' },
+    ],
+    depth: ['Item Master taxonomy and codification establish the common data anchor', 'BOM validation blocks invalid configurations before shipment', 'Serialization carries custody through deployment, return, fault handling, and financial disposition'],
   },
   rfds: {
-    tagline: 'Turn engineering knowledge in spreadsheets into repeatable product behavior.',
-    goal: 'Move faster from approved RF planning data to a trusted field-ready design.',
-    decisions: ['Trust source data first', 'Encode repeatable rules', 'Escalate true exceptions'],
-    sequence: ['Sources', 'Site model', 'Rules', 'Validation', 'Output'],
+    tagline: 'Turn engineering documents into outputs of a governed data-and-rules product.',
+    goal: 'Generate validated, field-ready RF designs in seconds while preserving engineering control.',
+    decisions: ['Data and rules over documents', 'Validate at source', 'Govern flexibility', 'Align fulfillment to design'],
+    sequence: ['Source model', 'Rules & governance', 'Automated output', 'Operational alignment'],
     proof: [
-      { value: '72%', label: 'Faster approvals' },
-      { value: 'Live', label: 'Source lineage' },
-      { value: 'Human', label: 'Exception review' },
+      { value: '$1.2M', label: 'Measured annual cost avoidance' },
+      { value: '2–4 hrs → <30 sec', label: 'Measured generation time' },
+      { value: '35–45% → <5%', label: 'Measured exception rate' },
     ],
-    depth: ['Planning and procurement data are normalized before document generation', 'Sector, frequency, structure, placement, and cable rules become explicit', 'Specialist review remains where engineering judgment protects quality'],
-  },
-  inspection: {
-    tagline: 'Shift maintenance from calendar activity to evidence-driven intervention.',
-    goal: 'Improve reliability while reducing unnecessary field work.',
-    decisions: ['Maturity before prediction', 'Prediction ≠ orchestration', 'Optimize work, not alerts'],
-    sequence: ['Planned', 'Proactive', 'Predictive', 'Field feedback'],
-    proof: [
-      { value: '345%', label: 'Projected 3-year ROI' },
-      { value: '$620K', label: 'Projected net value' },
-      { value: '$800K', label: 'Risk avoidance' },
-    ],
-    depth: ['Asset requirements, usage/faults, and lifecycle context drive different decisions', 'Predictive intelligence can remain specialized while workflow stays product-owned', 'Work-order consolidation reduces redundant field visits'],
+    depth: ['RF planning and procurement data are normalized before document generation', 'Sector, frequency, structure, placement, cable, and diagram rules are explicit and testable', 'Existing inventory shipments are validated against the approved RFDS configuration'],
   },
   'gl-coding': {
-    tagline: 'Separate changing accounting policy from application code.',
-    goal: 'Generate accurate, auditable financial coding across changing project types.',
-    decisions: ['Policy outside code', 'Review before posting', 'Design for the next project type'],
-    sequence: ['Components', 'Policy', 'Controls', 'Posting'],
+    tagline: 'Separate changing accounting policy from application architecture.',
+    goal: 'Create configurable financial routing that scales to new portfolios without repeating structural development.',
+    decisions: ['Policy outside code', 'Common project identity', 'Validate before posting', 'Scalability over the next quick fix'],
+    sequence: ['Common identity', 'Policy configuration', 'Routing & validation', 'Reconciliation'],
     proof: [
-      { value: '40%', label: 'Faster month-end close' },
-      { value: 'Traceable', label: 'Mapping evidence' },
-      { value: 'Configurable', label: 'Policy changes' },
+      { value: '40%', label: 'Measured faster close' },
+      { value: '4+', label: 'Observed portfolio adoption' },
+      { value: '3', label: 'Enterprise systems aligned' },
     ],
-    depth: ['CapEx / OpEx treatment varies by project context', 'Metadata-driven lookup rules replace monolithic hard-coded logic', 'Simulation, review, reason codes, and lineage preserve financial control'],
+    depth: ['A shared project identifier carries financial context across operations, warehouse, and ERP', 'Metadata-driven lookup rules replace project-specific hard-coded branches', 'The 2–3 month to under one week enablement comparison remains explicitly estimated rather than a production SLA'],
   },
-  'order-fulfillment': {
-    tagline: 'Coordinate one customer promise across specialized enterprise systems.',
-    goal: 'Make order state coherent across planning, warehouse, transport, and finance.',
-    decisions: ['Hub-and-spoke orchestration', 'Promise as state', 'Exceptions are first-class'],
-    sequence: ['Order', 'Inventory', 'Warehouse', 'Transport', 'Finance'],
+  'lease-vendor-management': {
+    tagline: 'Turn lease administration into a governed lease-to-pay financial control system.',
+    goal: 'Prevent invalid vendor and payment combinations before they reach Finance.',
+    decisions: ['Validate eligibility at source', 'Remove structural address limits', 'Treat lease data as financial-control data', 'Control over one-click speed'],
+    sequence: ['Lease lifecycle', 'Vendor scalability', 'Payment controls', 'Financial integrity'],
     proof: [
-      { value: '1', label: 'Unified order lifecycle' },
-      { value: '4+', label: 'Systems coordinated' },
-      { value: 'Held', label: 'Unvalidated metrics' },
+      { value: '$23.7M/mo', label: 'Actual rent roll governed' },
+      { value: '3 → scalable', label: 'Rent-address model' },
+      { value: '~2x', label: 'Estimated ROI' },
     ],
-    depth: ['The order platform orchestrates without replacing WMS, TMS, ERP, or planning', 'Backlog and exception states are modeled explicitly', 'Quantitative impact remains withheld because the current impact artifact is labeled placeholder'],
-  },
-  'financial-projections': {
-    tagline: 'Treat model quality, scale, security, and cloud cost as product constraints.',
-    goal: 'Deliver dependable scenarios without coupling every model change to the whole platform.',
-    decisions: ['Bound services by change', 'Secure the API edge', 'Measure cost with value'],
-    sequence: ['Data', 'Scenario', 'Projection', 'Recommendation', 'Evidence'],
-    proof: [
-      { value: '-15%', label: 'Forecast variance' },
-      { value: '+25%', label: 'Scenario coverage' },
-      { value: 'Live', label: 'Delta notifications' },
-    ],
-    depth: ['API gateway centralizes authentication and rate limiting', 'Projection and recommendation capabilities can evolve independently', 'FinOps signals keep workload scale connected to product economics'],
+    depth: ['Vendor status, rent address, and Oracle identifiers are validated before payment approval', 'VendorOne secondary addresses are surfaced directly in the Lease Management workflow', 'GL/CIP treatment, retention, and audit evidence are governed as part of the lease lifecycle'],
   },
 };
 
@@ -143,75 +131,66 @@ const brief = briefs[project.slug]!;
     <article class="v6-visual glass-card">
       <div class="v6-panel-head"><span>Product model</span><small>one scan</small></div>
 
-      {project.slug === 'asset-catalog' && (
-        <div class="v6-flow-map v6-asset" role="img" aria-label="Asset request flows through validation, approval, MDM, ERP, and reconciliation before publication">
-          <div class="v6-input-stack"><span>Request</span><span>Taxonomy</span><span>Validation</span></div>
-          <i>→</i><div class="v6-node is-accent"><small>GOVERN</small><strong>Approval policy</strong></div>
-          <i>→</i><div class="v6-node"><strong>MDM</strong><small>canonical identity</small></div>
-          <i>→</i><div class="v6-node"><strong>ERP</strong><small>enterprise state</small></div>
-          <i>→</i><div class="v6-node is-result"><strong>Reconcile</strong><small>publish / hold</small></div>
+      {project.slug === 'enterprise-order-management' && (
+        <div class="v6-order-map" role="img" aria-label="Business intent is decomposed through the catalog into worker dependencies, shared context, Kafka execution, and provisioning">
+          <div class="v6-order-core"><small>DECLARATIVE ENGINE</small><strong>Fulfillment DAG</strong><span>intent → dependencies</span></div>
+          <div class="v6-order-node o1"><strong>Hansen</strong><small>decompose</small></div>
+          <div class="v6-order-node o2"><strong>Workers</strong><small>propose</small></div>
+          <div class="v6-order-node o3"><strong>Kafka</strong><small>push tasks</small></div>
+          <div class="v6-order-node o4"><strong>Context</strong><small>shared state</small></div>
+          <div class="v6-order-status"><span>assess</span><span>enrich</span><span>phase gate</span><span>execute</span></div>
         </div>
       )}
 
-      {project.slug === 'inventory' && (
-        <div class="v6-orbit-map" role="img" aria-label="Serialized asset at the center of ERP, WMS, Fixed Assets, Planning, and Receiving">
-          <div class="v6-orbit-core"><small>PERSISTENT ID</small><strong>Serialized asset</strong></div>
-          <div class="v6-orbit-node n1"><strong>ERP</strong><small>procurement</small></div>
-          <div class="v6-orbit-node n2"><strong>WMS</strong><small>custody</small></div>
-          <div class="v6-orbit-node n3"><strong>Fixed Assets</strong><small>capitalization</small></div>
-          <div class="v6-orbit-node n4"><strong>Planning</strong><small>demand</small></div>
-          <div class="v6-orbit-node n5"><strong>Receiving</strong><small>physical truth</small></div>
-          <div class="v6-orbit-track"><span>receive</span><i>→</i><span>move</span><i>→</i><span>deploy</span><i>→</i><span>recover</span></div>
+      {project.slug === 'rag-analysis-agent' && (
+        <div class="v6-forecast-map" role="img" aria-label="Live engineering sources flow through hybrid retrieval, reranking, a language model, and grounding verification to produce cited answers">
+          <div class="v6-forecast-core"><small>GROUNDING GATE</small><strong>Cited answer</strong><span>answer or abstain</span></div>
+          <div class="v6-forecast-node f1"><strong>MCP</strong><small>live sources</small></div>
+          <div class="v6-forecast-node f2"><strong>Retrieve</strong><small>hybrid search</small></div>
+          <div class="v6-forecast-node f3"><strong>Rerank</strong><small>technical fit</small></div>
+          <div class="v6-forecast-node f4"><strong>Claude</strong><small>analysis</small></div>
+          <div class="v6-forecast-ring"><span>permissions</span><span>versions</span><span>citations</span></div>
+        </div>
+      )}
+
+      {project.slug === 'build-plus' && (
+        <div class="v6-orbit-map" role="img" aria-label="A governed asset identity connects master data, planning, fulfillment, warehouse custody, and finance across the supply-chain lifecycle">
+          <div class="v6-orbit-core"><small>COMMON DATA ANCHOR</small><strong>Asset / part identity</strong></div>
+          <div class="v6-orbit-node n1"><strong>Item Master</strong><small>taxonomy</small></div>
+          <div class="v6-orbit-node n2"><strong>Planning</strong><small>18-month demand</small></div>
+          <div class="v6-orbit-node n3"><strong>OMS</strong><small>validate / route</small></div>
+          <div class="v6-orbit-node n4"><strong>WMS</strong><small>custody</small></div>
+          <div class="v6-orbit-node n5"><strong>Oracle</strong><small>financial state</small></div>
+          <div class="v6-orbit-track"><span>define</span><i>→</i><span>forecast</span><i>→</i><span>fulfill</span><i>→</i><span>recover</span></div>
         </div>
       )}
 
       {project.slug === 'rfds' && (
-        <div class="v6-rfds-map" role="img" aria-label="RF planning and procurement data become a site model, rules, validation, and RFDS output">
+        <div class="v6-rfds-map" role="img" aria-label="RF planning and procurement data become a governed site model, engineering rules, validation, and field-ready RFDS output">
           <div class="v6-source-pair"><span>RF planning</span><span>Procurement</span></div><i>↓</i>
-          <div class="v6-node is-wide"><strong>Normalized site model</strong><small>site · sector · frequency · equipment</small></div><i>↓</i>
+          <div class="v6-node is-wide"><strong>Governed site model</strong><small>site · sector · frequency · equipment</small></div><i>↓</i>
           <div class="v6-rule-cloud"><strong>Rules</strong><span>sector</span><span>placement</span><span>frequency</span><span>cable</span></div><i>↓</i>
-          <div class="v6-branch"><div><strong>Known</strong><small>automate</small></div><div><strong>Exception</strong><small>specialist</small></div></div><i>↓</i>
-          <div class="v6-node is-result is-wide"><strong>RFDS + diagrams</strong><small>field-ready · traceable</small></div>
-        </div>
-      )}
-
-      {project.slug === 'inspection' && (
-        <div class="v6-inspection-map" role="img" aria-label="Maintenance progresses from planned to proactive to predictive and feeds field evidence back into decisions">
-          <div class="v6-maturity"><div><span>01</span><strong>Planned</strong></div><i>→</i><div><span>02</span><strong>Proactive</strong></div><i>→</i><div class="is-accent"><span>03</span><strong>Predictive</strong></div></div>
-          <div class="v6-signal-row"><span>asset requirements</span><span>usage + faults</span><span>lifecycle</span></div>
-          <i>↓</i><div class="v6-node is-result is-wide"><strong>Intervention decision</strong><small>risk · urgency · work window</small></div>
-          <div class="v6-feedback"><span>work order</span><i>→</i><span>field result</span><i>→</i><span>evidence</span><i>↺</i></div>
+          <div class="v6-branch"><div><strong>Valid</strong><small>generate</small></div><div><strong>Exception</strong><small>correct / review</small></div></div><i>↓</i>
+          <div class="v6-node is-result is-wide"><strong>RFDS + diagrams</strong><small>approved · field-ready · traceable</small></div>
         </div>
       )}
 
       {project.slug === 'gl-coding' && (
-        <div class="v6-gl-map" role="img" aria-label="Business context flows through configurable accounting policy, review, validation, posting, and evidence">
-          <div class="v6-signal-row"><span>project type</span><span>entity</span><span>activity</span><span>spend</span></div><i>↓</i>
+        <div class="v6-gl-map" role="img" aria-label="Business context and common project identity flow through configurable accounting policy, validation, posting, and evidence">
+          <div class="v6-signal-row"><span>project ID</span><span>activity</span><span>item</span><span>portfolio</span></div><i>↓</i>
           <div class="v6-node is-accent is-wide"><strong>Configurable policy</strong><small>lookup tables · mappings · exceptions</small></div><i>↓</i>
-          <div class="v6-control-track"><span>simulate</span><i>→</i><span>review</span><i>→</i><span>validate</span></div><i>↓</i>
-          <div class="v6-branch"><div><strong>GL code</strong><small>consistent treatment</small></div><div><strong>Evidence</strong><small>reason · approver · lineage</small></div></div>
+          <div class="v6-control-track"><span>assemble</span><i>→</i><span>validate</span><i>→</i><span>post</span></div><i>↓</i>
+          <div class="v6-branch"><div><strong>GL treatment</strong><small>consistent routing</small></div><div><strong>Evidence</strong><small>reason · approver · lineage</small></div></div>
         </div>
       )}
 
-      {project.slug === 'order-fulfillment' && (
-        <div class="v6-order-map" role="img" aria-label="Order control tower coordinates planning, WMS, TMS, and ERP into one customer promise">
-          <div class="v6-order-core"><small>SYSTEM OF ENGAGEMENT</small><strong>Order lifecycle</strong><span>one customer promise</span></div>
-          <div class="v6-order-node o1"><strong>Planning</strong><small>demand</small></div>
-          <div class="v6-order-node o2"><strong>WMS</strong><small>pick / ship</small></div>
-          <div class="v6-order-node o3"><strong>TMS</strong><small>transit</small></div>
-          <div class="v6-order-node o4"><strong>ERP</strong><small>financial</small></div>
-          <div class="v6-order-status"><span>available</span><span>backlog</span><span>exception</span><span>delivered</span></div>
-        </div>
-      )}
-
-      {project.slug === 'financial-projections' && (
-        <div class="v6-forecast-map" role="img" aria-label="API gateway connects data aggregation, projection, scenario, recommendation, security, and FinOps concerns">
-          <div class="v6-forecast-core"><small>API EDGE</small><strong>Gateway</strong><span>auth · rate limit</span></div>
-          <div class="v6-forecast-node f1"><strong>Data</strong><small>aggregation</small></div>
-          <div class="v6-forecast-node f2"><strong>Projection</strong><small>models</small></div>
-          <div class="v6-forecast-node f3"><strong>Scenario</strong><small>variance</small></div>
-          <div class="v6-forecast-node f4"><strong>Recommend</strong><small>decision</small></div>
-          <div class="v6-forecast-ring"><span>security</span><span>scale</span><span>FinOps</span></div>
+      {project.slug === 'lease-vendor-management' && (
+        <div class="v6-flow-map v6-asset" role="img" aria-label="Lease lifecycle and vendor data pass through eligibility validation, payment generation, Oracle execution, and reconciliation">
+          <div class="v6-input-stack"><span>Lease</span><span>VendorOne</span><span>Rent address</span></div>
+          <i>→</i><div class="v6-node is-accent"><small>VALIDATE</small><strong>Payment eligibility</strong></div>
+          <i>→</i><div class="v6-node"><strong>Schedule</strong><small>lease obligation</small></div>
+          <i>→</i><div class="v6-node"><strong>Oracle</strong><small>GL / payment</small></div>
+          <i>→</i><div class="v6-node is-result"><strong>Reconcile</strong><small>evidence / closeout</small></div>
         </div>
       )}
     </article>
