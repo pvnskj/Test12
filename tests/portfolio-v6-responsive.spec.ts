@@ -9,7 +9,7 @@ const routes = [
   './work/lease-vendor-management/',
 ];
 
-test('all project dashboards fit a 390px mobile viewport', async ({ page }) => {
+test('all project case studies fit a 390px mobile viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   for (const route of routes) {
     await page.goto(route);
@@ -17,12 +17,12 @@ test('all project dashboards fit a 390px mobile viewport', async ({ page }) => {
       viewport: window.innerWidth,
       scrollWidth: document.documentElement.scrollWidth,
       bodyWidth: document.body.getBoundingClientRect().width,
-      dashboardWidth: document.querySelector('.v6-project')?.getBoundingClientRect().width ?? 0,
+      caseWidth: document.querySelector('.case-v8')?.getBoundingClientRect().width ?? 0,
     }));
     expect(dimensions.viewport, route).toBe(390);
     expect(dimensions.scrollWidth, route).toBeLessThanOrEqual(391);
     expect(dimensions.bodyWidth, route).toBeGreaterThan(385);
-    expect(dimensions.dashboardWidth, route).toBeGreaterThan(360);
-    await expect(page.locator('.v6-dashboard-grid')).toBeVisible();
+    expect(dimensions.caseWidth, route).toBeGreaterThan(360);
+    await expect(page.locator('.case-glance')).toBeVisible();
   }
 });

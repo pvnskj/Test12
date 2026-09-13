@@ -2,128 +2,185 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { projects } from '../data/projects';
 
-const expertise = [
-  { n:'01', title:'Enterprise orchestration', tags:['Order platforms','Kafka / APIs','Cross-system state'] },
-  { n:'02', title:'AI & decision products', tags:['RAG','Grounding','Rules / validation'] },
-  { n:'03', title:'Data lifecycle & integrity', tags:['Identity','Governance','Lineage'] },
-  { n:'04', title:'Technical product execution', tags:['Product Goal','Increments','Evidence'] },
+const principles = [
+  {
+    n: '01',
+    title: 'Start with the product decision',
+    body: 'Clarify the outcome, constraint, and trade-off before turning the work into a delivery plan.',
+  },
+  {
+    n: '02',
+    title: 'Go technical where it changes the choice',
+    body: 'Architecture, data ownership, state, and integration matter when they materially change product risk or sequencing.',
+  },
+  {
+    n: '03',
+    title: 'Sequence for learning',
+    body: 'Use increments to reduce uncertainty, prove the operating model, and decide what deserves investment next.',
+  },
+  {
+    n: '04',
+    title: 'Keep evidence separate from aspiration',
+    body: 'Measured outcomes, projections, and estimates are labeled differently so the portfolio stays credible.',
+  },
 ];
-
-const approaches = [
-  ['Problem unclear','Discovery + Product Goal','What outcome are we solving for?'],
-  ['Workflow breaks','State modelling','Where can the flow fail?'],
-  ['Systems disagree','Source-of-truth mapping','Who owns this state now?'],
-  ['Policy changes','Rules-driven design','What should be configurable?'],
-  ['Solution uncertain','Incremental validation','What reduces uncertainty first?'],
-  ['Product is live','Evidence + adaptation','Did the outcome actually change?'],
-];
-
-const proofBySlug: Record<string,string[]> = {
-  'enterprise-order-management':['20% measured mapping gain','Declarative orchestration'],
-  'rag-analysis-agent':['~6 days → ~2 hrs','Grounded enterprise RAG'],
-  'build-plus':['18-month demand horizon','Cradle-to-grave SCM'],
-  rfds:['$1.2M measured avoidance','Engineering automation'],
-  'gl-coding':['40% faster close','Configurable financial routing'],
-  'lease-vendor-management':['$23.7M monthly rent roll','Lease-to-pay controls'],
-};
-
-const miniBySlug: Record<string,{ core:string; nodes:string[] }> = {
-  'enterprise-order-management': { core:'DAG', nodes:['Hansen','Workers','Kafka','Context'] },
-  'rag-analysis-agent': { core:'Ground', nodes:['MCP','Retrieve','Rerank','Cite'] },
-  'build-plus': { core:'Asset ID', nodes:['Master','Plan','OMS','WMS','ERP'] },
-  rfds: { core:'RFDS', nodes:['RF plan','Catalog','Rules','Validate'] },
-  'gl-coding': { core:'GL', nodes:['Project ID','Policy','Validate','Post'] },
-  'lease-vendor-management': { core:'Validate', nodes:['Lease','Vendor','Oracle','Pay'] },
-};
 ---
 
 <BaseLayout>
-  <div class="v6-home shell">
-    <section class="v6-home-hero">
-      <div class="v6-home-copy" data-reveal>
+  <div class="home-v8 shell">
+    <section class="home-hero">
+      <div class="home-hero-copy">
         <p class="eyebrow">Senior Technical Product Owner</p>
-        <h1>Make complex products easy to understand.</h1>
-        <p>Enterprise platforms, AI analysis, workflow orchestration, data products, and decision logic—shaped into clear product goals, buildable increments, and measurable outcomes.</p>
-        <div class="v6-hero-actions">
-          <a class="button button-primary" href="#work">Selected work →</a>
-          <a class="button button-secondary" href="#approach">How I think</a>
+        <h1>Complex products. Clear product decisions.</h1>
+        <p class="home-hero-lede">
+          I work across enterprise platforms, AI, orchestration, supply chain, engineering automation, and finance—turning complex operating problems into buildable product direction and measurable outcomes.
+        </p>
+        <div class="home-actions">
+          <a class="button button-primary" href="#work">View the work →</a>
+          <a class="button button-secondary" href="#approach">How I work</a>
         </div>
       </div>
 
-      <div class="v6-hero-board glass-card" data-reveal aria-label="Technical Product Owner operating surface">
-        <div class="v6-board-title"><span>Operating surface</span><strong>Product ownership end to end</strong></div>
-        <div class="v6-control-map">
-          <div class="v6-control-node"><strong>Outcome</strong><small>value · risk · timing</small></div>
-          <div class="v6-control-node"><strong>Domain</strong><small>users · states · rules</small></div>
-          <div class="v6-control-node"><strong>Systems</strong><small>data · APIs · ownership</small></div>
-          <div class="v6-control-node"><strong>Delivery</strong><small>ordering · increments · evidence</small></div>
-          <div class="v6-control-core"><span>SENIOR TPO</span><strong>Decision clarity</strong></div>
+      <aside class="home-hero-guide glass-card" aria-label="How to read this portfolio">
+        <p class="eyebrow">How to read this portfolio</p>
+        <h2>Each case study answers four things.</h2>
+        <div class="home-guide-list">
+          <span><b>Problem</b><small>What was actually constrained?</small></span>
+          <span><b>Decision</b><small>What product choice changed the system?</small></span>
+          <span><b>Trade-off</b><small>What did the choice optimize for?</small></span>
+          <span><b>Evidence</b><small>How do we know it mattered?</small></span>
         </div>
-      </div>
+      </aside>
     </section>
 
-    <section class="v6-band" aria-label="Portfolio focus">
-      <article class="glass-card"><strong>Enterprise systems</strong><span>Products that cross platforms, teams, and operating boundaries.</span></article>
-      <article class="glass-card"><strong>Technical depth</strong><span>Enough architecture fluency to make product trade-offs explicit.</span></article>
-      <article class="glass-card"><strong>Product judgment</strong><span>Goals, ordering, constraints, exceptions, and value—not ticket volume.</span></article>
-      <article class="glass-card"><strong>Evidence led</strong><span>Use increments to learn, then adapt what comes next.</span></article>
-    </section>
+    <section id="work" class="home-section home-work">
+      <div class="home-section-head">
+        <div>
+          <p class="eyebrow">Selected work</p>
+          <h2>Six projects. Scan first, go deep only when it earns your attention.</h2>
+        </div>
+        <p>Every project opens into a concise case study, with the full supporting detail still available for deeper review.</p>
+      </div>
 
-    <section id="expertise" class="v6-section">
-      <div class="v6-section-head" data-reveal>
-        <div><p class="eyebrow">Where I operate</p><h2>The hard part is usually between systems.</h2></div>
-        <p>I focus on the decisions that make complex enterprise products coherent.</p>
-      </div>
-      <div class="v6-expertise">
-        {expertise.map((item) => <article class="glass-card" data-reveal><span>{item.n}</span><h3>{item.title}</h3><div class="v6-tagline">{item.tags.map((tag)=><span>{tag}</span>)}</div></article>)}
-      </div>
-    </section>
-
-    <section id="work" class="v6-section">
-      <div class="v6-section-head" data-reveal>
-        <div><p class="eyebrow">Selected work</p><h2>Different problems. Different product decisions.</h2></div>
-        <p>Representative initiatives from a broader body of product ownership.</p>
-      </div>
-      <div class="v6-work-grid">
+      <div class="work-index glass-card">
         {projects.map((project) => (
-          <a class="v6-work-card glass-card" href={`${import.meta.env.BASE_URL}work/${project.slug}/`} data-reveal>
-            <div>
+          <a class="work-row" href={`${import.meta.env.BASE_URL}work/${project.slug}/`}>
+            <span class="work-number">{project.index}</span>
+            <div class="work-copy">
               <small>{project.eyebrow}</small>
               <h3>{project.title}</h3>
-              <p>{project.question}</p>
-              <div class="v6-card-proof">{proofBySlug[project.slug]?.map((proof)=><span>{proof}</span>)}</div>
+              <p>{project.headline}</p>
             </div>
-            <div class={`v6-mini-map v6-mini-${project.slug}`} aria-hidden="true">
-              <strong>{miniBySlug[project.slug]?.core}<small>{project.index}</small></strong>
-              {miniBySlug[project.slug]?.nodes.map((node)=><b>{node}</b>)}
+            <div class="work-proof">
+              <strong>{project.metrics[0]?.value}</strong>
+              <span>{project.metrics[0]?.label}</span>
             </div>
+            <span class="work-arrow" aria-hidden="true">→</span>
           </a>
         ))}
       </div>
     </section>
 
-    <section id="approach" class="v6-section">
-      <div class="v6-section-head" data-reveal>
-        <div><p class="eyebrow">How I choose an approach</p><h2>Use the tool that matches the uncertainty.</h2></div>
-        <p>No framework earns a place unless it improves the next product decision.</p>
+    <section id="expertise" class="home-section home-principles">
+      <div id="approach" class="home-section-head">
+        <div>
+          <p class="eyebrow">How I work</p>
+          <h2>Enough structure to make better decisions. No framework theater.</h2>
+        </div>
+        <p>The common thread is product judgment: what to solve, what to sequence, what to make configurable, and what evidence should change the next decision.</p>
       </div>
-      <div class="v6-approach-grid">
-        {approaches.map(([situation,approach,question]) => <article class="glass-card" data-reveal><small>{situation}</small><strong>{approach}</strong><span>{question}</span></article>)}
+
+      <div class="principle-grid">
+        {principles.map((item) => (
+          <article class="principle-card glass-card">
+            <span>{item.n}</span>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
       </div>
     </section>
 
-    <section id="about" class="v6-section v6-about-strip">
-      <article class="v6-about-copy glass-card" data-reveal>
+    <section id="about" class="home-section home-about">
+      <article class="home-about-main glass-card">
         <p class="eyebrow">Product ownership</p>
         <h2>Go deep enough to simplify the decision.</h2>
-        <p>I treat the Product Backlog as a decision system: connect the Product Goal to value, risk, technical constraints, dependencies, quality, and what we still need to learn. Architecture matters when it changes the product decision; delivery matters when it creates usable evidence.</p>
+        <p>
+          I treat the backlog as a decision system connecting product goals, value, risk, technical constraints, dependencies, quality, and learning. The point is not to make the portfolio look technical. The point is to show where technical understanding changed the product decision.
+        </p>
       </article>
-      <article id="contact" class="v6-contact-card glass-card" data-reveal>
+      <article id="contact" class="home-contact glass-card">
         <p class="eyebrow">Contact</p>
-        <strong>Continue the conversation.</strong>
-        <span>GitHub is the verified public destination connected to this portfolio.</span>
+        <h3>Continue the conversation.</h3>
+        <p>GitHub is the verified public destination connected to this portfolio.</p>
         <a class="button button-primary" href="https://github.com/pvnskj" rel="me">GitHub profile →</a>
       </article>
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  .home-v8{padding-bottom:72px}
+  .home-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(360px,.8fr);gap:28px;align-items:stretch;padding:72px 0 36px}
+  .home-hero-copy{display:flex;flex-direction:column;justify-content:center;padding:42px 10px 42px 0}
+  .home-hero-copy .eyebrow{margin-bottom:18px}
+  .home-hero-copy h1{max-width:900px;margin:0 0 24px;font-size:clamp(3.8rem,7vw,7rem);line-height:.94}
+  .home-hero-lede{max-width:780px;margin:0 0 30px;font-size:1.08rem;line-height:1.7;color:#52677e}
+  .home-actions{display:flex;flex-wrap:wrap;gap:12px}
+  .home-hero-guide{display:grid;align-content:start;gap:18px;padding:30px}
+  .home-hero-guide h2{margin:0;font-size:clamp(1.8rem,3vw,2.7rem);line-height:1.04}
+  .home-guide-list{display:grid;margin-top:8px;border-top:1px solid rgba(15,23,42,.08)}
+  .home-guide-list span{display:grid;grid-template-columns:110px 1fr;gap:18px;padding:17px 0;border-bottom:1px solid rgba(15,23,42,.08)}
+  .home-guide-list b{font-size:.82rem;color:#1d3652}
+  .home-guide-list small{font-size:.78rem;line-height:1.45;color:#718399}
+  .home-section{padding:84px 0 18px}
+  .home-section-head{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:48px;align-items:end;margin-bottom:28px}
+  .home-section-head .eyebrow{margin-bottom:14px}
+  .home-section-head h2{max-width:920px;margin:0;font-size:clamp(2.3rem,4.4vw,4.4rem)}
+  .home-section-head>p{max-width:520px;margin:0 0 6px;color:#697d91;font-size:.9rem;line-height:1.65}
+  .work-index{overflow:hidden;padding:0}
+  .work-row{display:grid;grid-template-columns:58px minmax(0,1fr) minmax(180px,250px) 28px;gap:22px;align-items:center;padding:24px 28px;border-bottom:1px solid rgba(15,23,42,.075);transition:background .2s ease,transform .2s ease}
+  .work-row:last-child{border-bottom:0}
+  .work-row:hover,.work-row:focus-visible{background:rgba(239,246,255,.58);outline:0}
+  .work-number{font-size:.7rem;font-weight:800;letter-spacing:.08em;color:#7e93a8}
+  .work-copy small{display:block;margin-bottom:5px;font-size:.61rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6d8aa6}
+  .work-copy h3{margin:0 0 5px;font-size:1.28rem}
+  .work-copy p{max-width:760px;margin:0;color:#667b90;font-size:.78rem;line-height:1.5}
+  .work-proof{display:grid;gap:3px;padding-left:20px;border-left:1px solid rgba(15,23,42,.08)}
+  .work-proof strong{font-size:1.15rem;color:#244f7a}
+  .work-proof span{font-size:.67rem;line-height:1.35;color:#75899c}
+  .work-arrow{font-size:1.15rem;color:#5f7f9f;transition:transform .2s ease}
+  .work-row:hover .work-arrow{transform:translateX(4px)}
+  .principle-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  .principle-card{min-height:220px;padding:24px}
+  .principle-card>span{display:inline-block;margin-bottom:34px;font-size:.65rem;font-weight:800;color:#7891aa}
+  .principle-card h3{margin:0 0 10px;font-size:1.05rem}
+  .principle-card p{margin:0;font-size:.78rem;line-height:1.6;color:#6f8295}
+  .home-about{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:16px}
+  .home-about-main,.home-contact{padding:30px}
+  .home-about-main h2{max-width:760px;margin:14px 0 16px;font-size:clamp(2.1rem,4vw,3.8rem)}
+  .home-about-main p:last-child{max-width:850px;margin:0;font-size:.92rem;line-height:1.7;color:#60758b}
+  .home-contact{display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+  .home-contact h3{margin:16px 0 10px;font-size:1.5rem}
+  .home-contact p{margin:0 0 22px;font-size:.82rem;line-height:1.6;color:#6b8095}
+  @media(max-width:980px){
+    .home-hero,.home-about{grid-template-columns:1fr}
+    .home-hero-copy{padding-right:0}
+    .home-section-head{grid-template-columns:1fr;gap:16px}
+    .principle-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .work-row{grid-template-columns:44px minmax(0,1fr) 28px}
+    .work-proof{grid-column:2;padding:9px 0 0;border-left:0;border-top:1px solid rgba(15,23,42,.07)}
+    .work-arrow{grid-column:3;grid-row:1/3}
+  }
+  @media(max-width:640px){
+    .home-hero{padding-top:42px}
+    .home-hero-copy h1{font-size:clamp(3rem,15vw,4.4rem)}
+    .home-hero-guide{padding:24px}
+    .home-guide-list span{grid-template-columns:1fr;gap:4px}
+    .home-section{padding-top:64px}
+    .work-row{grid-template-columns:36px minmax(0,1fr) 24px;padding:20px 18px;gap:12px}
+    .work-copy p{font-size:.73rem}
+    .principle-grid{grid-template-columns:1fr}
+    .principle-card{min-height:0}
+  }
+</style>
