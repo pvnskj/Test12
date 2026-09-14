@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import EnterpriseOrderManagementEpic from '../../components/EnterpriseOrderManagementEpic.astro';
-import ProjectEpicWorkspace from '../../components/ProjectEpicWorkspace.astro';
+import ScanProjectWorkspace from '../../components/ScanProjectWorkspace.astro';
 import { projects, type Project } from '../../data/projects';
 
 export function getStaticPaths() {
@@ -10,7 +9,6 @@ export function getStaticPaths() {
 
 interface Props { project: Project; }
 const { project } = Astro.props;
-const isEnterpriseOrderManagement = project.slug === 'enterprise-order-management';
 ---
 
 <BaseLayout
@@ -18,7 +16,5 @@ const isEnterpriseOrderManagement = project.slug === 'enterprise-order-managemen
   description={`${project.question} ${project.productGoal}`}
   bareMain
 >
-  {isEnterpriseOrderManagement
-    ? <EnterpriseOrderManagementEpic />
-    : <ProjectEpicWorkspace project={project} />}
+  <ScanProjectWorkspace project={project} />
 </BaseLayout>

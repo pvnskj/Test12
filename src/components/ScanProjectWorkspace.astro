@@ -1,0 +1,116 @@
+---
+import { projects, type Project } from '../data/projects';
+import { eomFocusAreas } from '../data/eomCase';
+import { projectPresentation, getEvidence, publicText } from '../data/projectPresentation';
+import ProjectSymbol from './ProjectSymbol.astro';
+
+interface Props { project: Project; }
+const { project } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const view = projectPresentation[project.slug]!;
+const evidence = getEvidence(project);
+const proof = evidence[view.proofIndex]!;
+const next = projects[(projects.findIndex((item) => item.slug === project.slug) + 1) % projects.length]!;
+const isEom = project.slug === 'enterprise-order-management';
+---
+
+<main class="scan-workspace shell" data-project={project.slug} data-tone={view.tone}>
+  <nav class="scan-workspace-bar" aria-label="Project navigation">
+    <a href={`${base}#work`}>← All projects</a><span>◆ EPIC-{project.index}</span><a href={`${base}work/${next.slug}/`}>Next project →</a>
+  </nav>
+
+  <section class="scan-epic-header" aria-labelledby="project-title">
+    <div class="scan-epic-copy">
+      <div class="epic-category"><ProjectSymbol slug={project.slug} /><span>{view.group} / {view.role}</span></div>
+      <h1 id="project-title">{project.title}</h1>
+      <p class="epic-takeaway">{view.before} <span aria-hidden="true">→</span><span class="sr-only">to</span> <strong>{view.after}.</strong></p>
+      <p class="epic-contribution"><b>My contribution</b>{view.contribution}</p>
+    </div>
+    <aside class="scan-primary-proof" aria-label="Headline evidence">
+      <span class="proof-type">{proof.type}</span><strong>{proof.value}</strong><span>{proof.label}</span><p>{view.proofNote}</p>
+      <a href="#evidence" data-open-evidence>See the basis <span aria-hidden="true">↗</span></a>
+    </aside>
+  </section>
+
+  <section class="scan-evidence-strip" aria-label="More evidence">
+    {evidence.filter((_, index) => index !== view.proofIndex).map((metric) => <article><span class="proof-type">{metric.type}</span><strong>{metric.value}</strong><span>{metric.label}</span></article>)}
+  </section>
+
+  <section class="scan-story" aria-label="Project at a glance">
+    <article><h2>Problem</h2><p>{view.problem}</p></article>
+    <article class="scan-decision"><h2>My decision</h2><p>{view.decision}</p></article>
+    <article><h2>What changed</h2><p>{view.outcome}</p></article>
+  </section>
+
+  <section class="scan-flow" aria-labelledby="flow-title">
+    <h2 id="flow-title">How it works</h2>
+    <ol>{view.flow.map((step, index) => <li><span>{String(index + 1).padStart(2, '0')}</span><strong>{step}</strong></li>)}</ol>
+  </section>
+
+  <section class="scan-detail-section" aria-labelledby="details-title">
+    <div class="scan-detail-heading"><h2 id="details-title">Inside the work</h2><span>Explore on this page</span></div>
+    <div class="scan-feature-list">
+      {project.increments.map((increment, index) => {
+        const area = isEom ? eomFocusAreas[index] : undefined;
+        return (
+          <details class="scan-feature" name="project-detail">
+            <summary><span class="issue-key">FOCUS-{String(index + 1).padStart(2, '0')}</span><h3>{publicText(increment.title)}</h3><span class="disclosure-plus" aria-hidden="true">+</span></summary>
+            <div class="scan-feature-content">
+              <div class="scan-detail-pair"><div><h4>Focus</h4><p>{publicText(increment.focus)}</p></div><div><h4>Question to resolve</h4><p>{publicText(increment.learning)}</p></div></div>
+              {area && <>
+                <div class="scan-detail-pair"><div><h4>What I owned</h4><ul>{area.ownership.map((item) => <li>{item}</li>)}</ul></div><div><h4>Challenges & trade-offs</h4><ul>{area.challenges.map((item) => <li>{item}</li>)}</ul></div></div>
+                <div class="scan-detail-pair"><div><h4>Capabilities</h4><ul>{area.capabilities.map((item) => <li>{item}</li>)}</ul></div><div><h4>Decisions</h4>{area.decisions.map((decision) => <p><b>{decision.title}.</b> {decision.body}</p>)}</div></div>
+                <p class="scan-learning"><b>What I learned.</b> {area.learning}</p>
+              </>}
+            </div>
+          </details>
+        );
+      })}
+
+      <details class="scan-record" name="project-detail">
+        <summary><span class="record-symbol" aria-hidden="true">◇</span><h3>Decisions & trade-offs</h3><span class="disclosure-plus" aria-hidden="true">+</span></summary>
+        <div class="scan-record-content">
+          {project.decisions.map((decision, index) => <article class="scan-decision-row"><span>{String(index + 1).padStart(2, '0')}</span><div><h4>{publicText(decision.title)}</h4><p>{publicText(decision.body)}</p></div></article>)}
+        </div>
+      </details>
+
+      <details class="scan-record" name="project-detail">
+        <summary><span class="record-symbol" aria-hidden="true">◎</span><h3>Ownership & system context</h3><span class="disclosure-plus" aria-hidden="true">+</span></summary>
+        <div class="scan-record-content">
+          <p>{publicText(project.summary)}</p>
+          <div class="scan-detail-pair"><div><h4>What I owned</h4><ul>{project.ownership.map((item) => <li>{publicText(item)}</li>)}</ul></div><div><h4>What made it hard</h4><ul>{project.complexity.map((item) => <li>{publicText(item)}</li>)}</ul></div></div>
+          <h4>Business constraint</h4><p>{publicText(project.problem)}</p>
+          <h4>Product goal</h4><p>{publicText(project.productGoal)}</p>
+          <h4>System flow</h4><ol class="scan-full-flow">{project.flow.map((step) => <li>{publicText(step)}</li>)}</ol>
+          <p>{publicText(project.flowCaption)}</p>
+        </div>
+      </details>
+
+      <details id="evidence" class="scan-record" name="project-detail">
+        <summary><span class="record-symbol" aria-hidden="true">↗</span><h3>Evidence & measurement basis</h3><span class="disclosure-plus" aria-hidden="true">+</span></summary>
+        <div class="scan-record-content">
+          {evidence.map((metric) => <article class="scan-evidence-row"><div><span class="proof-type">{metric.type}</span><strong>{metric.value}</strong><h4>{metric.label}</h4></div><p>{metric.detail}</p></article>)}
+          <p class="scan-evidence-context">{publicText(project.valueNarrative)}</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <a class="scan-next-project" href={`${base}work/${next.slug}/`}><span>Next project</span><strong>{next.title}</strong><b aria-hidden="true">→</b></a>
+</main>
+
+<script>
+  function bindEvidenceLink() {
+    const workspace = document.querySelector<HTMLElement>('.scan-workspace');
+    if (!workspace || workspace.dataset.bound === 'true') return;
+    workspace.dataset.bound = 'true';
+    const evidence = workspace.querySelector<HTMLDetailsElement>('#evidence');
+    const openEvidence = () => { if (evidence && window.location.hash === '#evidence') evidence.open = true; };
+    workspace.querySelector('[data-open-evidence]')?.addEventListener('click', () => { if (evidence) evidence.open = true; });
+    window.addEventListener('hashchange', openEvidence);
+    document.addEventListener('astro:before-swap', () => window.removeEventListener('hashchange', openEvidence), { once: true });
+    openEvidence();
+  }
+  bindEvidenceLink();
+  document.addEventListener('astro:page-load', bindEvidenceLink);
+</script>

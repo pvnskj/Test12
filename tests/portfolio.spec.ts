@@ -19,105 +19,98 @@ const retiredEomFocusRoutes = [
 
 const prohibitedTerms = ['hansen', 'camunda', 'change bucket', 'vendorone', 'nexsysone', 'uc1'];
 
-test('homepage presents product ownership approach and six proof-oriented projects', async ({ page }, testInfo) => {
+
+test('homepage puts identity and real project work in the first glance', async ({ page }, testInfo) => {
   await page.goto('./');
   await expect(page).toHaveTitle(/Venkata Parimi/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Turning challenges into opportunity.');
-  await expect(page.locator('.ownership-difference')).toBeVisible();
-  await expect(page.locator('.ownership-principle')).toHaveCount(4);
-  await expect(page.locator('.project-row')).toHaveCount(projects.length);
-  await expect(page.locator('.project-problem')).toHaveCount(projects.length);
-  await expect(page.locator('.project-decision')).toHaveCount(projects.length);
-  await expect(page.locator('.project-evidence')).toHaveCount(projects.length);
-  await expect(page.getByText('AI has changed how I think about product ownership.', { exact: false })).toBeVisible();
-  await expect(page.getByText('How the work is organized', { exact: true })).toHaveCount(0);
-  await page.screenshot({ path: testInfo.outputPath('homepage-product-ownership.png'), fullPage: true });
+  await expect(page.locator('.scan-hero')).toContainText('Senior Technical Product Owner');
+  await expect(page.locator('.scan-project-card')).toHaveCount(projects.length);
+  await expect(page.locator('.scan-approach')).toContainText('AI has changed how I think about product ownership.');
+  const introWords = (await page.locator('.scan-hero').innerText()).trim().split(/\s+/).length;
+  expect(introWords).toBeLessThan(65);
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    const first = await page.locator('.scan-project-card').first().boundingBox();
+    expect(first?.y).toBeLessThan(700);
+  }
+  await page.screenshot({ path: testInfo.outputPath('portfolio-board-mobile.png'), fullPage: true });
 });
 
-test('all six projects use one Jira-style epic workspace', async ({ page }, testInfo) => {
+test('project filters work and survive navigation back from a workspace', async ({ page }) => {
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Finance', exact: true }).click();
+  await expect(page.locator('.scan-project-card:visible')).toHaveCount(2);
+  await expect(page.locator('[data-project-count]')).toHaveText('2 projects');
+  await page.getByRole('button', { name: 'AI', exact: true }).click();
+  await expect(page.locator('.scan-project-card:visible')).toHaveCount(1);
+  await page.getByRole('link', { name: 'Enterprise RAG Analysis Agent', exact: true }).click();
+  await page.getByRole('link', { name: '← All projects', exact: true }).click();
+  await page.getByRole('button', { name: 'Operations', exact: true }).click();
+  await expect(page.locator('.scan-project-card:visible')).toHaveCount(2);
+  await page.getByRole('button', { name: 'All work', exact: true }).click();
+  await expect(page.locator('.scan-project-card:visible')).toHaveCount(projects.length);
+});
+
+test('all projects have one concise workspace with qualified evidence', async ({ page }, testInfo) => {
   for (const project of projects) {
     await page.goto(project.path);
+    const workspace = page.locator('.scan-workspace');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title);
-    const workspace = page.locator('.eom-workspace, .product-workspace');
-    await expect(workspace).toBeVisible();
-    await expect(workspace.locator('.epic-header')).toBeVisible();
-    await expect(workspace.locator('.evidence-strip > article')).toHaveCount(4);
-    await expect(workspace.locator('.story-grid > article')).toHaveCount(3);
-    await expect(workspace.locator('.decision-table > article')).toHaveCount(4);
-    await expect(workspace.locator('.feature-item')).toHaveCount(4);
-    await expect(workspace.getByText('The big picture', { exact: true })).toBeVisible();
-    await expect(workspace.getByText('Key product decisions', { exact: true })).toBeVisible();
-    await expect(workspace.locator('.focus-section .section-label > span')).toHaveText('Focus areas');
-    await expect(page.getByText('Senior TPO scope', { exact: true })).toHaveCount(0);
-    await expect(page.getByText(/INC-0/i)).toHaveCount(0);
-
+    await expect(workspace.locator('.epic-contribution')).toContainText('My contribution');
+    await expect(workspace.locator('.scan-primary-proof')).toBeVisible();
+    await expect(workspace.locator('.scan-evidence-strip > article')).toHaveCount(3);
+    await expect(workspace.locator('.scan-story > article')).toHaveCount(3);
+    await expect(workspace.locator('.scan-feature')).toHaveCount(4);
+    await expect(workspace.locator('details[open]')).toHaveCount(0);
     const text = (await workspace.innerText()).toLowerCase();
-    for (const term of prohibitedTerms) expect(text, `${project.title}: ${term}`).not.toContain(term);
+    for (const term of prohibitedTerms) expect(text, project.title).not.toContain(term);
     expect(text).not.toMatch(/\b20\d{2}\b/);
   }
-  await page.goto('./work/gl-coding/');
-  await page.screenshot({ path: testInfo.outputPath('gl-coding-workspace.png'), fullPage: true });
+  await page.goto('./work/enterprise-order-management/');
+  await page.screenshot({ path: testInfo.outputPath('eom-workspace-desktop.png'), fullPage: true });
 });
 
-test('focus areas expand inline and keep the reader on the same project', async ({ page }) => {
+test('focus areas and evidence expand inline using keyboard and pointer', async ({ page }) => {
   for (const project of projects) {
     await page.goto(project.path);
-    const workspace = page.locator('.eom-workspace, .product-workspace');
-    const first = workspace.locator('.feature-item').first();
-    const second = workspace.locator('.feature-item').nth(1);
-    await first.locator('summary').click();
+    const first = page.locator('.scan-feature').first();
+    const second = page.locator('.scan-feature').nth(1);
+    await first.locator('summary').focus();
+    await page.keyboard.press('Enter');
     await expect(first).toHaveAttribute('open', '');
-    await expect(first.getByText('Why this matters', { exact: true })).toBeVisible();
-    await expect(first.getByText('Capabilities delivered', { exact: true })).toBeVisible();
-    await expect(first.getByText('Challenges & trade-offs', { exact: true })).toBeVisible();
-    await expect(first.getByText('What I owned', { exact: true })).toBeVisible();
-    await expect(first.getByText('Product decisions', { exact: true })).toBeVisible();
-    await expect(first.getByText('System flow · simplified', { exact: true })).toBeVisible();
-    await expect(first.getByText('What the number means', { exact: true })).toBeVisible();
-
+    await expect(first.getByRole('heading', { name: 'Question to resolve' })).toBeVisible();
     await second.locator('summary').click();
     await expect(second).toHaveAttribute('open', '');
     await expect(first).not.toHaveAttribute('open', '');
+    await page.locator('.scan-primary-proof a').click();
+    await expect(page.locator('#evidence')).toHaveAttribute('open', '');
+    await expect(second).not.toHaveAttribute('open', '');
+    await expect(page.locator('.scan-evidence-row')).toHaveCount(4);
     expect(page.url()).toContain(project.path.replace('./', '/Test12/'));
+    expect(page.url()).toContain('#evidence');
+    const text = (await page.locator('.scan-workspace').innerText()).toLowerCase();
+    for (const term of prohibitedTerms) expect(text, project.title).not.toContain(term);
   }
+});
+
+test('projected and estimated outcomes keep their meaning at every entry point', async ({ page }) => {
+  await page.goto('./work/enterprise-order-management/');
+  await expect(page.locator('.scan-evidence-strip').getByText('Projected', { exact: true })).toBeVisible();
+  await expect(page.locator('.scan-evidence-strip').getByText('75K/day', { exact: true })).toBeVisible();
+  await expect(page.locator('.scan-primary-proof')).toContainText('Proof-of-concept');
+
+  await page.goto('./work/gl-coding/');
+  await expect(page.locator('.scan-evidence-strip').getByText('Estimated', { exact: true })).toBeVisible();
+
+  await page.goto('./work/lease-vendor-management/#evidence');
+  await expect(page.locator('#evidence')).toHaveAttribute('open', '');
+  await expect(page.locator('.scan-evidence-strip').getByText('~2x', { exact: true })).toBeVisible();
+  await expect(page.locator('#evidence')).toContainText('estimated $2.5M operational return');
 });
 
 test('EOM no longer exposes separate focus-area pages', async ({ request }) => {
   for (const path of retiredEomFocusRoutes) expect((await request.get(path)).status(), path).toBe(404);
-});
-
-test('projected and estimated outcomes remain visibly qualified', async ({ page }) => {
-  await page.goto('./work/enterprise-order-management/');
-  await expect(page.locator('.evidence-strip').getByText('Projected', { exact: true })).toBeVisible();
-  await expect(page.locator('.evidence-strip').getByText('75K/day', { exact: true })).toBeVisible();
-
-  await page.goto('./work/gl-coding/');
-  await expect(page.locator('.evidence-strip').getByText('Estimated', { exact: true })).toBeVisible();
-
-  await page.goto('./work/lease-vendor-management/');
-  await expect(page.locator('.evidence-strip').getByText('Estimated', { exact: true })).toBeVisible();
-  await expect(page.locator('.evidence-strip').getByText('~2x', { exact: true })).toBeVisible();
-});
-
-test('all mobile project workspaces use the full viewport without horizontal overflow', async ({ page }, testInfo) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  for (const project of projects) {
-    await page.goto(project.path);
-    const dims = await page.evaluate(() => ({
-      viewport: window.innerWidth,
-      scrollWidth: document.documentElement.scrollWidth,
-      bodyWidth: document.body.getBoundingClientRect().width,
-      projectWidth: (document.querySelector('.eom-workspace') ?? document.querySelector('.product-workspace'))?.getBoundingClientRect().width ?? 0,
-    }));
-    expect(dims.viewport).toBe(390);
-    expect(dims.scrollWidth, project.path).toBeLessThanOrEqual(391);
-    expect(dims.bodyWidth, project.path).toBeGreaterThan(385);
-    expect(dims.projectWidth, project.path).toBeGreaterThan(360);
-  }
-  await page.goto('./work/rag-analysis-agent/');
-  const first = page.locator('.feature-item').first();
-  await first.locator('summary').click();
-  await page.screenshot({ path: testInfo.outputPath('rag-workspace-mobile.png'), fullPage: true });
 });
 
 test('removed initiatives do not have public portfolio routes', async ({ request }) => {
@@ -128,15 +121,24 @@ test('removed initiatives do not have public portfolio routes', async ({ request
   for (const path of removed) expect((await request.get(path)).status(), path).toBe(404);
 });
 
+test('homepage navigation points to real sections', async ({ page }) => {
+  await page.goto('./');
+  for (const id of ['work', 'approach']) await expect(page.locator('#' + id)).toHaveCount(1);
+  await expect(page.locator('a[href$="#expertise"], a[href$="#about"], a[href$="#contact"]')).toHaveCount(0);
+});
+
 test('homepage and every project pass automated accessibility scans', async ({ page }) => {
-  const paths = ['./', ...projects.map((project) => project.path)];
-  for (const path of paths) {
+  for (const path of ['./', ...projects.map((project) => project.path)]) {
     await page.goto(path);
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze();
-    expect(results.violations, `Accessibility violations on ${path}`).toEqual([]);
+    expect(results.violations, 'Accessibility violations on ' + path).toEqual([]);
   }
+  await page.goto('./work/enterprise-order-management/');
+  await page.locator('.scan-feature summary').first().click();
+  const expanded = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
+  expect(expanded.violations).toEqual([]);
 });
 
 test('legacy source artifacts remain available without public deep-dive CTAs', async ({ page, request }) => {

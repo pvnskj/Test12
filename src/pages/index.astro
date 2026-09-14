@@ -1,265 +1,76 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectSymbol from '../components/ProjectSymbol.astro';
 import { projects } from '../data/projects';
+import { projectPresentation, getEvidence } from '../data/projectPresentation';
 
-type WorkspaceMeta = {
-  problem: string;
-  decision: string;
-  approaches: string[];
-  metric: string;
-  metricLabel: string;
-  metricType: 'Measured' | 'Observed' | 'Governed';
-};
-
-const workspaceMeta: Record<string, WorkspaceMeta> = {
-  'enterprise-order-management': {
-    problem: 'Every product variation increased workflow modeling, deployment effort, and regression risk.',
-    decision: 'Shift orchestration from manually modeled paths to dependency-driven execution with governed shared context.',
-    approaches: ['Dependency-first', 'Configurable'],
-    metric: '20%',
-    metricLabel: 'faster logic mapping',
-    metricType: 'Measured',
-  },
-  'rag-analysis-agent': {
-    problem: 'Technical investigations required days of manual reconstruction across fragmented engineering sources.',
-    decision: 'Build a grounded analysis agent that prioritizes current evidence, citations, evaluation, and abstention over generic chat.',
-    approaches: ['Grounded', 'Traceable'],
-    metric: '~6 days → ~2 hrs',
-    metricLabel: 'analysis cycle',
-    metricType: 'Measured',
-  },
-  'build-plus': {
-    problem: 'Master data, demand planning, fulfillment, custody, and recovery operated as disconnected workflows.',
-    decision: 'Create one lifecycle operating model anchored on governed part identity before scaling downstream automation.',
-    approaches: ['Lifecycle', 'Data-first'],
-    metric: '18 months',
-    metricLabel: 'demand horizon',
-    metricType: 'Observed',
-  },
-  rfds: {
-    problem: 'Engineering outputs depended on document-heavy manual work that was difficult to govern and expensive to repeat.',
-    decision: 'Move repeatable engineering logic into a governed rules-driven product that generates consistent outputs from structured data.',
-    approaches: ['Rules-first', 'Governed'],
-    metric: '$1.2M',
-    metricLabel: 'annual cost avoidance',
-    metricType: 'Measured',
-  },
-  'gl-coding': {
-    problem: 'Changing financial policy was embedded in application logic, making portfolio growth dependent on software changes.',
-    decision: 'Separate accounting policy from application architecture through configurable routing, validation, and shared context.',
-    approaches: ['Policy-led', 'Controls'],
-    metric: '40%',
-    metricLabel: 'faster financial close',
-    metricType: 'Measured',
-  },
-  'lease-vendor-management': {
-    problem: 'Recurring lease obligations relied on fragmented handoffs that made control, exception handling, and traceability harder.',
-    decision: 'Turn lease-to-pay into a governed workflow with explicit validation, ownership, exceptions, and financial controls.',
-    approaches: ['Control-first', 'Traceable'],
-    metric: '$23.7M',
-    metricLabel: 'monthly rent roll',
-    metricType: 'Governed',
-  },
-};
-
-const principles = [
-  { title: 'Outcome-first', body: 'Start with the change the product must create, not the artifact to deliver.' },
-  { title: 'Decision clarity', body: 'Make trade-offs explicit enough that teams understand why the product is moving.' },
-  { title: 'Evidence-led', body: 'Separate measured outcomes from projections, estimates, and assumptions.' },
-  { title: 'Learn in sequence', body: 'Order delivery to reduce uncertainty before scaling investment and complexity.' },
-];
+const groups = ['All work', 'Platforms', 'AI', 'Operations', 'Finance'];
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout>
-  <div class="ownership-home shell">
-    <section class="ownership-hero" aria-labelledby="portfolio-title">
-      <div class="ownership-hero-copy">
-        <p class="eyebrow">Product ownership in practice</p>
-        <h1 id="portfolio-title">Turning challenges into opportunity.</h1>
-        <p class="ownership-lede">
-          I work where business intent, system constraints, and delivery choices collide. My role is to make the problem precise, turn ambiguity into product decisions, and keep evidence visible enough to change the next choice.
-        </p>
-
-        <div class="principle-strip" aria-label="Principles I work by">
-          {principles.map((principle) => (
-            <article class="ownership-principle">
-              <strong>{principle.title}</strong>
-              <span>{principle.body}</span>
-            </article>
-          ))}
-        </div>
-      </div>
-
-      <aside class="ownership-difference glass-card" aria-label="What makes my product ownership approach different">
-        <p class="eyebrow">What makes my approach different</p>
-        <h2>I do not separate product judgment from technical reality.</h2>
-        <p>
-          I am comfortable going deep into architecture, data, workflows, controls, and AI behavior—but only when that depth changes the product decision. I translate technical complexity into choices business partners can understand, engineering teams can build, and leaders can measure.
-        </p>
-        <div class="difference-path" aria-label="How I connect product thinking">
-          <span>Business intent</span><b>→</b><span>Product choice</span><b>→</b><span>Buildable direction</span><b>→</b><span>Evidence</span>
-        </div>
-      </aside>
+  <div class="scan-home shell">
+    <section class="scan-hero" aria-labelledby="portfolio-title">
+      <p class="eyebrow">Venkata Parimi · Senior Technical Product Owner</p>
+      <h1 id="portfolio-title">Turning challenges into opportunity.</h1>
+      <p class="scan-lede">I connect business decisions with the systems behind them.<br class="desktop-break" /> From enterprise platforms to AI products, I make complex work easier to change.</p>
     </section>
 
-    <section id="approach" class="ownership-approach glass-card" aria-labelledby="approach-title">
-      <div class="approach-copy">
-        <p class="eyebrow">My approach to product ownership</p>
-        <h2 id="approach-title">Make the problem explicit. Make the decision visible. Make the evidence testable.</h2>
+    <section id="work" class="work-board" aria-labelledby="work-title" data-work-board>
+      <div class="board-heading">
+        <div><p class="eyebrow">Selected product work</p><h2 id="work-title">The problem, the decision, and the evidence.</h2></div>
+        <span class="board-count" aria-live="polite" data-project-count>6 projects</span>
       </div>
-      <p>
-        AI has changed how I think about product ownership. The advantage is no longer who can produce the most requirements; it is who can frame the right problem, interrogate the system quickly, test assumptions earlier, and turn better evidence into better decisions. I use AI to accelerate discovery, analysis, and technical understanding—not to outsource judgment. What I bring is the ability to connect business intent with system reality, challenge the obvious solution, and create a faster learning loop from idea to evidence.
-      </p>
-    </section>
-
-    <section id="work" class="product-work" aria-labelledby="work-title">
-      <div class="work-heading">
-        <p class="eyebrow">Selected product work</p>
-        <h2 id="work-title">The problem, the decision, and the evidence.</h2>
+      <div class="board-filters" role="group" aria-label="Filter projects" data-project-filters hidden>
+        {groups.map((group, index) => <button type="button" data-filter={group} aria-pressed={index === 0}>{group}</button>)}
       </div>
 
-      <div class="project-table glass-card">
-        <div class="project-table-head" aria-hidden="true">
-          <span>Product</span>
-          <span>Problem</span>
-          <span>Decision</span>
-          <span>Evidence</span>
-          <span></span>
-        </div>
-
+      <div class="scan-project-grid">
         {projects.map((project) => {
-          const meta = workspaceMeta[project.slug];
-          if (!meta) return null;
+          const view = projectPresentation[project.slug]!;
+          const proof = getEvidence(project)[view.proofIndex]!;
           return (
-            <a class="project-row" href={`${import.meta.env.BASE_URL}work/${project.slug}/`}>
-              <div class="project-identity">
-                <small>{project.eyebrow}</small>
-                <h3>{project.title}</h3>
-                <span>{project.category.split('·')[0]?.trim()}</span>
-              </div>
-
-              <div class="project-problem">
-                <span class="mobile-field-label">Problem</span>
-                <p>{meta.problem}</p>
-              </div>
-
-              <div class="project-decision">
-                <span class="mobile-field-label">Decision</span>
-                <p>{meta.decision}</p>
-              </div>
-
-              <div class="project-evidence">
-                <span class="evidence-type">{meta.metricType}</span>
-                <strong>{meta.metric}</strong>
-                <small>{meta.metricLabel}</small>
-                <div class="approach-tags" aria-label={`${project.title} product approach`}>
-                  {meta.approaches.map((approach) => <span>{approach}</span>)}
-                </div>
-              </div>
-
-              <span class="project-arrow" aria-hidden="true">→</span>
-            </a>
+            <article class="scan-project-card" data-group={view.group} data-tone={view.tone}>
+              <a class="scan-project-link" href={`${base}work/${project.slug}/`} aria-labelledby={`card-${project.slug}`}>
+                <div class="card-meta"><span><i aria-hidden="true">◆</i> EPIC-{project.index}</span><span>{view.group}</span></div>
+                <div class="card-title"><ProjectSymbol slug={project.slug} /><h3 id={`card-${project.slug}`}>{project.title}</h3></div>
+                <p class="card-decision">{view.decision}</p>
+                <div class="card-proof"><span class="proof-type">{proof.type}</span><strong>{proof.value}</strong><span>{proof.label}</span><small>{view.proofNote}</small></div>
+                <div class="card-bottom"><span>{view.role}</span><b aria-hidden="true">↗</b></div>
+              </a>
+            </article>
           );
         })}
       </div>
     </section>
+
+    <section id="approach" class="scan-approach" aria-labelledby="approach-title">
+      <div><p class="eyebrow">How I work</p><h2 id="approach-title">Technical depth.<br />Human judgment.</h2></div>
+      <div><p>AI has changed how I think about product ownership. I use it to investigate faster and test assumptions earlier. My job is to decide what matters, make the trade-offs clear, and stay accountable for what we build.</p><p class="approach-signoff">Understand the system. Make the call. Learn from the evidence.</p></div>
+    </section>
   </div>
 </BaseLayout>
 
-<style>
-  .ownership-home{padding-bottom:72px}
-  .ownership-hero{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(390px,.72fr);gap:24px;align-items:stretch;padding:54px 0 24px}
-  .ownership-hero-copy{display:flex;flex-direction:column;justify-content:center;padding:30px 18px 22px 0}
-  .ownership-hero-copy .eyebrow{margin-bottom:15px}
-  .ownership-hero-copy h1{max-width:820px;margin:0 0 20px;font-size:clamp(3rem,5.3vw,5.15rem);line-height:.98;letter-spacing:-.05em}
-  .ownership-lede{max-width:760px;margin:0;color:#587087;font-size:1rem;line-height:1.68}
-
-  .principle-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:28px}
-  .ownership-principle{display:grid;gap:7px;min-height:112px;padding:15px 14px;border:1px solid rgba(37,99,235,.08);border-radius:15px;background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(243,248,255,.57));box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
-  .ownership-principle strong{font-size:.75rem;color:#214b73}
-  .ownership-principle span{font-size:.66rem;line-height:1.45;color:#71869a}
-
-  .ownership-difference{position:relative;display:flex;flex-direction:column;justify-content:center;overflow:hidden;padding:30px}
-  .ownership-difference:before{position:absolute;inset:-22% -18% auto 26%;height:290px;background:radial-gradient(circle,rgba(154,190,255,.2),transparent 68%);content:'';pointer-events:none}
-  .ownership-difference>*{position:relative;z-index:1}
-  .ownership-difference .eyebrow{margin-bottom:16px}
-  .ownership-difference h2{max-width:520px;margin:0 0 18px;font-size:clamp(1.8rem,2.8vw,2.75rem);line-height:1.06;letter-spacing:-.035em;color:#123453}
-  .ownership-difference>p:last-of-type{margin:0;color:#60778d;font-size:.86rem;line-height:1.7}
-  .difference-path{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:24px;padding-top:19px;border-top:1px solid rgba(15,23,42,.08)}
-  .difference-path span{padding:6px 9px;border-radius:999px;background:rgba(239,246,255,.72);font-size:.61rem;font-weight:750;color:#416484}
-  .difference-path b{font-size:.65rem;color:#9aa9b8}
-
-  .ownership-approach{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:center;margin:36px 0 24px;padding:28px 30px;border-radius:22px}
-  .approach-copy .eyebrow{margin-bottom:11px}
-  .approach-copy h2{max-width:720px;margin:0;font-size:clamp(1.7rem,3vw,2.75rem);line-height:1.08;letter-spacing:-.035em;color:#143958}
-  .ownership-approach>p{margin:0;color:#61778d;font-size:.84rem;line-height:1.72}
-
-  .product-work{padding:38px 0 18px}
-  .work-heading{display:block;margin-bottom:18px;padding:0 4px}
-  .work-heading .eyebrow{margin-bottom:10px}
-  .work-heading h2{width:100%;max-width:none;margin:0;font-size:clamp(2rem,3.7vw,3.55rem);line-height:1.03;letter-spacing:-.04em;color:#143755}
-
-  .project-table{overflow:hidden;padding:0;border-radius:22px}
-  .project-table-head{display:grid;grid-template-columns:minmax(210px,.72fr) minmax(220px,1fr) minmax(240px,1fr) minmax(190px,.68fr) 28px;gap:18px;padding:13px 22px;border-bottom:1px solid rgba(15,23,42,.07);background:rgba(246,249,253,.5)}
-  .project-table-head span{font-size:.57rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8ba0b4}
-  .project-row{display:grid;grid-template-columns:minmax(210px,.72fr) minmax(220px,1fr) minmax(240px,1fr) minmax(190px,.68fr) 28px;gap:18px;align-items:center;min-height:150px;padding:20px 22px;border-bottom:1px solid rgba(15,23,42,.07);transition:background .2s ease,box-shadow .2s ease}
-  .project-row:last-child{border-bottom:0}
-  .project-row:hover,.project-row:focus-visible{position:relative;z-index:2;background:linear-gradient(90deg,rgba(246,250,255,.94),rgba(255,255,255,.78));box-shadow:inset 3px 0 0 rgba(47,101,200,.65);outline:0}
-
-  .project-identity{min-width:0}
-  .project-identity small{display:block;margin-bottom:5px;font-size:.56rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#5d7d9c}
-  .project-identity h3{margin:0 0 7px;font-size:1rem;line-height:1.18;color:#102f50}
-  .project-identity>span{display:inline-block;padding:4px 7px;border-radius:999px;background:rgba(239,246,255,.75);font-size:.56rem;font-weight:700;color:#607c98}
-
-  .project-problem,.project-decision{min-width:0;padding-left:16px;border-left:1px solid rgba(15,23,42,.07)}
-  .project-problem p,.project-decision p{margin:0;color:#62798f;font-size:.72rem;line-height:1.52}
-  .project-decision p{color:#3f5d79;font-weight:550}
-  .mobile-field-label{display:none}
-
-  .project-evidence{display:grid;align-content:center;gap:2px;padding-left:16px;border-left:1px solid rgba(15,23,42,.07)}
-  .evidence-type{font-size:.54rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:#6684a0}
-  .project-evidence strong{margin-top:2px;font-size:1.12rem;line-height:1.1;color:#1952aa}
-  .project-evidence small{font-size:.62rem;line-height:1.35;color:#788da1}
-  .approach-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-  .approach-tags span{padding:4px 7px;border:1px solid rgba(37,99,235,.07);border-radius:999px;background:rgba(244,248,255,.86);font-size:.53rem;font-weight:750;color:#496a8a}
-  .project-arrow{font-size:1rem;color:#6784a1;transition:transform .2s ease}
-  .project-row:hover .project-arrow{transform:translateX(4px)}
-
-  @media(max-width:1120px){
-    .ownership-hero{grid-template-columns:1fr}
-    .ownership-hero-copy{padding-right:0}
-    .ownership-difference{min-height:0}
-    .project-table-head{display:none}
-    .project-row{grid-template-columns:minmax(190px,.72fr) minmax(0,1fr) minmax(190px,.66fr) 24px}
-    .project-problem{grid-column:2}
-    .project-decision{grid-column:2}
-    .project-evidence{grid-column:3;grid-row:1/3}
-    .project-arrow{grid-column:4;grid-row:1/3}
+<script>
+  function bindProjectFilters() {
+    const board = document.querySelector<HTMLElement>('[data-work-board]');
+    if (!board || board.dataset.bound === 'true') return;
+    board.dataset.bound = 'true';
+    const controls = board.querySelector<HTMLElement>('[data-project-filters]');
+    const buttons = board.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const cards = board.querySelectorAll<HTMLElement>('[data-group]');
+    const count = board.querySelector<HTMLElement>('[data-project-count]');
+    if (controls) controls.hidden = false;
+    buttons.forEach((button) => button.addEventListener('click', () => {
+      let visible = 0;
+      buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+      cards.forEach((card) => {
+        card.hidden = button.dataset.filter !== 'All work' && card.dataset.group !== button.dataset.filter;
+        if (!card.hidden) visible += 1;
+      });
+      if (count) count.textContent = `${visible} ${visible === 1 ? 'project' : 'projects'}`;
+    }));
   }
-
-  @media(max-width:860px){
-    .principle-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .ownership-approach{grid-template-columns:1fr;gap:18px}
-    .project-row{grid-template-columns:1fr 180px 24px;gap:14px}
-    .project-identity{grid-column:1}
-    .project-problem,.project-decision{grid-column:1;padding:10px 0 0;border-left:0;border-top:1px solid rgba(15,23,42,.06)}
-    .project-evidence{grid-column:2;grid-row:1/4}
-    .project-arrow{grid-column:3;grid-row:1/4}
-    .mobile-field-label{display:block;margin-bottom:5px;font-size:.53rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:#8aa0b4}
-  }
-
-  @media(max-width:640px){
-    .ownership-hero{padding-top:38px}
-    .ownership-hero-copy h1{font-size:clamp(2.65rem,13vw,4rem)}
-    .ownership-lede{font-size:.9rem}
-    .principle-strip{grid-template-columns:1fr 1fr}
-    .ownership-principle{min-height:104px;padding:13px}
-    .ownership-difference{padding:24px}
-    .ownership-approach{margin-top:24px;padding:24px}
-    .product-work{padding-top:26px}
-    .project-row{grid-template-columns:1fr 24px;padding:20px 18px}
-    .project-evidence{grid-column:1;grid-row:auto;padding:12px 0 0;border-left:0;border-top:1px solid rgba(15,23,42,.06)}
-    .project-arrow{grid-column:2;grid-row:1/5}
-    .project-problem p,.project-decision p{font-size:.7rem}
-  }
-</style>
+  bindProjectFilters();
+  document.addEventListener('astro:page-load', bindProjectFilters);
+</script>
